@@ -1,8 +1,9 @@
-import {defineComponent, reactive, ref, Transition} from 'vue';
+import {defineComponent, onMounted, reactive, ref, Transition} from 'vue';
 import styled from "vue3-styled-components";
 import {RouterView} from "vue-router";
 import {CheckOutlined, PlusOutlined} from "@ant-design/icons-vue";
 import {Input} from "ant-design-vue";
+import {DocList} from "@/bindings/changeme/handler/filehandler.ts";
 
 export default defineComponent({
     name: 'Layout',
@@ -95,13 +96,29 @@ export default defineComponent({
             name: ''
         })
 
+        const currentCom = ref(null)
+
+        const updateFileName = () => {
+            const name = fileList.value[selectFileIdx.value]
+            if (currentCom.value) {
+                (currentCom.value as any).updateContent(name)
+            }
+        }
+
+        onMounted(async () => {
+            const docs = await DocList()
+            fileList.value.splice(0, fileList.value.length)
+            docs.forEach(item => fileList.value.push(item))
+        })
+
         return () => (
             <Container>
                 <MenuView>
                     <div class={'title'}>
                         <span class={'name'}>MDNotes</span>
                         <PlusOutlined style={{lineHeight: '45px', color: "gray"}} onClick={() => {
-                            fileList.value.push("new")
+                            fileList.value.push("New")
+                            updateFileName()
                         }}/>
                     </div>
                     {fileList.value.filter(item => item !== "").map((item: string, index: number) => {
@@ -111,6 +128,7 @@ export default defineComponent({
                                     fileList.value[editFileIdx.value] = tempInfo.name
                                     tempInfo.name = ''
                                     editFileIdx.value = -1
+                                    updateFileName()
                                 }}/>
                             }
                                    onChange={e => tempInfo.name = e.target.value!}
@@ -119,8 +137,10 @@ export default defineComponent({
                                   onDblclick={() => {
                                       editFileIdx.value = index
                                       tempInfo.name = fileList.value[editFileIdx.value]
+                                      updateFileName()
                                   }} onClick={() => {
                                 selectFileIdx.value = index
+                                updateFileName()
                             }}>{item}</span>
                     })}
                 </MenuView>
@@ -129,7 +149,7 @@ export default defineComponent({
                         v-slots={{
                             default: ({Component, route}: any) => (
                                 <Transition name={route.meta.transition || 'fade'} mode='out-in'>
-                                    <Component is={Component} key={route.path}></Component>
+                                    <Component is={Component} key={route.path} ref={currentCom}></Component>
                                 </Transition>
                             )
                         }}

@@ -1,10 +1,11 @@
-import {defineComponent, onBeforeMount, onMounted, ref} from 'vue';
+import {defineComponent, onBeforeMount, onMounted, reactive, ref} from 'vue';
 import styled from "vue3-styled-components";
 import Vditor from "vditor";
+import {FileContent, SyncFile} from "@/bindings/changeme/handler/filehandler.ts";
 
 export default defineComponent({
     name: 'Home',
-    setup() {
+    setup(_, { expose }) {
 
         const Container = styled.div`
             margin: 0 auto;
@@ -18,8 +19,11 @@ export default defineComponent({
             }
         `
 
-        const vditorRef = ref<any>(null)
+        const editorInfo = reactive({
+            fileName: ''
+        })
 
+        const vditorRef = ref<any>(null)
 
         onMounted(() => {
             console.log('vditorRerf', vditorRef)
@@ -34,8 +38,9 @@ export default defineComponent({
                     after: () => {
                         // vditorRef.value.setValue("## 所见即所得（WYSIWYG）\\n所见即所得模式对不熟悉 Markdown 的用户较为友好，熟悉 Markdown 的话也可以无缝使用。 ")
                     },
-                    input: (val: string) => {
-                        console.log('xxxxx', val)
+                    input: async (val: string) => {
+                        const success = await SyncFile(editorInfo.fileName, val)
+                        console.log('SyncFile', editorInfo.fileName, success)
                     },
                     value: '',
                     mode: 'wysiwyg',
@@ -55,6 +60,16 @@ export default defineComponent({
         onBeforeMount(() => {
 
         })
+
+        const updateContent = async (name: string) => {
+            if (editorInfo.fileName !== name) {
+                const content = await FileContent(name)
+                vditorRef.value.setValue(content)
+            }
+            editorInfo.fileName = name
+        }
+
+        expose({updateContent})
 
         return () => (
             <Container id="vditor" ref={vditorRef} onClick={() => alert('kkk')}>

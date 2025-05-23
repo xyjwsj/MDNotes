@@ -1,6 +1,7 @@
 package main
 
 import (
+	"changeme/handler"
 	"embed"
 	_ "embed"
 	"log"
@@ -31,7 +32,7 @@ func main() {
 		Name:        "MDNote",
 		Description: "A demo of using raw HTML & CSS",
 		Services: []application.Service{
-			application.NewService(&GreetService{}),
+			application.NewService(&handler.FileHandler{}),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
