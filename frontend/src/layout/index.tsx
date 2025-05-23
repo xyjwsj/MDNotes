@@ -45,7 +45,7 @@ export default defineComponent({
 
             .selectDefault {
                 line-height: 30px;
-                width: 100%;
+                width: calc(100% - 20px);
                 padding-left: 20px;
             }
 
