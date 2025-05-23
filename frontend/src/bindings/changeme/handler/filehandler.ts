@@ -5,24 +5,34 @@
 // @ts-ignore: Unused imports
 import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 
-export function DocList(): Promise<string[]> & { cancel(): void } {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as model$0 from "../model/models.js";
+
+export function CreatFileKey(): Promise<string> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(17940868) as any;
+    return $resultPromise;
+}
+
+export function DocList(): Promise<model$0.RecordInfo[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3028887424) as any;
     let $typingPromise = $resultPromise.then(($result: any) => {
-        return $$createType0($result);
+        return $$createType1($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
 }
 
-export function FileContent(fileName: string): Promise<string> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1761704901, fileName) as any;
+export function FileContent(fileKey: string): Promise<string> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1761704901, fileKey) as any;
     return $resultPromise;
 }
 
-export function SyncFile(fileName: string, content: string): Promise<boolean> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1211937091, fileName, content) as any;
+export function SyncFile(fileKey: string, fileName: string, content: string): Promise<boolean> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1211937091, fileKey, fileName, content) as any;
     return $resultPromise;
 }
 
 // Private type creation functions
-const $$createType0 = $Create.Array($Create.Any);
+const $$createType0 = model$0.RecordInfo.createFrom;
+const $$createType1 = $Create.Array($$createType0);

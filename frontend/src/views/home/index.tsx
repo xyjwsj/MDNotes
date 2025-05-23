@@ -20,7 +20,8 @@ export default defineComponent({
         `
 
         const editorInfo = reactive({
-            fileName: ''
+            fileKey: '',
+            fileName: '',
         })
 
         const vditorRef = ref<any>(null)
@@ -36,10 +37,10 @@ export default defineComponent({
                         enable: false,
                     },
                     after: () => {
-                        // vditorRef.value.setValue("## 所见即所得（WYSIWYG）\\n所见即所得模式对不熟悉 Markdown 的用户较为友好，熟悉 Markdown 的话也可以无缝使用。 ")
+
                     },
                     input: async (val: string) => {
-                        const success = await SyncFile(editorInfo.fileName, val)
+                        const success = await SyncFile(editorInfo.fileKey, editorInfo.fileName, val)
                         console.log('SyncFile', editorInfo.fileName, success)
                     },
                     value: '',
@@ -61,12 +62,13 @@ export default defineComponent({
 
         })
 
-        const updateContent = async (name: string) => {
-            if (editorInfo.fileName !== name) {
-                const content = await FileContent(name)
+        const updateContent = async (key: string, fileName: string) => {
+            if (editorInfo.fileKey !== key) {
+                const content = await FileContent(key)
                 vditorRef.value.setValue(content)
             }
-            editorInfo.fileName = name
+            editorInfo.fileKey = key
+            editorInfo.fileName = fileName
         }
 
         expose({updateContent})

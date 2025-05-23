@@ -3,7 +3,8 @@ import styled from "vue3-styled-components";
 import {RouterView} from "vue-router";
 import {CheckOutlined, PlusOutlined} from "@ant-design/icons-vue";
 import {Input} from "ant-design-vue";
-import {DocList} from "@/bindings/changeme/handler/filehandler.ts";
+import {CreatFileKey, DocList} from "@/bindings/changeme/handler/filehandler.ts";
+import {RecordInfo} from "@/bindings/changeme/model";
 
 export default defineComponent({
     name: 'Layout',
@@ -19,7 +20,7 @@ export default defineComponent({
 
         const MenuView = styled.div`
             width: 280px;
-            background-color: rgba(128, 128, 128, 0.1);
+            background-color: #EFEFF2;
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -47,10 +48,14 @@ export default defineComponent({
                 line-height: 30px;
                 width: calc(100% - 20px);
                 padding-left: 20px;
+                font-size: 14px;
+                &:hover {
+                    background-color: #E0E0E3;
+                }
             }
 
             .select {
-                background-color: rgba(128, 128, 128, 0.2);
+                background-color: #E7E7EA;
             }
         `
 
@@ -88,10 +93,10 @@ export default defineComponent({
                 transform: translateY(30px);
             }
         `
-        const fileList = ref<string[]>([])
+        const fileList = ref<RecordInfo[]>([])
 
-        const selectFileIdx = ref(0)
-        const editFileIdx = ref(-1)
+        const selectFileKey = ref('')
+        const editFileKey = ref('')
         const tempInfo = reactive({
             name: ''
         })
@@ -99,9 +104,12 @@ export default defineComponent({
         const currentCom = ref(null)
 
         const updateFileName = () => {
-            const name = fileList.value[selectFileIdx.value]
+            const res = fileList.value.filter(item => item.uuid === selectFileKey.value)
+            if (res.length == 0) {
+                return
+            }
             if (currentCom.value) {
-                (currentCom.value as any).updateContent(name)
+                (currentCom.value as any).updateContent(res[0].uuid, res[0].fileName)
             }
         }
 
@@ -116,32 +124,44 @@ export default defineComponent({
                 <MenuView>
                     <div class={'title'}>
                         <span class={'name'}>MDNotes</span>
-                        <PlusOutlined style={{lineHeight: '45px', color: "gray"}} onClick={() => {
-                            fileList.value.push("New")
+                        <PlusOutlined style={{lineHeight: '45px', color: "gray"}} onClick={async () => {
+                            const fileKey = await CreatFileKey()
+                            fileList.value.push({
+                                fileName: 'New',
+                                uuid: fileKey,
+                                create: null,
+                                modify: null,
+                            })
+                            selectFileKey.value = fileKey
                             updateFileName()
                         }}/>
                     </div>
-                    {fileList.value.filter(item => item !== "").map((item: string, index: number) => {
-                        return editFileIdx.value === index ?
+                    {fileList.value.filter(item => item.fileName !== "").map((item: RecordInfo) => {
+                        return editFileKey.value === item.uuid ?
                             <Input bordered={false} style={{backgroundColor: 'white', borderRadius: '0'}} suffix={
                                 <CheckOutlined onClick={() => {
-                                    fileList.value[editFileIdx.value] = tempInfo.name
+                                    fileList.value.forEach(item => {
+                                        if (item.uuid === editFileKey.value) {
+                                            item.fileName = tempInfo.name
+                                        }
+                                    })
                                     tempInfo.name = ''
-                                    editFileIdx.value = -1
+                                    editFileKey.value = ''
                                     updateFileName()
                                 }}/>
                             }
                                    onChange={e => tempInfo.name = e.target.value!}
                                    value={tempInfo.name}></Input> :
-                            <span class={['selectDefault', selectFileIdx.value === index ? "select" : ""]}
+                            <span class={['selectDefault', selectFileKey.value === item.uuid ? "select" : ""]}
                                   onDblclick={() => {
-                                      editFileIdx.value = index
-                                      tempInfo.name = fileList.value[editFileIdx.value]
+                                      selectFileKey.value = item.uuid
+                                      editFileKey.value = item.uuid
+                                      tempInfo.name = item.fileName
                                       updateFileName()
                                   }} onClick={() => {
-                                selectFileIdx.value = index
+                                selectFileKey.value = item.uuid
                                 updateFileName()
-                            }}>{item}</span>
+                            }}>{item.fileName}</span>
                     })}
                 </MenuView>
                 <RouterViewCon>
