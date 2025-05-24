@@ -10,7 +10,7 @@ import (
 var recordCache []model.RecordInfo
 
 func init() {
-	path := util.CreatePlatformPath(model.CacheDir, "info.db")
+	path := util.CreatePlatformPath(model.CacheDir, "info.json")
 	if !util.IsFileExists(path) {
 		recordCache = make([]model.RecordInfo, 0)
 	}
@@ -32,7 +32,7 @@ func SyncData() {
 
 func SaveInfo(key, filename string) {
 	record := findRecord(key)
-	now := time.Now()
+	now := util.Datetime(time.Now())
 	if record != nil {
 		record.FileName = filename
 		record.Modify = &now
@@ -48,6 +48,17 @@ func SaveInfo(key, filename string) {
 
 func CacheList() []model.RecordInfo {
 	return recordCache
+}
+
+func DeleteFile(fileKey string) bool {
+	for idx, item := range recordCache {
+		if item.Uuid == fileKey {
+			recordCache = append(recordCache[:idx], recordCache[idx+1:]...)
+			SyncData()
+			return true
+		}
+	}
+	return true
 }
 
 func findRecord(key string) *model.RecordInfo {

@@ -7,13 +7,13 @@ import {Create as $Create} from "@wailsio/runtime";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
-import * as time$0 from "../../time/models.js";
+import * as util$0 from "../util/models.js";
 
 export class RecordInfo {
     "uuid": string;
     "fileName": string;
-    "create": time$0.Time | null;
-    "modify": time$0.Time | null;
+    "create": util$0.Datetime | null;
+    "modify": util$0.Datetime | null;
 
     /** Creates a new RecordInfo instance. */
     constructor($$source: Partial<RecordInfo> = {}) {

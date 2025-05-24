@@ -12,7 +12,7 @@ var (
 
 func init() {
 	dir, _ := os.UserCacheDir()
-	CacheDir = util.CreatePlatformPath(dir, "MDNotes")
+	CacheDir = util.CreatePlatformPath(dir, "MDNote", "data")
 	if !util.Exists(CacheDir) {
 		err := os.Mkdir(CacheDir, os.ModePerm)
 		if err != nil {

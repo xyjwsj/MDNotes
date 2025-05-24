@@ -1,10 +1,11 @@
-import {defineComponent, onMounted, reactive, ref, Transition} from 'vue';
+import {defineComponent, KeepAlive, onMounted, provide, reactive, ref, Transition} from 'vue';
 import styled from "vue3-styled-components";
 import {RouterView} from "vue-router";
-import {CheckOutlined, PlusOutlined} from "@ant-design/icons-vue";
+import {CheckOutlined, PlusOutlined, SearchOutlined} from "@ant-design/icons-vue";
 import {Input} from "ant-design-vue";
-import {CreatFileKey, DocList} from "@/bindings/changeme/handler/filehandler.ts";
+import {CreatFileKey, DeleteFile, DocList} from "@/bindings/changeme/handler/filehandler.ts";
 import {RecordInfo} from "@/bindings/changeme/model";
+import {TipWarning} from "@/util/messageUtil.ts";
 
 export default defineComponent({
     name: 'Layout',
@@ -24,6 +25,7 @@ export default defineComponent({
             height: 100%;
             display: flex;
             flex-direction: column;
+            align-items: center;
 
             .title {
                 width: calc(100% - 100px);
@@ -35,13 +37,27 @@ export default defineComponent({
                 font-weight: 600;
                 display: flex;
                 font-size: 19px;
-                justify-content: space-between;
+                justify-content: flex-end;
 
                 .name {
                     font-size: 14px;
                     margin-right: 20px;
                     color: gray;
                 }
+            }
+            
+            .search {
+                background-color: #FAFAFA;
+                border-radius: 0;
+                font-size: 12px;
+            }
+            
+            .footer {
+                height: 20px;
+                font-size: 11px;
+                color: gray;
+                position: absolute;
+                bottom: 0;
             }
 
             .selectDefault {
@@ -109,7 +125,7 @@ export default defineComponent({
                 return
             }
             if (currentCom.value) {
-                (currentCom.value as any).updateContent(res[0].uuid, res[0].fileName)
+                (currentCom.value as any).updateContent(res[0])
             }
         }
 
@@ -119,36 +135,69 @@ export default defineComponent({
             docs.forEach(item => fileList.value.push(item))
         })
 
+        const deleteFile = async (key: string) => {
+            const res = await DeleteFile(key)
+            if (!res) {
+                TipWarning('删除失败!')
+                return
+            }
+             // 再从本地列表中过滤掉该条目
+            const index = fileList.value.findIndex(item => item.uuid === key);
+            if (index !== -1) {
+                fileList.value.splice(index, 1);
+            }
+
+            // 如果当前选中的是被删除的文件，则清空编辑器
+            if (selectFileKey.value === key) {
+                selectFileKey.value = '';
+                if (currentCom.value) {
+                    // 可以选择触发一个 clear 或 reset 方法
+                }
+            }
+        }
+        provide('deleteFile', deleteFile)
+
+        const okModify = () => {
+            fileList.value.forEach(item => {
+                if (item.uuid === editFileKey.value) {
+                    item.fileName = tempInfo.name
+                }
+            })
+            tempInfo.name = ''
+            editFileKey.value = ''
+            updateFileName()
+        };
+
         return () => (
             <Container>
                 <MenuView>
                     <div class={'title'}>
-                        <span class={'name'}>MDNotes</span>
                         <PlusOutlined style={{lineHeight: '45px', color: "gray"}} onClick={async () => {
                             const fileKey = await CreatFileKey()
                             fileList.value.push({
                                 fileName: 'New',
                                 uuid: fileKey,
-                                create: null,
-                                modify: null,
+                                create: '',
+                                modify: '',
                             })
                             selectFileKey.value = fileKey
                             updateFileName()
                         }}/>
                     </div>
+                    <Input class={'search'}
+                           placeholder={"文件名"}
+                            prefix={<SearchOutlined style={{
+                                color: 'gray',
+                            }}/>}
+                           bordered={false}></Input>
                     {fileList.value.filter(item => item.fileName !== "").map((item: RecordInfo) => {
+
                         return editFileKey.value === item.uuid ?
-                            <Input bordered={false} style={{backgroundColor: 'white', borderRadius: '0'}} suffix={
-                                <CheckOutlined onClick={() => {
-                                    fileList.value.forEach(item => {
-                                        if (item.uuid === editFileKey.value) {
-                                            item.fileName = tempInfo.name
-                                        }
-                                    })
-                                    tempInfo.name = ''
-                                    editFileKey.value = ''
-                                    updateFileName()
-                                }}/>
+                            <Input bordered={false}
+                                   style={{backgroundColor: 'white', borderRadius: '0'}}
+                                   onPressEnter={okModify}
+                                   suffix={
+                                <CheckOutlined onClick={okModify}/>
                             }
                                    onChange={e => tempInfo.name = e.target.value!}
                                    value={tempInfo.name}></Input> :
@@ -163,13 +212,16 @@ export default defineComponent({
                                 updateFileName()
                             }}>{item.fileName}</span>
                     })}
+                    <span class={'footer'}>{`${fileList.value.length}个文件`}</span>
                 </MenuView>
                 <RouterViewCon>
                     <RouterView
                         v-slots={{
                             default: ({Component, route}: any) => (
                                 <Transition name={route.meta.transition || 'fade'} mode='out-in'>
-                                    <Component is={Component} key={route.path} ref={currentCom}></Component>
+                                    <KeepAlive>
+                                        <Component is={Component} key={route.path} ref={currentCom}></Component>
+                                    </KeepAlive>
                                 </Transition>
                             )
                         }}

@@ -33,6 +33,10 @@ func (file *FileHandler) FileContent(fileKey string) string {
 	return contents
 }
 
+func (file *FileHandler) DeleteFile(fileKey string) bool {
+	return mgr.DeleteFile(fileKey)
+}
+
 func (file *FileHandler) CreatFileKey() string {
 	return util.UUID()
 }

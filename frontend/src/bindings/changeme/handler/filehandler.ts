@@ -14,6 +14,11 @@ export function CreatFileKey(): Promise<string> & { cancel(): void } {
     return $resultPromise;
 }
 
+export function DeleteFile(fileKey: string): Promise<boolean> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2399497863, fileKey) as any;
+    return $resultPromise;
+}
+
 export function DocList(): Promise<model$0.RecordInfo[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3028887424) as any;
     let $typingPromise = $resultPromise.then(($result: any) => {
