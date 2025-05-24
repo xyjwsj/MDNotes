@@ -10,7 +10,7 @@ import (
 var recordCache []model.RecordInfo
 
 func init() {
-	path := util.CreatePlatformPath(model.CacheDir, "info.json")
+	path := util.CreatePlatformPath(model.CacheDir, "info.db")
 	if !util.IsFileExists(path) {
 		recordCache = make([]model.RecordInfo, 0)
 	}
