@@ -9,9 +9,13 @@ import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 // @ts-ignore: Unused imports
 import * as model$0 from "../model/models.js";
 
-export function CreatFileKey(): Promise<string> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(17940868) as any;
-    return $resultPromise;
+export function CreateFile(): Promise<model$0.RecordInfo> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1643363620) as any;
+    let $typingPromise = $resultPromise.then(($result: any) => {
+        return $$createType0($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
 }
 
 export function DeleteFile(fileKey: string): Promise<boolean> & { cancel(): void } {

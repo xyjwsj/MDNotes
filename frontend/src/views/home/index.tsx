@@ -4,6 +4,8 @@ import Vditor from "vditor";
 import {FileContent, SyncFile} from "@/bindings/changeme/handler/filehandler.ts";
 import {RecordInfo} from "@/bindings/changeme/model";
 import {DeleteOutlined} from "@ant-design/icons-vue";
+import moment from "moment";
+import {SameDay} from "@/util/dateUtil.ts";
 
 export default defineComponent({
     name: 'Home',
@@ -30,11 +32,14 @@ export default defineComponent({
 
                 .actions {
                     height: 45px;
-                    color: gray;
+                    color: lightgray;
                     font-size: 17px;
                     display: flex;
                     justify-content: flex-end;
                     align-items: center;
+                    &:hover {
+                        color: gray;
+                    }
                 }
             }
         `
@@ -42,7 +47,8 @@ export default defineComponent({
         const EditorView = styled.div`
             border: none;
             height: 100px;
-
+            
+            
             .vditor-toolbar {
                 border: none;
             }
@@ -68,18 +74,22 @@ export default defineComponent({
             vditor.value = new Vditor('vditor', {
                 height: '805px',
                 toolbar: [],
+                toolbarConfig: {
+                    hide: false
+                },
                 placeholder: '请在这里输入内容',
                 cache: {
                     enable: true,
                 },
                 after: () => {
-                    vditorRef.value.setValue(defaultVal)
+                    // vditorRef.value.setValue(defaultVal)
+                    vditor.value?.setTheme('classic')
                 },
                 input: async (val: string) => {
                     const success = await SyncFile(editorInfo.fileKey, editorInfo.fileName, val)
                     console.log('SyncFile', editorInfo.fileName, success)
                 },
-                value: 'fdasfa',
+                value: defaultVal,
                 mode: 'wysiwyg',
                 // 代码高亮
                 preview: {
@@ -112,13 +122,32 @@ export default defineComponent({
 
         expose({updateContent})
 
+        const formatDate = (str: string) => {
+            const dateStr = str.split(" ");
+            const dateObj = moment(str);
+            const now = moment();
+            let formatStr = str
+            if (SameDay(now.toDate(), dateObj.toDate())) {
+                formatStr = "今天 " + dateStr[1]
+            }
+            let res = dateObj.add(1, 'days');
+            if (SameDay(now.toDate(), res.toDate())) {
+                formatStr = "昨天 " + dateStr[1]
+            }
+            res = dateObj.add(2, 'days');
+            if (SameDay(now.toDate(), res.toDate())) {
+                formatStr = "前天 " + dateStr[1]
+            }
+            return formatStr
+        }
+
         return () => (
             <Container>
                 <div class={'tools'}>
+                    {editorInfo.create && <span class={'create'}>{`创建：${formatDate(editorInfo.create)}`}</span>}
                     <div class={'actions'} onClick={() => deleteFile(editorInfo.fileKey)}>
                         <DeleteOutlined/>
                     </div>
-                    {editorInfo.create && <span class={'create'}>{`创建时间：${editorInfo.create}`}</span>}
                 </div>
                 <EditorView id="vditor" ref={el => vditorRef.value = el}></EditorView>
             </Container>

@@ -37,6 +37,6 @@ func (file *FileHandler) DeleteFile(fileKey string) bool {
 	return mgr.DeleteFile(fileKey)
 }
 
-func (file *FileHandler) CreatFileKey() string {
-	return util.UUID()
+func (file *FileHandler) CreateFile() model.RecordInfo {
+	return mgr.NewRecord()
 }

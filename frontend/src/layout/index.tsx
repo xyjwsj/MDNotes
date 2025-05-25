@@ -2,8 +2,8 @@ import {defineComponent, KeepAlive, onMounted, provide, reactive, ref, Transitio
 import styled from "vue3-styled-components";
 import {RouterView} from "vue-router";
 import {CheckOutlined, PlusOutlined, SearchOutlined} from "@ant-design/icons-vue";
-import {Input} from "ant-design-vue";
-import {CreatFileKey, DeleteFile, DocList} from "@/bindings/changeme/handler/filehandler.ts";
+import {Input, Modal} from "ant-design-vue";
+import {CreateFile, DeleteFile, DocList} from "@/bindings/changeme/handler/filehandler.ts";
 import {RecordInfo} from "@/bindings/changeme/model";
 import {TipWarning} from "@/util/messageUtil.ts";
 
@@ -44,14 +44,23 @@ export default defineComponent({
                     margin-right: 20px;
                     color: gray;
                 }
+
+                .add {
+                    line-height: 45px;
+                    color: lightgray;
+
+                    &:hover {
+                        color: gray;
+                    }
+                }
             }
-            
+
             .search {
                 background-color: #FAFAFA;
                 border-radius: 0;
                 font-size: 12px;
             }
-            
+
             .footer {
                 height: 20px;
                 font-size: 11px;
@@ -65,6 +74,7 @@ export default defineComponent({
                 width: calc(100% - 20px);
                 padding-left: 20px;
                 font-size: 14px;
+
                 &:hover {
                     background-color: #E0E0E3;
                 }
@@ -135,25 +145,39 @@ export default defineComponent({
             docs.forEach(item => fileList.value.push(item))
         })
 
-        const deleteFile = async (key: string) => {
-            const res = await DeleteFile(key)
-            if (!res) {
-                TipWarning('删除失败!')
-                return
-            }
-             // 再从本地列表中过滤掉该条目
-            const index = fileList.value.findIndex(item => item.uuid === key);
-            if (index !== -1) {
-                fileList.value.splice(index, 1);
-            }
+        const deleteFile = (key: string) => {
+            Modal.confirm({
+                width: 300,
+                title: '删除',
+                centered: true,
+                content: () => {
+                    const files = fileList.value.filter(item => item.uuid === key)
+                    if (files.length > 0) {
+                        return <span>{`确认删除'${files[0].fileName}'文件？`}</span>
+                    }
+                },
+                onOk: async () => {
+                    const res = await DeleteFile(key)
+                    if (!res) {
+                        TipWarning('删除失败!')
+                        return
+                    }
+                    // 再从本地列表中过滤掉该条目
+                    const index = fileList.value.findIndex(item => item.uuid === key);
+                    if (index !== -1) {
+                        fileList.value.splice(index, 1);
+                    }
 
-            // 如果当前选中的是被删除的文件，则清空编辑器
-            if (selectFileKey.value === key) {
-                selectFileKey.value = '';
-                if (currentCom.value) {
-                    // 可以选择触发一个 clear 或 reset 方法
+                    // 如果当前选中的是被删除的文件，则清空编辑器
+                    if (selectFileKey.value === key) {
+                        selectFileKey.value = '';
+                        if (currentCom.value) {
+                            // 可以选择触发一个 clear 或 reset 方法
+                        }
+                    }
                 }
-            }
+            })
+
         }
         provide('deleteFile', deleteFile)
 
@@ -172,23 +196,18 @@ export default defineComponent({
             <Container>
                 <MenuView>
                     <div class={'title'}>
-                        <PlusOutlined style={{lineHeight: '45px', color: "gray"}} onClick={async () => {
-                            const fileKey = await CreatFileKey()
-                            fileList.value.push({
-                                fileName: 'New',
-                                uuid: fileKey,
-                                create: '',
-                                modify: '',
-                            })
-                            selectFileKey.value = fileKey
+                        <PlusOutlined class={'add'} onClick={async () => {
+                            const file = await CreateFile()
+                            fileList.value.push(file)
+                            selectFileKey.value = file.uuid
                             updateFileName()
                         }}/>
                     </div>
                     <Input class={'search'}
                            placeholder={"文件名"}
-                            prefix={<SearchOutlined style={{
-                                color: 'gray',
-                            }}/>}
+                           prefix={<SearchOutlined style={{
+                               color: 'gray',
+                           }}/>}
                            bordered={false}></Input>
                     {fileList.value.filter(item => item.fileName !== "").map((item: RecordInfo) => {
 
@@ -197,8 +216,8 @@ export default defineComponent({
                                    style={{backgroundColor: 'white', borderRadius: '0'}}
                                    onPressEnter={okModify}
                                    suffix={
-                                <CheckOutlined onClick={okModify}/>
-                            }
+                                       <CheckOutlined onClick={okModify}/>
+                                   }
                                    onChange={e => tempInfo.name = e.target.value!}
                                    value={tempInfo.name}></Input> :
                             <span class={['selectDefault', selectFileKey.value === item.uuid ? "select" : ""]}

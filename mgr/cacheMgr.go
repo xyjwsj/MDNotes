@@ -46,6 +46,18 @@ func SaveInfo(key, filename string) {
 	SyncData()
 }
 
+func NewRecord() model.RecordInfo {
+	datetime := util.Datetime(time.Now())
+	info := model.RecordInfo{
+		Uuid:     util.UUID(),
+		FileName: "New",
+		Create:   &datetime,
+		Modify:   nil,
+	}
+	recordCache = append(recordCache, info)
+	return info
+}
+
 func CacheList() []model.RecordInfo {
 	return recordCache
 }
