@@ -144,7 +144,7 @@ export default defineComponent({
         return () => (
             <Container>
                 <div class={'tools'}>
-                    {editorInfo.create && <span class={'create'}>{`创建：${formatDate(editorInfo.create)}`}</span>}
+                    {editorInfo.create && <span class={'create'}>{`${formatDate(editorInfo.create)}创建`}</span>}
                     <div class={'actions'} onClick={() => deleteFile(editorInfo.fileKey)}>
                         <DeleteOutlined/>
                     </div>
