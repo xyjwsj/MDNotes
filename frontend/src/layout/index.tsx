@@ -1,11 +1,12 @@
 import {defineComponent, KeepAlive, onMounted, provide, reactive, ref, Transition} from 'vue';
 import styled from "vue3-styled-components";
 import {RouterView} from "vue-router";
-import {CheckOutlined, PlusOutlined, SearchOutlined} from "@ant-design/icons-vue";
-import {Input, Modal} from "ant-design-vue";
+import {CheckOutlined, PlusOutlined, RightOutlined, SearchOutlined} from "@ant-design/icons-vue";
+import {Image, Input, Modal} from "ant-design-vue";
 import {CreateFile, DeleteFile, DocList, ModifyName} from "@/bindings/changeme/handler/filehandler.ts";
 import {RecordInfo} from "@/bindings/changeme/model";
 import {TipWarning} from "@/util/messageUtil.ts";
+import mdIcon from '@/assets/png/markdown.png'
 
 export default defineComponent({
     name: 'Layout',
@@ -74,6 +75,7 @@ export default defineComponent({
                 width: calc(100% - 20px);
                 padding: 0 20px;
                 font-size: 14px;
+                color: rgba(48, 48, 45, 1);
                 display: flex;
                 justify-content: space-between;
 
@@ -81,9 +83,20 @@ export default defineComponent({
                     background-color: #E0E0E3;
                 }
                 
+                .left {
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                    gap: 5px;
+                }
+                
                 .right {
                     font-size: 12px;
                     color: gray;
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                    gap: 3px;
                 }
             }
 
@@ -257,8 +270,14 @@ export default defineComponent({
                                 selectFileKey.value = item.uuid
                                 updateFileName()
                             }}>
-                                <span>{item.fileName}</span>
-                                <span class={'right'}>{item.sizeStr}</span>
+                                <div class={'left'}>
+                                    <Image src={mdIcon} width={20} preview={false}/>
+                                    <span>{item.fileName}</span>
+                                </div>
+                                <div class={'right'}>
+                                    <span>{item.sizeStr}</span>
+                                    <RightOutlined />
+                                </div>
                             </div>
                     })}
                     <span class={'footer'}>{`${fileList.value.length}个文件`}</span>
