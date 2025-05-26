@@ -19,12 +19,13 @@ func (file *FileHandler) SyncFile(fileKey, content string) string {
 		return ""
 	}
 	stat, _ := os.Stat(path)
-	stat.Size()
-	return util.FileSizeCovert(stat.Size())
+	size := stat.Size()
+	mgr.ModifyInfo(fileKey, "", size)
+	return util.FileSizeCovert(size)
 }
 
 func (file *FileHandler) ModifyName(fileKey, fileName string) bool {
-	mgr.SaveInfo(fileKey, fileName)
+	mgr.ModifyInfo(fileKey, fileName, 0)
 	return true
 }
 

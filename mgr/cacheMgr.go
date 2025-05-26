@@ -31,21 +31,21 @@ func SyncData() {
 	util.WriteToFile(path, util.Struct2Json(recordCache))
 }
 
-func SaveInfo(key, filename string) {
+func ModifyInfo(key, filename string, size int64) {
 	record := findRecord(key)
 	now := util.Datetime(time.Now())
 	if record != nil {
-		record.FileName = filename
+		if filename != "" {
+			record.FileName = filename
+		}
+		if size >= 0 {
+			record.Size = size
+		}
 		record.Modify = &now
 		SyncData()
 		return
 	}
-	recordCache = append(recordCache, &model.RecordInfo{
-		Uuid:     key,
-		FileName: filename,
-		Create:   &now,
-	})
-	SyncData()
+	return
 }
 
 func NewRecord() model.RecordInfo {
@@ -57,6 +57,7 @@ func NewRecord() model.RecordInfo {
 		Modify:   nil,
 	}
 	recordCache = append(recordCache, &info)
+	SyncData()
 	return info
 }
 
