@@ -179,7 +179,13 @@ export default defineComponent({
             })
 
         }
+
+        const exportFile = (key: string) => {
+            TipWarning('导出' + key)
+        }
+
         provide('deleteFile', deleteFile)
+        provide('exportFile', exportFile)
 
         const okModify = () => {
             fileList.value.forEach(item => {

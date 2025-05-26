@@ -3,7 +3,7 @@ import styled from "vue3-styled-components";
 import Vditor from "vditor";
 import {FileContent, SyncFile} from "@/bindings/changeme/handler/filehandler.ts";
 import {RecordInfo} from "@/bindings/changeme/model";
-import {DeleteOutlined} from "@ant-design/icons-vue";
+import {DeleteOutlined, ExportOutlined} from "@ant-design/icons-vue";
 import moment from "moment";
 import {SameDay} from "@/util/dateUtil.ts";
 
@@ -37,8 +37,18 @@ export default defineComponent({
                     display: flex;
                     justify-content: flex-end;
                     align-items: center;
-                    &:hover {
-                        color: gray;
+                    gap: 15px;
+
+                    .action {
+                        height: 45px;
+                        color: lightgray;
+                        font-size: 17px;
+                        display: flex;
+                        justify-content: flex-end;
+                        align-items: center;
+                        &:hover {
+                            color: gray;
+                        }
                     }
                 }
             }
@@ -61,6 +71,7 @@ export default defineComponent({
         })
 
         const deleteFile: any = inject('deleteFile')
+        const exportFile: any = inject('exportFile')
 
         const vditorRef = ref<any>(null)
         const vditor = ref<Vditor|null>(null)
@@ -90,7 +101,7 @@ export default defineComponent({
                     console.log('SyncFile', editorInfo.fileName, success)
                 },
                 value: defaultVal,
-                mode: 'wysiwyg',
+                mode: 'ir',
                 // 代码高亮
                 preview: {
                     delay: 0,
@@ -145,8 +156,13 @@ export default defineComponent({
             <Container>
                 <div class={'tools'}>
                     {editorInfo.create && <span class={'create'}>{`${formatDate(editorInfo.create)}创建`}</span>}
-                    <div class={'actions'} onClick={() => deleteFile(editorInfo.fileKey)}>
-                        <DeleteOutlined/>
+                    <div class={'actions'}>
+                        <div class={'action'} onClick={() => deleteFile(editorInfo.fileKey)}>
+                            <DeleteOutlined/>
+                        </div>
+                        <div class={'action'} onClick={() => exportFile(editorInfo.fileKey)}>
+                            <ExportOutlined />
+                        </div>
                     </div>
                 </div>
                 <EditorView id="vditor" ref={el => vditorRef.value = el}></EditorView>
