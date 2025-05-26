@@ -72,6 +72,7 @@ export default defineComponent({
 
         const deleteFile: any = inject('deleteFile')
         const exportFile: any = inject('exportFile')
+        const updateFileSize: any = inject('updateFileSize')
 
         const vditorRef = ref<any>(null)
         const vditor = ref<Vditor|null>(null)
@@ -99,7 +100,7 @@ export default defineComponent({
                 input: async (val: string) => {
                     const success = await SyncFile(editorInfo.fileKey, val)
                     if (success !== "") {
-
+                        updateFileSize(editorInfo.fileKey, success)
                     }
                     console.log('SyncFile', editorInfo.fileName, success)
                 },

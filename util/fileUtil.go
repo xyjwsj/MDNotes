@@ -268,7 +268,7 @@ func CreateFileTypeToDir(fileDir string, data multipart.File) (string, []byte, e
 func FileSizeCovert(size int64) string {
 
 	if size < 1024 {
-		return fmt.Sprintf("%d 字节", size)
+		return fmt.Sprintf("%d Byte", size)
 	}
 	if size < 1024*1024 {
 		return fmt.Sprintf("%.2f KB", float64(size/1024.0))

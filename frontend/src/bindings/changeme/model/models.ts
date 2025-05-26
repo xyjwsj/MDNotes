@@ -12,6 +12,8 @@ import * as util$0 from "../util/models.js";
 export class RecordInfo {
     "uuid": string;
     "fileName": string;
+    "size": number;
+    "sizeStr": string;
     "create": util$0.Datetime | null;
     "modify": util$0.Datetime | null;
 
@@ -22,6 +24,12 @@ export class RecordInfo {
         }
         if (!("fileName" in $$source)) {
             this["fileName"] = "";
+        }
+        if (!("size" in $$source)) {
+            this["size"] = 0;
+        }
+        if (!("sizeStr" in $$source)) {
+            this["sizeStr"] = "";
         }
         if (!("create" in $$source)) {
             this["create"] = null;

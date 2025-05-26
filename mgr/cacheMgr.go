@@ -40,6 +40,7 @@ func ModifyInfo(key, filename string, size int64) {
 		}
 		if size >= 0 {
 			record.Size = size
+			record.SizeStr = util.FileSizeCovert(record.Size)
 		}
 		record.Modify = &now
 		SyncData()
@@ -53,6 +54,8 @@ func NewRecord() model.RecordInfo {
 	info := model.RecordInfo{
 		Uuid:     util.UUID(),
 		FileName: "New",
+		Size:     0,
+		SizeStr:  "0 Byte",
 		Create:   &datetime,
 		Modify:   nil,
 	}

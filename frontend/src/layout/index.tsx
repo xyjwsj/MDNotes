@@ -195,8 +195,17 @@ export default defineComponent({
             TipWarning('导出' + key)
         }
 
+        const updateFileSize = (key: string, sizeStr: string) => {
+            fileList.value.forEach(item => {
+                if (item.uuid === key) {
+                    item.sizeStr = sizeStr
+                }
+            })
+        }
+
         provide('deleteFile', deleteFile)
         provide('exportFile', exportFile)
+        provide('updateFileSize', updateFileSize)
 
         const okModify = () => {
             fileList.value.forEach(item => {
@@ -249,7 +258,7 @@ export default defineComponent({
                                 updateFileName()
                             }}>
                                 <span>{item.fileName}</span>
-                                <span class={'right'}>{'1 KB'}</span>
+                                <span class={'right'}>{item.sizeStr}</span>
                             </div>
                     })}
                     <span class={'footer'}>{`${fileList.value.length}个文件`}</span>
