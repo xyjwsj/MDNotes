@@ -72,11 +72,18 @@ export default defineComponent({
             .selectDefault {
                 line-height: 30px;
                 width: calc(100% - 20px);
-                padding-left: 20px;
+                padding: 0 20px;
                 font-size: 14px;
+                display: flex;
+                justify-content: space-between;
 
                 &:hover {
                     background-color: #E0E0E3;
+                }
+                
+                .right {
+                    font-size: 12px;
+                    color: gray;
                 }
             }
 
@@ -231,16 +238,19 @@ export default defineComponent({
                                    }
                                    onChange={e => tempInfo.name = e.target.value!}
                                    value={tempInfo.name}></Input> :
-                            <span class={['selectDefault', selectFileKey.value === item.uuid ? "select" : ""]}
-                                  onDblclick={() => {
-                                      selectFileKey.value = item.uuid
-                                      editFileKey.value = item.uuid
-                                      tempInfo.name = item.fileName
-                                      updateFileName()
-                                  }} onClick={() => {
-                                    selectFileKey.value = item.uuid
-                                    updateFileName()
-                            }}>{item.fileName}</span>
+                            <div class={['selectDefault', selectFileKey.value === item.uuid ? "select" : ""]}
+                                 onDblclick={() => {
+                                     selectFileKey.value = item.uuid
+                                     editFileKey.value = item.uuid
+                                     tempInfo.name = item.fileName
+                                     updateFileName()
+                                 }} onClick={() => {
+                                selectFileKey.value = item.uuid
+                                updateFileName()
+                            }}>
+                                <span>{item.fileName}</span>
+                                <span class={'right'}>{'1 KB'}</span>
+                            </div>
                     })}
                     <span class={'footer'}>{`${fileList.value.length}个文件`}</span>
                 </MenuView>

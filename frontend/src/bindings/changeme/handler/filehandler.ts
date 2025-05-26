@@ -42,7 +42,7 @@ export function ModifyName(fileKey: string, fileName: string): Promise<boolean> 
     return $resultPromise;
 }
 
-export function SyncFile(fileKey: string, content: string): Promise<boolean> & { cancel(): void } {
+export function SyncFile(fileKey: string, content: string): Promise<string> & { cancel(): void } {
     let $resultPromise = $Call.ByID(1211937091, fileKey, content) as any;
     return $resultPromise;
 }

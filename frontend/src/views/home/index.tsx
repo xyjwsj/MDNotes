@@ -98,6 +98,9 @@ export default defineComponent({
                 },
                 input: async (val: string) => {
                     const success = await SyncFile(editorInfo.fileKey, val)
+                    if (success !== "") {
+
+                    }
                     console.log('SyncFile', editorInfo.fileName, success)
                 },
                 upload: {

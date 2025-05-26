@@ -264,3 +264,20 @@ func CreateFileTypeToDir(fileDir string, data multipart.File) (string, []byte, e
 
 	return md5, fileType, nil
 }
+
+func FileSizeCovert(size int64) string {
+
+	if size < 1024 {
+		return fmt.Sprintf("%d 字节", size)
+	}
+	if size < 1024*1024 {
+		return fmt.Sprintf("%.2f KB", float64(size/1024.0))
+	}
+	if size < 1024*1024*1024 {
+		return fmt.Sprintf("%.2f KB", float64(size/1024.0/1024))
+	}
+	if size < 1024*1024*1024*1024 {
+		return fmt.Sprintf("%.2f MB", float64(size/1024.0/1024/1024))
+	}
+	return fmt.Sprintf("%.2f GB", float64(size/1024.0/1024/1024/1024))
+}

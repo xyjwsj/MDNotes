@@ -5,18 +5,22 @@ import (
 	"changeme/model"
 	"changeme/util"
 	"log"
+	"os"
 )
 
 type FileHandler struct {
 }
 
-func (file *FileHandler) SyncFile(fileKey, content string) bool {
-	err := util.WriteToFile(util.CreatePlatformPath(model.CacheDir, "md", fileKey+".md"), content)
+func (file *FileHandler) SyncFile(fileKey, content string) string {
+	path := util.CreatePlatformPath(model.CacheDir, "md", fileKey+".md")
+	err := util.WriteToFile(path, content)
 	if err != nil {
 		log.Println("SyncFile Error:" + err.Error())
-		return false
+		return ""
 	}
-	return true
+	stat, _ := os.Stat(path)
+	stat.Size()
+	return util.FileSizeCovert(stat.Size())
 }
 
 func (file *FileHandler) ModifyName(fileKey, fileName string) bool {
