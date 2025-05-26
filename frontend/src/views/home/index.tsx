@@ -97,12 +97,39 @@ export default defineComponent({
                     vditor.value?.setTheme('classic')
                 },
                 input: async (val: string) => {
-                    const success = await SyncFile(editorInfo.fileKey, editorInfo.fileName, val)
+                    const success = await SyncFile(editorInfo.fileKey, val)
                     console.log('SyncFile', editorInfo.fileName, success)
                 },
+                upload: {
+                    accept: 'image/*',
+                    url: '/api/upload',
+                    linkToImgUrl: '/api/upload',
+                    format: (files: File[], responseText: string) => {
+                        const data = {
+                            "msg": "",
+                            "code": 0,
+                            "data": {
+                                "errFiles": [],
+                                "succMap": {
+                                }
+                            }
+                        };
+                        (data.data.succMap as any)[files[0].name] = responseText
+
+                        console.log('%%%%%%%%', responseText, data)
+                        return JSON.stringify(data)
+                    },
+                    linkToImgCallback: (responseText: string) => {
+                        console.log('%%%%%%%%',responseText)
+                    },
+                    linkToImgFormat: (responseText: string) => {
+                        console.log('########', responseText)
+                        return ""
+                    }
+                },
                 value: defaultVal,
-                mode: 'ir',
                 // 代码高亮
+                mode: 'ir',
                 preview: {
                     delay: 0,
                     hljs: {
@@ -120,7 +147,7 @@ export default defineComponent({
         })
 
         const updateContent = async (info: RecordInfo) => {
-            console.log(vditorRef.value)
+            console.log(info)
             if (editorInfo.fileKey !== info.uuid) {
                 const content = await FileContent(info.uuid);
                 console.log('ref', vditorRef)

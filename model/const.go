@@ -19,4 +19,19 @@ func init() {
 			fmt.Println(err)
 		}
 	}
+	CacheDirMd := util.CreatePlatformPath(CacheDir, "md")
+	if !util.Exists(CacheDirMd) {
+		err := os.Mkdir(CacheDirMd, os.ModePerm)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
+	CacheDirMg := util.CreatePlatformPath(CacheDir, "image")
+	if !util.Exists(CacheDirMg) {
+		err := os.Mkdir(CacheDirMg, os.ModePerm)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
 }

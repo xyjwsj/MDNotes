@@ -35,7 +35,8 @@ func main() {
 			application.NewService(&handler.FileHandler{}),
 		},
 		Assets: application.AssetOptions{
-			Handler: application.AssetFileServerFS(assets),
+			Handler:    application.AssetFileServerFS(assets),
+			Middleware: ImageApi,
 		},
 		Mac: application.MacOptions{
 			ApplicationShouldTerminateAfterLastWindowClosed: true,

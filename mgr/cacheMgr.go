@@ -7,21 +7,22 @@ import (
 	"time"
 )
 
-var recordCache []model.RecordInfo
+var recordCache []*model.RecordInfo
 
 func init() {
 	path := util.CreatePlatformPath(model.CacheDir, "info.db")
 	if !util.IsFileExists(path) {
-		recordCache = make([]model.RecordInfo, 0)
-	}
-	contents, err := util.ReadFileContents(path)
-	if err != nil {
-		log.Println("ReadFileContents info.db Error", err.Error())
-		return
-	}
-	err = util.Json2Struct(contents, &recordCache)
-	if err != nil {
-		log.Println("Json2Struct info.db Error", err.Error())
+		recordCache = make([]*model.RecordInfo, 0)
+	} else {
+		contents, err := util.ReadFileContents(path)
+		if err != nil {
+			log.Println("ReadFileContents info.db Error", err.Error())
+			return
+		}
+		err = util.Json2Struct(contents, &recordCache)
+		if err != nil {
+			log.Println("Json2Struct info.db Error", err.Error())
+		}
 	}
 }
 
@@ -36,9 +37,10 @@ func SaveInfo(key, filename string) {
 	if record != nil {
 		record.FileName = filename
 		record.Modify = &now
+		SyncData()
 		return
 	}
-	recordCache = append(recordCache, model.RecordInfo{
+	recordCache = append(recordCache, &model.RecordInfo{
 		Uuid:     key,
 		FileName: filename,
 		Create:   &now,
@@ -54,11 +56,11 @@ func NewRecord() model.RecordInfo {
 		Create:   &datetime,
 		Modify:   nil,
 	}
-	recordCache = append(recordCache, info)
+	recordCache = append(recordCache, &info)
 	return info
 }
 
-func CacheList() []model.RecordInfo {
+func CacheList() []*model.RecordInfo {
 	return recordCache
 }
 
@@ -76,7 +78,7 @@ func DeleteFile(fileKey string) bool {
 func findRecord(key string) *model.RecordInfo {
 	for _, itm := range recordCache {
 		if itm.Uuid == key {
-			return &itm
+			return itm
 		}
 	}
 	return nil

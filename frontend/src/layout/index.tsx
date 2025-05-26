@@ -3,7 +3,7 @@ import styled from "vue3-styled-components";
 import {RouterView} from "vue-router";
 import {CheckOutlined, PlusOutlined, SearchOutlined} from "@ant-design/icons-vue";
 import {Input, Modal} from "ant-design-vue";
-import {CreateFile, DeleteFile, DocList} from "@/bindings/changeme/handler/filehandler.ts";
+import {CreateFile, DeleteFile, DocList, ModifyName} from "@/bindings/changeme/handler/filehandler.ts";
 import {RecordInfo} from "@/bindings/changeme/model";
 import {TipWarning} from "@/util/messageUtil.ts";
 
@@ -142,7 +142,11 @@ export default defineComponent({
         onMounted(async () => {
             const docs = await DocList()
             fileList.value.splice(0, fileList.value.length)
-            docs.forEach(item => fileList.value.push(item))
+            docs.forEach(item => {
+                if (item !== null) {
+                    fileList.value.push(item)
+                }
+            })
         })
 
         const deleteFile = (key: string) => {
@@ -193,6 +197,7 @@ export default defineComponent({
                     item.fileName = tempInfo.name
                 }
             })
+            ModifyName(editFileKey.value, tempInfo.name)
             tempInfo.name = ''
             editFileKey.value = ''
             updateFileName()
@@ -233,8 +238,8 @@ export default defineComponent({
                                       tempInfo.name = item.fileName
                                       updateFileName()
                                   }} onClick={() => {
-                                selectFileKey.value = item.uuid
-                                updateFileName()
+                                    selectFileKey.value = item.uuid
+                                    updateFileName()
                             }}>{item.fileName}</span>
                     })}
                     <span class={'footer'}>{`${fileList.value.length}个文件`}</span>

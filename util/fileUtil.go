@@ -230,3 +230,37 @@ func FetchFiles(folder, suffix string) (filesList []string) {
 
 	return
 }
+
+func CreateFileTypeToDir(fileDir string, data multipart.File) (string, []byte, error) {
+	filePath := fileDir + "/" + UUID()
+	out, err := os.Create(filePath)
+	if err != nil {
+		out.Close()
+		return "", nil, err
+	}
+
+	var fileType = make([]byte, 10)
+
+	_, err = data.Read(fileType)
+	if err != nil {
+		out.Close()
+		return "", nil, err
+	}
+
+	out.Write(fileType)
+
+	_, err = io.Copy(out, data)
+
+	out.Close()
+	if err != nil {
+		return "", nil, err
+	}
+
+	md5 := FileMD5(filePath)
+
+	newPath := fileDir + "/" + md5
+
+	os.Rename(filePath, newPath)
+
+	return md5, fileType, nil
+}

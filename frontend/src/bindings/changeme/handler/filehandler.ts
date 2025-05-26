@@ -23,10 +23,10 @@ export function DeleteFile(fileKey: string): Promise<boolean> & { cancel(): void
     return $resultPromise;
 }
 
-export function DocList(): Promise<model$0.RecordInfo[]> & { cancel(): void } {
+export function DocList(): Promise<(model$0.RecordInfo | null)[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3028887424) as any;
     let $typingPromise = $resultPromise.then(($result: any) => {
-        return $$createType1($result);
+        return $$createType2($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -37,11 +37,17 @@ export function FileContent(fileKey: string): Promise<string> & { cancel(): void
     return $resultPromise;
 }
 
-export function SyncFile(fileKey: string, fileName: string, content: string): Promise<boolean> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1211937091, fileKey, fileName, content) as any;
+export function ModifyName(fileKey: string, fileName: string): Promise<boolean> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3872922023, fileKey, fileName) as any;
+    return $resultPromise;
+}
+
+export function SyncFile(fileKey: string, content: string): Promise<boolean> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1211937091, fileKey, content) as any;
     return $resultPromise;
 }
 
 // Private type creation functions
 const $$createType0 = model$0.RecordInfo.createFrom;
-const $$createType1 = $Create.Array($$createType0);
+const $$createType1 = $Create.Nullable($$createType0);
+const $$createType2 = $Create.Array($$createType1);
