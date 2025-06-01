@@ -274,10 +274,10 @@ func FileSizeCovert(size int64) string {
 		return fmt.Sprintf("%.2f KB", float64(size/1024.0))
 	}
 	if size < 1024*1024*1024 {
-		return fmt.Sprintf("%.2f KB", float64(size/1024.0/1024))
+		return fmt.Sprintf("%.2f MB", float64(size/1024.0/1024))
 	}
 	if size < 1024*1024*1024*1024 {
-		return fmt.Sprintf("%.2f MB", float64(size/1024.0/1024/1024))
+		return fmt.Sprintf("%.2f GB", float64(size/1024.0/1024/1024))
 	}
-	return fmt.Sprintf("%.2f GB", float64(size/1024.0/1024/1024/1024))
+	return fmt.Sprintf("%.2f TB", float64(size/1024.0/1024/1024/1024))
 }
