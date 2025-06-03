@@ -76,9 +76,21 @@ export default defineComponent({
                         background-color: rgba(0, 0, 0, 0.1) !important;
                     }
                 }
-
             }
         `
+        const InputView = styled(Input)`
+            background-color: rgba(255, 255, 255, 0.6);
+            color: gray;
+            &:hover {
+                background-color: #FAFAFA;
+                color: gray;
+            }
+            &:focus {
+                background-color: white;
+                color: gray
+            }
+        `
+
         const ActionBtn = styled.div`
             width: 100%;
             display: flex;
@@ -86,14 +98,15 @@ export default defineComponent({
             justify-content: flex-end;
             align-items: center;
             gap: 10px;
-
+            
             .btn {
                 background-color: lightgray;
                 border: none;
                 color: gray;
 
                 &:hover {
-                    background-color: gray;
+                    background-color: white;
+                    color: black;
                 }
             }
         `
@@ -296,21 +309,24 @@ export default defineComponent({
                     footer={null}
                     mask={false}
                     open={openSettings.value}>
-                    <Input
+                    <InputView
+                        class={"inputC"}
                         bordered={false}
                         placeholder={'请输入远程存储地址(gitee)'}
                         defaultValue={settingInfo.url}
-                        onChange={e => settingInfo.url = e.target.value!}></Input>
-                    <Input
+                        onChange={e => settingInfo.url = e.target.value!}></InputView>
+                    <InputView
+                        class={"inputC"}
                         bordered={false}
                         placeholder={'请输入用户名'}
                         defaultValue={settingInfo.username}
-                        onChange={e => settingInfo.username = e.target.value!}></Input>
-                    <Input
+                        onChange={e => settingInfo.username = e.target.value!}></InputView>
+                    <InputView
+                        class={"inputC"}
                         bordered={false}
                         placeholder={'请输入Token'}
                         defaultValue={settingInfo.token}
-                        onChange={e => settingInfo.token = e.target.value!}></Input>
+                        onChange={e => settingInfo.token = e.target.value!}></InputView>
                     <ActionBtn>
                         <Button class={'btn'} onClick={() => {
                             openSettings.value = !openSettings.value
