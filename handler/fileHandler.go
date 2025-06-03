@@ -49,3 +49,17 @@ func (file *FileHandler) DeleteFile(fileKey string) bool {
 func (file *FileHandler) CreateFile() model.RecordInfo {
 	return mgr.NewRecord()
 }
+
+func (file *FileHandler) ExportFile(all bool, fileKey string) bool {
+	if all {
+		src := util.CreatePlatformPath(model.CacheDir)
+		target := util.CreatePlatformPath(model.UserHomeDir, "Downloads", "Notes")
+		util.Copy(src, target)
+		return true
+	} else {
+		src := util.CreatePlatformPath(model.CacheDir, "md", fileKey+".md")
+		target := util.CreatePlatformPath(model.UserHomeDir, "Downloads", fileKey+".md")
+		util.Copy(src, target)
+		return true
+	}
+}

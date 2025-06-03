@@ -32,6 +32,11 @@ export function DocList(): Promise<(model$0.RecordInfo | null)[]> & { cancel(): 
     return $typingPromise;
 }
 
+export function ExportFile(all: boolean, fileKey: string): Promise<boolean> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(58726906, all, fileKey) as any;
+    return $resultPromise;
+}
+
 export function FileContent(fileKey: string): Promise<string> & { cancel(): void } {
     let $resultPromise = $Call.ByID(1761704901, fileKey) as any;
     return $resultPromise;

@@ -7,21 +7,22 @@ import (
 )
 
 var (
-	CacheDir string
+	CacheDir    string
+	UserHomeDir string
 )
 
 func init() {
 	dir, _ := os.UserCacheDir()
 	CacheDir = util.CreatePlatformPath(dir, "MDNote", "data")
 	if !util.Exists(CacheDir) {
-		err := os.Mkdir(CacheDir, os.ModePerm)
+		err := os.MkdirAll(CacheDir, os.ModePerm)
 		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	CacheDirMd := util.CreatePlatformPath(CacheDir, "md")
 	if !util.Exists(CacheDirMd) {
-		err := os.Mkdir(CacheDirMd, os.ModePerm)
+		err := os.MkdirAll(CacheDirMd, os.ModePerm)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -34,4 +35,10 @@ func init() {
 			fmt.Println(err)
 		}
 	}
+
+	home, err := os.UserHomeDir()
+	if err != nil {
+		fmt.Println(err)
+	}
+	UserHomeDir = home
 }
