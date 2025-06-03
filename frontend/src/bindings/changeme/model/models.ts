@@ -9,6 +9,35 @@ import {Create as $Create} from "@wailsio/runtime";
 // @ts-ignore: Unused imports
 import * as util$0 from "../util/models.js";
 
+export class Preference {
+    "username": string;
+    "token": string;
+    "remoteUrl": string;
+
+    /** Creates a new Preference instance. */
+    constructor($$source: Partial<Preference> = {}) {
+        if (!("username" in $$source)) {
+            this["username"] = "";
+        }
+        if (!("token" in $$source)) {
+            this["token"] = "";
+        }
+        if (!("remoteUrl" in $$source)) {
+            this["remoteUrl"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new Preference instance from a string or object.
+     */
+    static createFrom($$source: any = {}): Preference {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new Preference($$parsedSource as Partial<Preference>);
+    }
+}
+
 export class RecordInfo {
     "uuid": string;
     "fileName": string;

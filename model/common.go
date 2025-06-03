@@ -12,3 +12,9 @@ type RecordInfo struct {
 	Create   *util.Datetime `json:"create"`
 	Modify   *util.Datetime `json:"modify"`
 }
+
+type Preference struct {
+	Username  string `json:"username"`
+	Token     string `json:"token"`
+	RemoteUrl string `json:"remoteUrl"`
+}

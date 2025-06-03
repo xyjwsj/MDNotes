@@ -72,7 +72,7 @@ export default defineComponent({
 
             .selectDefault {
                 line-height: 30px;
-                width: calc(100% - 20px);
+                width: calc(100% - 40px);
                 padding: 0 20px;
                 font-size: 14px;
                 color: rgba(48, 48, 45, 1);
