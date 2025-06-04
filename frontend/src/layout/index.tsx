@@ -5,27 +5,24 @@ import {
   DocList,
   ExportFile,
   ModifyName,
+  Search,
 } from "@/bindings/changeme/handler/filehandler.ts";
-import { RecordInfo } from "@/bindings/changeme/model";
-import { TipWarning } from "@/util/messageUtil.ts";
+import {RecordInfo} from "@/bindings/changeme/model";
+import {TipSuccess, TipWarning} from "@/util/messageUtil.ts";
 import {
   CheckOutlined,
+  DeleteOutlined,
+  ExportOutlined,
   PlusOutlined,
   RightOutlined,
   SearchOutlined,
 } from "@ant-design/icons-vue";
-import { Image, Input, Modal } from "ant-design-vue";
-import {
-  defineComponent,
-  KeepAlive,
-  onMounted,
-  provide,
-  reactive,
-  ref,
-  Transition,
-} from "vue";
-import { RouterView } from "vue-router";
+import {Image, Input} from "ant-design-vue";
+import {defineComponent, KeepAlive, onMounted, provide, reactive, ref, Transition,} from "vue";
+import {RouterView} from "vue-router";
 import styled from "vue3-styled-components";
+import {ModalView} from "@/util/modalUtil.tsx";
+import {ConfigStore, PreferenceInfo} from "@/bindings/changeme/handler/systemhandler.ts";
 
 export default defineComponent({
   name: "Layout",
@@ -156,6 +153,22 @@ export default defineComponent({
         transform: translateY(30px);
       }
     `;
+
+    const InputView = styled(Input)`
+      background-color: rgba(255, 255, 255, 0.6);
+      margin: 5px 0;
+      color: gray;
+      &:hover {
+        background-color: #fafafa;
+        color: gray;
+      }
+      &:focus {
+        background-color: white;
+        color: gray;
+      }
+    `;
+
+
     const fileList = ref<RecordInfo[]>([]);
 
     const selectFileKey = ref("");
@@ -189,41 +202,66 @@ export default defineComponent({
     });
 
     const deleteFile = (key: string) => {
-      Modal.confirm({
-        width: 300,
-        title: "删除",
-        centered: true,
-        content: () => {
-          const files = fileList.value.filter((item) => item.uuid === key);
-          if (files.length > 0) {
-            return <span>{`确认删除'${files[0].fileName}'文件？`}</span>;
-          }
-        },
-        onOk: async () => {
-          const res = await DeleteFile(key);
-          if (!res) {
-            TipWarning("删除失败!");
-            return;
-          }
-          // 再从本地列表中过滤掉该条目
-          const index = fileList.value.findIndex((item) => item.uuid === key);
-          if (index !== -1) {
-            fileList.value.splice(index, 1);
-          }
+      if (key === "") {
+        TipWarning('请选择文件')
+        return
+      }
+      const modalView = new ModalView()
+      const files = fileList.value.filter((item) => item.uuid === key);
+      if (files.length > 0) {
+        modalView.content = <span>{`确认删除'${files[0].fileName}'文件？`}</span>;
+      }
+      modalView.icon = <DeleteOutlined style={{color: 'black'}}/>
+      modalView.ok = async () => {
+        const res = await DeleteFile(key);
+        if (!res) {
+          TipWarning("删除失败!");
+          return;
+        }
+        // 再从本地列表中过滤掉该条目
+        const index = fileList.value.findIndex((item) => item.uuid === key);
+        if (index !== -1) {
+          fileList.value.splice(index, 1);
+        }
 
-          // 如果当前选中的是被删除的文件，则清空编辑器
-          if (selectFileKey.value === key) {
-            selectFileKey.value = "";
-            if (currentCom.value) {
-              // 可以选择触发一个 clear 或 reset 方法
-            }
+        // 如果当前选中的是被删除的文件，则清空编辑器
+        if (selectFileKey.value === key) {
+          selectFileKey.value = "";
+          if (currentCom.value) {
+            // 可以选择触发一个 clear 或 reset 方法
           }
-        },
-      });
+        }
+      }
+      modalView.show()
     };
 
-    const exportFile = (all: boolean, key: string) => {
-      ExportFile(all, key);
+    const exportFile = (key: string) => {
+      const modalView = new ModalView()
+      modalView.cancelText = '导出所有'
+      modalView.okText = '导出当前'
+      modalView.title = "导出"
+      modalView.closed = true
+      modalView.icon = <ExportOutlined style={{color: 'black'}}/>
+      modalView.content = <span>{`请选择导出方式`}</span>;
+      modalView.ok = async () => {
+        if (key === "") {
+          TipWarning('请选择文件')
+          return
+        }
+        if (await ExportFile(false, key)) {
+          TipSuccess("当前文件导出成功")
+        } else {
+          TipSuccess("当前文件导出失败")
+        }
+      }
+      modalView.cancel = async () => {
+        if (await ExportFile(true, key)) {
+          TipSuccess("所有文件导出成功")
+        } else {
+          TipSuccess("所有文件导出失败")
+        }
+      }
+      modalView.show()
     };
 
     const updateFileSize = (key: string, sizeStr: string) => {
@@ -234,9 +272,76 @@ export default defineComponent({
       });
     };
 
+    const settingInfo = reactive({
+      url: "",
+      username: "",
+      token: "",
+    });
+
+    const configStore = async () => {
+      const info = await PreferenceInfo();
+      settingInfo.username = info.username;
+      settingInfo.url = info.remoteUrl;
+      settingInfo.token = info.token;
+
+      const modalView = new ModalView()
+      modalView.width = 400
+      modalView.title = '配置远程存储'
+      modalView.content = <div>
+        <InputView
+            class={"inputC"}
+            bordered={false}
+            placeholder={"请输入远程存储地址(gitee)"}
+            defaultValue={settingInfo.url}
+            onChange={(e) => (settingInfo.url = e.target.value!)}
+        ></InputView>
+        <InputView
+            class={"inputC"}
+            bordered={false}
+            placeholder={"请输入用户名"}
+            defaultValue={settingInfo.username}
+            onChange={(e) => (settingInfo.username = e.target.value!)}
+        ></InputView>
+        <InputView
+            class={"inputC"}
+            bordered={false}
+            placeholder={"请输入Token"}
+            defaultValue={settingInfo.token}
+            onChange={(e) => (settingInfo.token = e.target.value!)}
+        ></InputView>
+      </div>
+      modalView.ok = async () => {
+        if (settingInfo.url === "") {
+          TipWarning("远程URL地址未配置");
+          return;
+        }
+        if (settingInfo.username === "") {
+          TipWarning("远程用户名未配置");
+          return;
+        }
+        if (settingInfo.token === "") {
+          TipWarning("远程TOKEN未配置");
+          return;
+        }
+        const res = await ConfigStore(
+            settingInfo.url,
+            settingInfo.username,
+            settingInfo.token
+        );
+        if (res) {
+          TipSuccess("配置成功");
+        } else {
+          TipSuccess("配置失败");
+        }
+      }
+
+      modalView.show()
+    };
+
     provide("deleteFile", deleteFile);
     provide("exportFile", exportFile);
     provide("updateFileSize", updateFileSize);
+    provide("configStore", configStore);
 
     const okModify = () => {
       fileList.value.forEach((item) => {
@@ -249,6 +354,16 @@ export default defineComponent({
       editFileKey.value = "";
       updateFileName();
     };
+
+    const searchDoc = async (name: string) => {
+      const searchList = await Search(name)
+      fileList.value.splice(0, fileList.value.length);
+      searchList.forEach((item) => {
+        if (item !== null) {
+          fileList.value.push(item);
+        }
+      });
+    }
 
     return () => (
       <Container>
@@ -275,6 +390,9 @@ export default defineComponent({
               />
             }
             bordered={false}
+            onChange={e => {
+                searchDoc(e.target.value!)
+            }}
           ></Input>
           {fileList.value
             .filter((item) => item.fileName !== "")

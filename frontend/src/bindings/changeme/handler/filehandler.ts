@@ -47,6 +47,15 @@ export function ModifyName(fileKey: string, fileName: string): Promise<boolean> 
     return $resultPromise;
 }
 
+export function Search(name: string): Promise<(model$0.RecordInfo | null)[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(821196262, name) as any;
+    let $typingPromise = $resultPromise.then(($result: any) => {
+        return $$createType2($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
+}
+
 export function SyncFile(fileKey: string, content: string): Promise<string> & { cancel(): void } {
     let $resultPromise = $Call.ByID(1211937091, fileKey, content) as any;
     return $resultPromise;

@@ -6,6 +6,7 @@ import (
 	"changeme/util"
 	"log"
 	"os"
+	"strings"
 )
 
 type FileHandler struct {
@@ -31,6 +32,20 @@ func (file *FileHandler) ModifyName(fileKey, fileName string) bool {
 
 func (file *FileHandler) DocList() []*model.RecordInfo {
 	return mgr.CacheList()
+}
+
+func (file *FileHandler) Search(name string) []*model.RecordInfo {
+	infos := make([]*model.RecordInfo, 0)
+	list := mgr.CacheList()
+	if name == "" {
+		return list
+	}
+	for _, item := range list {
+		if strings.Contains(item.FileName, name) {
+			infos = append(infos, item)
+		}
+	}
+	return infos
 }
 
 func (file *FileHandler) FileContent(fileKey string) string {

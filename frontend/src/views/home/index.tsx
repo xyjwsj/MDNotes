@@ -1,23 +1,10 @@
-import {
-  FileContent,
-  SyncFile,
-} from "@/bindings/changeme/handler/filehandler.js";
-import {
-  ConfigStore,
-  PreferenceInfo,
-} from "@/bindings/changeme/handler/systemhandler.ts";
-import { RecordInfo } from "@/bindings/changeme/model";
-import { SameDay } from "@/util/dateUtil.ts";
-import { TipSuccess, TipWarning } from "@/util/messageUtil.ts";
-import {
-  DeleteOutlined,
-  ExportOutlined,
-  SettingOutlined,
-} from "@ant-design/icons-vue";
-import { Button, Input, Modal } from "ant-design-vue";
+import {FileContent, SyncFile,} from "@/bindings/changeme/handler/filehandler.js";
+import {RecordInfo} from "@/bindings/changeme/model";
+import {SameDay} from "@/util/dateUtil.ts";
+import {DeleteOutlined, ExportOutlined, SettingOutlined,} from "@ant-design/icons-vue";
 import moment from "moment";
 import Vditor from "vditor";
-import { defineComponent, inject, onMounted, reactive, ref } from "vue";
+import {defineComponent, inject, onMounted, reactive, ref} from "vue";
 import styled from "vue3-styled-components";
 
 export default defineComponent({
@@ -87,38 +74,6 @@ export default defineComponent({
         }
       }
     `;
-    const InputView = styled(Input)`
-      background-color: rgba(255, 255, 255, 0.6);
-      color: gray;
-      &:hover {
-        background-color: #fafafa;
-        color: gray;
-      }
-      &:focus {
-        background-color: white;
-        color: gray;
-      }
-    `;
-
-    const ActionBtn = styled.div`
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 10px;
-
-      .btn {
-        background-color: lightgray;
-        border: none;
-        color: gray;
-
-        &:hover {
-          background-color: white;
-          color: black;
-        }
-      }
-    `;
 
     const EditorView = styled.div`
       border: none;
@@ -137,6 +92,7 @@ export default defineComponent({
 
     const deleteFile: any = inject("deleteFile");
     const exportFile: any = inject("exportFile");
+    const configStore: any = inject('configStore')
     const updateFileSize: any = inject("updateFileSize");
 
     const vditorRef = ref<any>(null);
@@ -146,47 +102,6 @@ export default defineComponent({
       console.log("vditorRerf", vditorRef);
       initVditor("");
     });
-
-    const openSettings = ref(false);
-
-    const settingInfo = reactive({
-      url: "",
-      username: "",
-      token: "",
-    });
-
-    const actionInfo = reactive({
-      openExport: false,
-    });
-
-    const configStore = async () => {
-      if (settingInfo.url === "") {
-        TipWarning("远程URL地址未配置");
-        return;
-      }
-      if (settingInfo.username === "") {
-        TipWarning("远程用户名未配置");
-        return;
-      }
-      if (settingInfo.token === "") {
-        TipWarning("远程TOKEN未配置");
-        return;
-      }
-      const res = await ConfigStore(
-        settingInfo.url,
-        settingInfo.username,
-        settingInfo.token
-      );
-      if (res) {
-        TipSuccess("配置成功");
-      } else {
-        TipSuccess("配置失败");
-      }
-    };
-
-    const settings = () => {
-      openSettings.value = !openSettings.value;
-    };
 
     const initVditor = (defaultVal: string) => {
       vditor.value = new Vditor("vditor", {
@@ -251,10 +166,7 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      const info = await PreferenceInfo();
-      settingInfo.username = info.username;
-      settingInfo.url = info.remoteUrl;
-      settingInfo.token = info.token;
+
     });
 
     const updateContent = async (info: RecordInfo) => {
@@ -293,11 +205,13 @@ export default defineComponent({
     return () => (
       <Container>
         <div class={"tools"}>
-          {editorInfo.create && (
-            <span class={"create"}>{`${formatDate(
-              editorInfo.create
-            )}创建`}</span>
-          )}
+          <div class={"info"}>
+            {editorInfo.create && (
+                <span class={"create"}>{`${formatDate(
+                    editorInfo.create
+                )}创建`}</span>
+            )}
+          </div>
           <div class={"actions"}>
             <div
               class={"action"}
@@ -308,115 +222,16 @@ export default defineComponent({
             <div
               class={"action"}
               onClick={() => {
-                actionInfo.openExport = true;
+                exportFile(editorInfo.fileKey)
               }}
             >
               <ExportOutlined />
             </div>
-            <div class={"action"} onClick={() => settings()}>
+            <div class={"action"} onClick={() => configStore()}>
               <SettingOutlined />
             </div>
           </div>
         </div>
-        <Modal
-          width={350}
-          title={"导出"}
-          centered
-          closable={false}
-          footer={null}
-          mask={false}
-          open={actionInfo.openExport}
-        >
-          <div
-            style={{
-              width: "100%",
-              textAlign: "left",
-              fontSize: "17px",
-              height: "60px",
-              lineHeight: "60px",
-            }}
-          >
-            {"请选择导出方式"}
-          </div>
-          <ActionBtn>
-            <Button
-              class={"btn"}
-              onClick={() => {
-                actionInfo.openExport = !actionInfo.openExport;
-                exportFile(true, editorInfo.fileKey);
-              }}
-            >
-              {"导出所有"}
-            </Button>
-            <Button
-              class={"btn"}
-              onClick={() => {
-                actionInfo.openExport = !actionInfo.openExport;
-                exportFile(false, editorInfo.fileKey);
-              }}
-            >
-              {"导出当前"}
-            </Button>
-          </ActionBtn>
-        </Modal>
-        <Modal
-          class={"settingDialog"}
-          width={350}
-          bodyStyle={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-start",
-            gap: "10px",
-            width: "100%",
-          }}
-          title={"配置远程存储"}
-          centered
-          closable={false}
-          footer={null}
-          mask={false}
-          open={openSettings.value}
-        >
-          <InputView
-            class={"inputC"}
-            bordered={false}
-            placeholder={"请输入远程存储地址(gitee)"}
-            defaultValue={settingInfo.url}
-            onChange={(e) => (settingInfo.url = e.target.value!)}
-          ></InputView>
-          <InputView
-            class={"inputC"}
-            bordered={false}
-            placeholder={"请输入用户名"}
-            defaultValue={settingInfo.username}
-            onChange={(e) => (settingInfo.username = e.target.value!)}
-          ></InputView>
-          <InputView
-            class={"inputC"}
-            bordered={false}
-            placeholder={"请输入Token"}
-            defaultValue={settingInfo.token}
-            onChange={(e) => (settingInfo.token = e.target.value!)}
-          ></InputView>
-          <ActionBtn>
-            <Button
-              class={"btn"}
-              onClick={() => {
-                openSettings.value = !openSettings.value;
-              }}
-            >
-              {"取消"}
-            </Button>
-            <Button
-              class={"btn"}
-              onClick={() => {
-                openSettings.value = !openSettings.value;
-                configStore();
-              }}
-            >
-              {"确认"}
-            </Button>
-          </ActionBtn>
-        </Modal>
         <EditorView
           id="vditor"
           ref={(el) => (vditorRef.value = el)}
