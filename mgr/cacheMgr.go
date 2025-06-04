@@ -215,10 +215,12 @@ func NewRecord() model.RecordInfo {
 	info := model.RecordInfo{
 		Uuid:     util.UUID(),
 		FileName: "New",
+		Status:   1,
 		Size:     0,
 		SizeStr:  "0 Byte",
 		Create:   &datetime,
 		Modify:   nil,
+		Del:      nil,
 	}
 	recordCache = append(recordCache, &info)
 	SyncData()
@@ -226,13 +228,25 @@ func NewRecord() model.RecordInfo {
 }
 
 func CacheList() []*model.RecordInfo {
-	return recordCache
+	infos := make([]*model.RecordInfo, 0)
+	for _, item := range recordCache {
+		if item.Status > 0 {
+			infos = append(infos, item)
+		}
+	}
+	return infos
 }
 
 func DeleteFile(fileKey string) bool {
-	for idx, item := range recordCache {
+	for _, item := range recordCache {
 		if item.Uuid == fileKey {
-			recordCache = append(recordCache[:idx], recordCache[idx+1:]...)
+			datetime := util.Datetime(time.Now())
+			item.Del = &datetime
+			item.Status = 0
+			//recordCache = append(recordCache[:idx], recordCache[idx+1:]...)
+			src := util.CreatePlatformPath(model.CacheDirMd, fileKey+".md")
+			target := util.CreatePlatformPath(model.CacheDel, fileKey+".md")
+			util.Move(src, target)
 			SyncData()
 			return true
 		}

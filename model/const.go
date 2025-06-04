@@ -8,6 +8,9 @@ import (
 
 var (
 	CacheDir    string
+	CacheDirMd  string
+	CacheDirMg  string
+	CacheDel    string
 	UserHomeDir string
 )
 
@@ -20,7 +23,7 @@ func init() {
 			fmt.Println(err)
 		}
 	}
-	CacheDirMd := util.CreatePlatformPath(CacheDir, "md")
+	CacheDirMd = util.CreatePlatformPath(CacheDir, "md")
 	if !util.Exists(CacheDirMd) {
 		err := os.MkdirAll(CacheDirMd, os.ModePerm)
 		if err != nil {
@@ -28,9 +31,17 @@ func init() {
 		}
 	}
 
-	CacheDirMg := util.CreatePlatformPath(CacheDir, "image")
+	CacheDirMg = util.CreatePlatformPath(CacheDir, "image")
 	if !util.Exists(CacheDirMg) {
 		err := os.Mkdir(CacheDirMg, os.ModePerm)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
+	CacheDel = util.CreatePlatformPath(CacheDir, "del")
+	if !util.Exists(CacheDel) {
+		err := os.Mkdir(CacheDel, os.ModePerm)
 		if err != nil {
 			fmt.Println(err)
 		}
