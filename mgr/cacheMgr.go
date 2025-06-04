@@ -58,6 +58,10 @@ func init() {
 	go repository()
 }
 
+func Start() {
+	log.Println("Task Starting...")
+}
+
 func PreferenceInfo() model.Preference {
 	return *preference
 }

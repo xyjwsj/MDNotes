@@ -41,10 +41,12 @@ export class Preference {
 export class RecordInfo {
     "uuid": string;
     "fileName": string;
+    "status": number;
     "size": number;
     "sizeStr": string;
     "create": util$0.Datetime | null;
     "modify": util$0.Datetime | null;
+    "del": util$0.Datetime | null;
 
     /** Creates a new RecordInfo instance. */
     constructor($$source: Partial<RecordInfo> = {}) {
@@ -53,6 +55,9 @@ export class RecordInfo {
         }
         if (!("fileName" in $$source)) {
             this["fileName"] = "";
+        }
+        if (!("status" in $$source)) {
+            this["status"] = 0;
         }
         if (!("size" in $$source)) {
             this["size"] = 0;
@@ -65,6 +70,9 @@ export class RecordInfo {
         }
         if (!("modify" in $$source)) {
             this["modify"] = null;
+        }
+        if (!("del" in $$source)) {
+            this["del"] = null;
         }
 
         Object.assign(this, $$source);

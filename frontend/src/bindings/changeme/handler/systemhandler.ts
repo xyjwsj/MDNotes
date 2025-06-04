@@ -23,5 +23,10 @@ export function PreferenceInfo(): Promise<model$0.Preference> & { cancel(): void
     return $typingPromise;
 }
 
+export function Start(): Promise<boolean> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3716840919) as any;
+    return $resultPromise;
+}
+
 // Private type creation functions
 const $$createType0 = model$0.Preference.createFrom;

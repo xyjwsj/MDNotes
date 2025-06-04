@@ -19,3 +19,8 @@ func (system *SystemHandler) ConfigStore(url, username, token string) bool {
 func (system *SystemHandler) PreferenceInfo() model.Preference {
 	return mgr.PreferenceInfo()
 }
+
+func (system *SystemHandler) Start() bool {
+	mgr.Start()
+	return true
+}
