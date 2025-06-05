@@ -1,11 +1,12 @@
 import {FileContent, SyncFile,} from "@/bindings/changeme/handler/filehandler.js";
 import {RecordInfo} from "@/bindings/changeme/model";
 import {SameDay} from "@/util/dateUtil.ts";
-import {DeleteOutlined, ExportOutlined, SettingOutlined,} from "@ant-design/icons-vue";
+import {BlockOutlined, DeleteOutlined, ExportOutlined, SettingOutlined,} from "@ant-design/icons-vue";
 import moment from "moment";
 import Vditor from "vditor";
 import {defineComponent, inject, onMounted, reactive, ref} from "vue";
 import styled from "vue3-styled-components";
+import {settingInfoStore} from "@/store/modules/settings.ts";
 
 export default defineComponent({
   name: "Home",
@@ -17,7 +18,7 @@ export default defineComponent({
       border: none;
 
       .tools {
-        background-color: rgba(239, 239, 242, 0.6);
+        background-color: ${() => settingInfoStore.DarkTheme() ? '#2b2d31' : 'rgba(239, 239, 242, 0.6)'};
         height: 45px;
         display: flex;
         justify-content: space-between;
@@ -40,14 +41,14 @@ export default defineComponent({
 
           .action {
             height: 45px;
-            color: lightgray;
+            color: ${() => settingInfoStore.DarkTheme() ? 'gray' : 'lightgray'};;
             font-size: 17px;
             display: flex;
             justify-content: flex-end;
             align-items: center;
 
             &:hover {
-              color: gray;
+              color: ${() => settingInfoStore.DarkTheme() ? 'lightgray' : 'gray'};;;
             }
           }
         }
@@ -105,6 +106,7 @@ export default defineComponent({
 
     const initVditor = (defaultVal: string) => {
       vditor.value = new Vditor("vditor", {
+        theme: settingInfoStore.DarkTheme() ? 'dark': 'classic',
         height: "805px",
         toolbar: [],
         toolbarConfig: {
@@ -115,8 +117,7 @@ export default defineComponent({
           enable: true,
         },
         after: () => {
-          // vditorRef.value.setValue(defaultVal)
-          vditor.value?.setTheme("classic");
+          vditor.value?.setTheme(settingInfoStore.DarkTheme() ? 'dark': 'classic', settingInfoStore.DarkTheme() ? 'dark': 'classic');
         },
         input: async (val: string) => {
           const success = await SyncFile(editorInfo.fileKey, val);
@@ -202,6 +203,11 @@ export default defineComponent({
       return formatStr;
     };
 
+    const SwitchTheme = () => {
+      settingInfoStore.SwitchTheme()
+      vditor.value?.setTheme(settingInfoStore.DarkTheme() ? 'dark': 'classic', settingInfoStore.DarkTheme() ? 'dark': 'classic');
+    }
+
     return () => (
       <Container>
         <div class={"tools"}>
@@ -229,6 +235,9 @@ export default defineComponent({
             </div>
             <div class={"action"} onClick={() => configStore()}>
               <SettingOutlined />
+            </div>
+            <div class={"action"} onClick={SwitchTheme}>
+              <BlockOutlined />
             </div>
           </div>
         </div>

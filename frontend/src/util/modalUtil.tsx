@@ -1,6 +1,7 @@
 import {Button, Modal} from "ant-design-vue";
 import styled from "vue3-styled-components";
-import {InfoCircleOutlined} from "@ant-design/icons-vue";
+import {CloseOutlined, InfoCircleOutlined} from "@ant-design/icons-vue";
+import {settingInfoStore} from "@/store/modules/settings.ts";
 
 const ActionBtn = styled.div`
     width: 100%;
@@ -12,9 +13,9 @@ const ActionBtn = styled.div`
     gap: 10px;
 
     .btn {
-        background-color: lightgray;
+        background-color: ${() => settingInfoStore.DarkTheme() ? '#2b2d30' : 'lightgray'};;
         border: none;
-        color: gray;
+        color: ${() => settingInfoStore.DarkTheme() ? 'white' : 'gray'};
 
         &:hover {
             background-color: white;
@@ -41,14 +42,21 @@ class ModalView {
         this.cancelText = "取消"
         this.closed = false
         this.width = 300
-        this.icon = <InfoCircleOutlined style={{color: 'black'}}/>
+        this.icon = <InfoCircleOutlined style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}}/>
     }
 
     public show() {
         const modal = Modal.confirm({
+            style: {
+                backgroundColor: settingInfoStore.DarkTheme() ? '#17181A' : 'white',
+                color: settingInfoStore.DarkTheme() ? 'white' : 'black',
+                borderRadius: '5px',
+            },
+            closeIcon: <CloseOutlined style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}}/>,
             width: this.width,
-            title: this.title,
+            title: <span style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}}>{this.title}</span>,
             mask: false,
+            class: 'aaa',
             closable: this.closed,
             centered: true,
             icon: this.icon,
