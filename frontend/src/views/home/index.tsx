@@ -1,7 +1,7 @@
 import {FileContent, SyncFile,} from "@/bindings/changeme/handler/filehandler.js";
 import {RecordInfo} from "@/bindings/changeme/model";
 import {SameDay} from "@/util/dateUtil.ts";
-import {BlockOutlined, DeleteOutlined, ExportOutlined, SettingOutlined,} from "@ant-design/icons-vue";
+import {BulbOutlined, DeleteOutlined, ExportOutlined, SettingOutlined,} from "@ant-design/icons-vue";
 import moment from "moment";
 import Vditor from "vditor";
 import {defineComponent, inject, onMounted, reactive, ref} from "vue";
@@ -237,7 +237,7 @@ export default defineComponent({
               <SettingOutlined />
             </div>
             <div class={"action"} onClick={SwitchTheme}>
-              <BlockOutlined />
+              <BulbOutlined />
             </div>
           </div>
         </div>
