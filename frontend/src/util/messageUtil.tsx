@@ -1,4 +1,6 @@
-import { message } from 'ant-design-vue'
+import {message} from 'ant-design-vue'
+import './message.css'
+import {settingInfoStore} from "@/store/modules/settings.ts";
 
 message.config({
   top: `49vh`,
@@ -8,11 +10,14 @@ message.config({
 });
 
 const TipSuccess = (msg: string) => {
-  message.info(msg)
+  message.success(msg)
 }
 
 const TipWarning = (msg: string) => {
-  message.warning(msg)
+  message.warning({
+    content: msg,
+    class: settingInfoStore.DarkTheme() ? 'modalDark' : '',
+  })
 }
 
 const TipError = (msg: string) => {

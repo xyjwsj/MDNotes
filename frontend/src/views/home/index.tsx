@@ -213,10 +213,10 @@ export default defineComponent({
     }
 
     const changeLang = () => {
-      if (locale.value === 'zh') {
-        locale.value = "en";
+      if (locale.value === 'zh-CN') {
+        locale.value = "en-US";
       } else {
-        locale.value = "zh";
+        locale.value = "zh-CN";
       }
       settingInfoStore.UpdateLang(locale.value)
     }
@@ -253,7 +253,7 @@ export default defineComponent({
               <BulbOutlined />
             </div>
             <div class={"action"} onClick={changeLang}>
-              {locale.value === 'zh' ? 'EN' : '中'}
+              {locale.value === 'zh-CN' ? 'EN' : '中'}
             </div>
           </div>
         </div>

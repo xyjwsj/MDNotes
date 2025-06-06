@@ -3,21 +3,18 @@ import enLocale from "./en"
 import zhLocale from "./zh"
 
 const messages = {
-  en: {
+  'en-US': {
     ...enLocale
   },
-  zh: {
+  'zh-CN': {
     ...zhLocale
   },
 }
-let lang = (navigator.language || 'en').toLocaleLowerCase()
-const langArr = lang.split("-");
-if (langArr.length > 0) {
-  lang = langArr[0]
-}
+const lang = (navigator.language || 'en').toLocaleLowerCase()
 
 const i18n = createI18n({
-  locale: lang || 'zh', // 默认cn语言环境
+  legacy: false,
+  locale: lang || 'zh-CN"', // 默认cn语言环境
   messages
 })
 

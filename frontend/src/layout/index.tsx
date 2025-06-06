@@ -8,7 +8,7 @@ import {
     Search,
 } from "@/bindings/changeme/handler/filehandler.ts";
 import {RecordInfo} from "@/bindings/changeme/model";
-import {TipSuccess, TipWarning} from "@/util/messageUtil.ts";
+import {TipSuccess, TipWarning} from "@/util/messageUtil.tsx";
 import {
     CheckOutlined,
     DeleteOutlined,

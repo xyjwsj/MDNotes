@@ -1,0 +1,6 @@
+ .modalDark {
+     .ant-message-notice-content {
+         background-color: #242424;
+         color: white;
+     }
+ }
