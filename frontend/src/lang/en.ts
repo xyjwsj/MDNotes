@@ -1,0 +1,26 @@
+const enLocale = {
+    file: 'File',
+    create: 'Create',
+    fileName: 'File Name',
+    selectFile: 'Please select a file',
+    confirmDelete: 'Confirm Deletion',
+    deleteFailure: 'Deletion Failed',
+    exportAll: 'Export All',
+    exportCurrent: 'Export Current',
+    export: 'Export',
+    selectExport: 'Select Export Method',
+    success: 'Success',
+    failure: 'Failure',
+    input: 'Please enter',
+    configStore: 'Configure Remote Storage',
+    remoteAddr: 'Remote Storage Address',
+    username: 'Username',
+    notConfig: 'Not Configured',
+    config: 'Configure',
+    footerTip: 'Take notes simply and store documents happily',
+    today: 'Today',
+    yesterday: 'Yesterday',
+    editorPlaceholder: 'Enter content here',
+}
+
+export default enLocale

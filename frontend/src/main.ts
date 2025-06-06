@@ -3,6 +3,7 @@ import App from './App'
 import './style.css'
 import router from "./router"
 import 'vditor/dist/index.css'
+import i18n from "@/lang";
 
 
 // 禁止鼠标右键
@@ -12,4 +13,5 @@ import 'vditor/dist/index.css'
 
 createApp(App)
     .use(router)
+    .use(i18n)
     .mount('#app')

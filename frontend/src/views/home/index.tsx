@@ -7,10 +7,14 @@ import Vditor from "vditor";
 import {defineComponent, inject, onMounted, reactive, ref} from "vue";
 import styled from "vue3-styled-components";
 import {settingInfoStore} from "@/store/modules/settings.ts";
+import {useI18n} from "vue-i18n";
 
 export default defineComponent({
   name: "Home",
   setup(_, { expose }) {
+
+    const { t, locale} = useI18n();
+
     const Container = styled.div`
       margin: 0 auto;
       height: 100%;
@@ -48,7 +52,7 @@ export default defineComponent({
             align-items: center;
 
             &:hover {
-              color: ${() => settingInfoStore.DarkTheme() ? 'lightgray' : 'gray'};;;
+              color: ${() => settingInfoStore.DarkTheme() ? 'lightgray' : 'gray'};
             }
           }
         }
@@ -112,7 +116,7 @@ export default defineComponent({
         toolbarConfig: {
           hide: false,
         },
-        placeholder: "请在这里输入内容",
+        placeholder: t('editorPlaceholder'),
         cache: {
           enable: true,
         },
@@ -190,22 +194,31 @@ export default defineComponent({
       const now = moment();
       let formatStr = str;
       if (SameDay(now.toDate(), dateObj.toDate())) {
-        formatStr = "今天 " + dateStr[1];
+        formatStr = `${t('today')} ` + dateStr[1];
       }
       let res = dateObj.add(1, "days");
       if (SameDay(now.toDate(), res.toDate())) {
-        formatStr = "昨天 " + dateStr[1];
+        formatStr = `${t('yesterday')} ` + dateStr[1];
       }
-      res = dateObj.add(2, "days");
-      if (SameDay(now.toDate(), res.toDate())) {
-        formatStr = "前天 " + dateStr[1];
-      }
+      // res = dateObj.add(2, "days");
+      // if (SameDay(now.toDate(), res.toDate())) {
+      //   formatStr = "前天 " + dateStr[1];
+      // }
       return formatStr;
     };
 
     const SwitchTheme = () => {
       settingInfoStore.SwitchTheme()
-      vditor.value?.setTheme(settingInfoStore.DarkTheme() ? 'dark': 'classic', settingInfoStore.DarkTheme() ? 'dark': 'classic');
+      vditor.value?.setTheme(settingInfoStore.DarkTheme() ? 'dark': 'classic', settingInfoStore.DarkTheme() ? 'dark': 'classic', settingInfoStore.DarkTheme() ? 'dark': 'github');
+    }
+
+    const changeLang = () => {
+      if (locale.value === 'zh') {
+        locale.value = "en";
+      } else {
+        locale.value = "zh";
+      }
+      settingInfoStore.UpdateLang(locale.value)
     }
 
     return () => (
@@ -215,7 +228,7 @@ export default defineComponent({
             {editorInfo.create && (
                 <span class={"create"}>{`${formatDate(
                     editorInfo.create
-                )}创建`}</span>
+                )}${t('create')}`}</span>
             )}
           </div>
           <div class={"actions"}>
@@ -238,6 +251,9 @@ export default defineComponent({
             </div>
             <div class={"action"} onClick={SwitchTheme}>
               <BulbOutlined />
+            </div>
+            <div class={"action"} onClick={changeLang}>
+              {locale.value === 'zh' ? 'EN' : '中'}
             </div>
           </div>
         </div>

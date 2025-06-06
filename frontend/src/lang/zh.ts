@@ -1,0 +1,26 @@
+const zhLocale = {
+  file: '文件',
+  create: '创建',
+  fileName: '文件名',
+  selectFile: '请选择文件',
+  confirmDelete: '确认删除',
+  deleteFailure: '删除失败',
+  exportAll: '导出所有',
+  exportCurrent: '导出当前',
+  export: '导出',
+  selectExport: '选择导出方式',
+  success: '成功',
+  failure: '失败',
+  input: '请输入',
+  configStore: '配置远程存储',
+  remoteAddr: '远程存储地址',
+  username: '用户名',
+  notConfig: '未配置',
+  config: '配置',
+  footerTip: '简简单单记笔记 开开心心存文档',
+  today: '今天',
+  yesterday: '昨天',
+  editorPlaceholder: '请在这里输入内容',
+}
+
+export default zhLocale

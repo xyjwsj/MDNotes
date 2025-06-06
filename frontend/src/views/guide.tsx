@@ -3,12 +3,15 @@ import styled from "vue3-styled-components";
 import {Image} from "ant-design-vue";
 import appIcon from '@/assets/png/appicon.png'
 import {Start} from "@/bindings/changeme/handler/systemhandler.ts";
+
+import {useI18n} from "vue-i18n";
+import {settingInfoStore} from "@/store/modules/settings.ts";
 import router from "@/router";
 
 export default defineComponent({
     name: "Guide",
     setup() {
-
+        const { t } = useI18n();
 
         const Container = styled.div`
             width: 100%;
@@ -17,7 +20,7 @@ export default defineComponent({
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            background-color: rgba(193, 251, 240, 0.4);
+            background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.8)' : 'rgba(193, 251, 240, 0.4)'};
             position: relative;
 
             @keyframes scaleAnimation {
@@ -35,20 +38,20 @@ export default defineComponent({
             .title {
                 position: absolute;
                 top: 220px;
-                color: black;
+                color: ${() => settingInfoStore.DarkTheme()? 'white' : 'black'};
                 font-size: 25px;
                 font-weight: bold;
             }
             
             .img {
                 border-radius: 20px;
-                box-shadow: -5px -5px 20px 30px rgba(193, 251, 240, 0.5);
+                box-shadow: -5px -5px 80px 30px rgba(193, 251, 240, 0.5);
                 animation: scaleAnimation 2s infinite ease-in-out; 
             }
             .footer {
                 position: absolute;
                 bottom: 180px;
-                color: gray;
+                color: ${() => settingInfoStore.DarkTheme()? 'lightgray' : 'gray'};;
                 opacity: 0;
                 font-size: 14px;
                 z-index: 2;
@@ -78,7 +81,7 @@ export default defineComponent({
             <Container>
                 <span class={'title'}>{'MDNote'}</span>
                 <Image class={'img'} src={appIcon} preview={false} width={200}></Image>
-                <span class={'footer'}>{'简简单单记笔记 开开心心存文档'}</span>
+                <span class={'footer'}>{t("footerTip")}</span>
             </Container>
         )
     }

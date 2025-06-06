@@ -18,21 +18,26 @@ import {
     SearchOutlined,
 } from "@ant-design/icons-vue";
 import {Image, Input} from "ant-design-vue";
-import {defineComponent, KeepAlive, onMounted, provide, reactive, ref, Transition,} from "vue";
+import {defineComponent, KeepAlive, onMounted, provide, reactive, ref, Transition, TransitionGroup,} from "vue";
 import {RouterView} from "vue-router";
 import styled from "vue3-styled-components";
 import {ModalView} from "@/util/modalUtil.tsx";
 import {ConfigStore, PreferenceInfo} from "@/bindings/changeme/handler/systemhandler.ts";
 import {settingInfoStore} from "@/store/modules/settings.ts";
+import i18n from "@/lang";
+
+const { t } = i18n.global
 
 export default defineComponent({
     name: "Layout",
     setup() {
+
         const Container = styled.div`
             margin: 0 auto;
             width: 100%;
             height: 100%;
             display: flex;
+
         `;
 
         const MenuView = styled.div`
@@ -72,16 +77,17 @@ export default defineComponent({
             }
 
             .search {
-                background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.1)' : '#fafafa'};
+                background-color: ${() => settingInfoStore.DarkTheme() ? '#242424' : '#fafafa'};
                 padding-left: 10px;
                 border-radius: 0;
-                font-size: 12px;
+                font-size: 13px;
+                height: 35px;
                 display: flex;
                 align-items: center;
 
                 .ant-input {
                     padding-left: 10px;
-                    color: ${() => settingInfoStore.DarkTheme() ?  'white' : 'rgba(0, 0, 0, 0.6)'};;
+                    color: ${() => settingInfoStore.DarkTheme() ? 'white' : 'rgba(0, 0, 0, 0.6)'};;
 
                     &::placeholder {
                         color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.4)'};
@@ -102,7 +108,7 @@ export default defineComponent({
                     color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.9)' : 'black'};
                 }
             }
-            
+
             .selectDefault {
                 line-height: 30px;
                 width: calc(100% - 40px);
@@ -113,7 +119,7 @@ export default defineComponent({
                 justify-content: space-between;
 
                 &:hover {
-                    background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.1)' : '#e0e0e3'};
+                    background-color: ${() => settingInfoStore.DarkTheme() ? '#323233' : '#e7e7ea'};
                 }
 
                 .left {
@@ -134,9 +140,25 @@ export default defineComponent({
             }
 
             .select {
-                background-color: ${() => settingInfoStore.DarkTheme() ? '#43454A' : '#e7e7ea'};
+                background-color: ${() => settingInfoStore.DarkTheme() ? '#43454A' : '#e0e0e3'};
             }
         `;
+
+        const TransitionGroupCon = styled(TransitionGroup)`
+            width: 100%;
+
+            /* fade */
+
+            .fade-enter-active,
+            .fade-leave-active {
+                transition: opacity 0.5s ease;
+            }
+
+            .fade-enter-from,
+            .fade-leave-to {
+                opacity: 0;
+            }
+        `
 
         const RouterViewCon = styled.div`
             min-height: 500px; /* 固定最小高度，防抖动 */
@@ -183,7 +205,7 @@ export default defineComponent({
                     color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.4)' : 'gray'};
                 }
             }
-            
+
             &:hover {
                 background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.4)' : '#fafafa'};
             }
@@ -228,19 +250,20 @@ export default defineComponent({
 
         const deleteFile = (key: string) => {
             if (key === "") {
-                TipWarning('请选择文件')
+                TipWarning(t("selectFile"))
                 return
             }
             const modalView = new ModalView()
             const files = fileList.value.filter((item) => item.uuid === key);
             if (files.length > 0) {
-                modalView.content = <span style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}}>{`确认删除'${files[0].fileName}'文件？`}</span>;
+                modalView.content = <span
+                    style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}}>{`${t("confirmDelete")}'${files[0].fileName}'${t("file")}？`}</span>;
             }
             modalView.icon = <DeleteOutlined style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}}/>
             modalView.ok = async () => {
-                const res = await DeleteFile(key);
+                const res = await DeleteFile(key)
                 if (!res) {
-                    TipWarning("删除失败!");
+                    TipWarning(t("deleteFailure"))
                     return;
                 }
                 // 再从本地列表中过滤掉该条目
@@ -262,28 +285,29 @@ export default defineComponent({
 
         const exportFile = (key: string) => {
             const modalView = new ModalView()
-            modalView.cancelText = '导出所有'
-            modalView.okText = '导出当前'
-            modalView.title = "导出"
+            modalView.cancelText = t("exportAll")
+            modalView.okText = t("exportCurrent")
+            modalView.title = t("export")
             modalView.closed = true
             modalView.icon = <ExportOutlined style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}}/>
-            modalView.content = <span style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}}>{`请选择导出方式`}</span>;
+            modalView.content =
+                <span style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}}>{t("selectExport")}</span>;
             modalView.ok = async () => {
                 if (key === "") {
-                    TipWarning('请选择文件')
+                    TipWarning(t("selectFile"))
                     return
                 }
                 if (await ExportFile(false, key)) {
-                    TipSuccess("当前文件导出成功")
+                    TipSuccess(`${t("exportCurrent")}${t("success")}`)
                 } else {
-                    TipSuccess("当前文件导出失败")
+                    TipSuccess(`${t("exportCurrent")}${t("failure")}`)
                 }
             }
             modalView.cancel = async () => {
                 if (await ExportFile(true, key)) {
-                    TipSuccess("所有文件导出成功")
+                    TipSuccess(`${t("exportAll")}${t("success")}`)
                 } else {
-                    TipSuccess("所有文件导出失败")
+                    TipSuccess(`${t("exportAll")}${t("failure")}`)
                 }
             }
             modalView.show()
@@ -311,41 +335,41 @@ export default defineComponent({
 
             const modalView = new ModalView()
             modalView.width = 400
-            modalView.title = '配置远程存储'
+            modalView.title = t('configStore')
             modalView.content = <div>
                 <InputView
                     class={"inputC"}
                     bordered={false}
-                    placeholder={"请输入远程存储地址(gitee)"}
+                    placeholder={`${t("input")}${t("remoteAddr")}(gitee)`}
                     defaultValue={settingInfo.url}
                     onChange={(e) => (settingInfo.url = e.target.value!)}
                 ></InputView>
                 <InputView
                     class={"inputC"}
                     bordered={false}
-                    placeholder={"请输入用户名"}
+                    placeholder={`${t("input")}${t("username")}`}
                     defaultValue={settingInfo.username}
                     onChange={(e) => (settingInfo.username = e.target.value!)}
                 ></InputView>
                 <InputView
                     class={"inputC"}
                     bordered={false}
-                    placeholder={"请输入Token"}
+                    placeholder={`${t("input")}TOKEN`}
                     defaultValue={settingInfo.token}
                     onChange={(e) => (settingInfo.token = e.target.value!)}
                 ></InputView>
             </div>
             modalView.ok = async () => {
                 if (settingInfo.url === "") {
-                    TipWarning("远程URL地址未配置");
+                    TipWarning(`${t("remoteAddr")}${t("notConfig")}`);
                     return;
                 }
                 if (settingInfo.username === "") {
-                    TipWarning("远程用户名未配置");
+                    TipWarning(`${t("username")}${t("notConfig")}`);
                     return;
                 }
                 if (settingInfo.token === "") {
-                    TipWarning("远程TOKEN未配置");
+                    TipWarning(`TOKEN${t("notConfig")}`);
                     return;
                 }
                 const res = await ConfigStore(
@@ -354,9 +378,9 @@ export default defineComponent({
                     settingInfo.token
                 );
                 if (res) {
-                    TipSuccess("配置成功");
+                    TipSuccess(`${t("config")}${t("success")}`);
                 } else {
-                    TipSuccess("配置失败");
+                    TipSuccess(`${t("config")}${t("failure")}`);
                 }
             }
 
@@ -406,7 +430,7 @@ export default defineComponent({
                     </div>
                     <Input
                         class={"search"}
-                        placeholder={"文件名"}
+                        placeholder={t("fileName")}
                         prefix={
                             <SearchOutlined
                                 style={{
@@ -419,51 +443,56 @@ export default defineComponent({
                             searchDoc(e.target.value!)
                         }}
                     ></Input>
-                    {fileList.value
-                        .filter((item) => item.fileName !== "")
-                        .map((item: RecordInfo) => {
-                            return editFileKey.value === item.uuid ? (
-                                <Input
-                                    class={'editInput'}
-                                    bordered={false}
-                                    style={{
-                                        backgroundColor: settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.4)' : "white",
-                                        borderRadius: "0"
-                                    }}
-                                    onPressEnter={okModify}
-                                    suffix={<CheckOutlined onClick={okModify}/>}
-                                    onChange={(e) => (tempInfo.name = e.target.value!)}
-                                    value={tempInfo.name}
-                                ></Input>
-                            ) : (
-                                <div
-                                    class={[
-                                        "selectDefault",
-                                        selectFileKey.value === item.uuid ? "select" : "",
-                                    ]}
-                                    onDblclick={() => {
-                                        selectFileKey.value = item.uuid;
-                                        editFileKey.value = item.uuid;
-                                        tempInfo.name = item.fileName;
-                                        updateFileName();
-                                    }}
-                                    onClick={() => {
-                                        selectFileKey.value = item.uuid;
-                                        updateFileName();
-                                    }}
-                                >
-                                    <div class={"left"}>
-                                        <Image src={mdIcon} width={20} preview={false}/>
-                                        <span>{item.fileName}</span>
-                                    </div>
-                                    <div class={"right"}>
-                                        <span>{item.sizeStr}</span>
-                                        <RightOutlined/>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    <span class={"footer"}>{`${fileList.value.length}个文件`}</span>
+                    <TransitionGroupCon name="fade" tag="div">
+                        {fileList.value
+                            .filter((item) => item.fileName !== "")
+                            .map((item: RecordInfo) => {
+                                    return editFileKey.value === item.uuid ? (
+                                        <Input
+                                            key={item.uuid}
+                                            class={'editInput'}
+                                            bordered={false}
+                                            style={{
+                                                backgroundColor: settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.4)' : "white",
+                                                borderRadius: "0"
+                                            }}
+                                            onPressEnter={okModify}
+                                            suffix={<CheckOutlined onClick={okModify}/>}
+                                            onChange={(e) => (tempInfo.name = e.target.value!)}
+                                            value={tempInfo.name}
+                                        ></Input>
+                                    ) : (
+                                        <div
+                                            key={item.uuid}
+                                            class={[
+                                                "selectDefault",
+                                                selectFileKey.value === item.uuid ? "select" : "",
+                                            ]}
+                                            onDblclick={() => {
+                                                selectFileKey.value = item.uuid;
+                                                editFileKey.value = item.uuid;
+                                                tempInfo.name = item.fileName;
+                                                updateFileName();
+                                            }}
+                                            onClick={() => {
+                                                selectFileKey.value = item.uuid;
+                                                updateFileName();
+                                            }}
+                                        >
+                                            <div class={"left"}>
+                                                <Image src={mdIcon} width={20} preview={false}/>
+                                                <span>{item.fileName}</span>
+                                            </div>
+                                            <div class={"right"}>
+                                                <span>{item.sizeStr}</span>
+                                                <RightOutlined/>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+                            )}
+                    </TransitionGroupCon>
+                    <span class={"footer"}>{`${fileList.value.length} ${t("file")}`}</span>
                 </MenuView>
                 <RouterViewCon>
                     <RouterView

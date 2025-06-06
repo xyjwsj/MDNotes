@@ -2,6 +2,7 @@ import {Store} from "@/store";
 
 export interface SettingInfo {
     theme: string
+    lang: string
 }
 
 const SETTING_INFO = "_SETTING_INFO"
@@ -9,7 +10,8 @@ const SETTING_INFO = "_SETTING_INFO"
 export class SettingInfoStore extends Store<SettingInfo> {
     protected data(): SettingInfo {
         return {
-            theme: 'dark1',
+            theme: 'dark',
+            lang: 'zh'
         }
     }
     protected key(): string {
@@ -26,6 +28,12 @@ export class SettingInfoStore extends Store<SettingInfo> {
         } else {
             this.state.theme = 'dark'
         }
+        this.updateState()
+    }
+
+    public UpdateLang(lang: string) {
+        this.state.lang = lang
+        this.updateState()
     }
 
 }

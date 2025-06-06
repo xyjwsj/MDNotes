@@ -13,13 +13,13 @@ const ActionBtn = styled.div`
     gap: 10px;
 
     .btn {
-        background-color: ${() => settingInfoStore.DarkTheme() ? '#2b2d30' : 'lightgray'};;
+        background-color: ${() => settingInfoStore.DarkTheme() ? '#3a383a' : 'lightgray'};
         border: none;
-        color: ${() => settingInfoStore.DarkTheme() ? 'white' : 'gray'};
+        color: ${() => settingInfoStore.DarkTheme() ? 'lightgray' : 'gray'};
 
         &:hover {
-            background-color: white;
-            color: black;
+            background-color: ${() => settingInfoStore.DarkTheme() ? '#4E4B4E' : 'white'};
+            color: ${() => settingInfoStore.DarkTheme() ? 'white' : 'black'};;
         }
     }
 `;
@@ -48,9 +48,10 @@ class ModalView {
     public show() {
         const modal = Modal.confirm({
             style: {
-                backgroundColor: settingInfoStore.DarkTheme() ? '#17181A' : 'white',
+                backgroundColor: settingInfoStore.DarkTheme() ? '#1E1F22' : 'white',
                 color: settingInfoStore.DarkTheme() ? 'white' : 'black',
-                borderRadius: '5px',
+                borderRadius: '10px',
+                boxShadow: '0 0 20px 1px gray'
             },
             closeIcon: <CloseOutlined style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}}/>,
             width: this.width,
