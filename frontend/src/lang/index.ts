@@ -10,7 +10,11 @@ const messages = {
     ...zhLocale
   },
 }
-const lang = (navigator.language || 'en').toLocaleLowerCase()
+let lang = (navigator.language || 'en').toLocaleLowerCase()
+const langArr = lang.split("-");
+if (langArr.length > 0) {
+  lang = langArr[0]
+}
 
 const i18n = createI18n({
   locale: lang || 'zh', // 默认cn语言环境
