@@ -1,6 +1,7 @@
 package main
 
 import (
+	"changeme/mgr"
 	"changeme/model"
 	"changeme/util"
 	"testing"
@@ -14,4 +15,8 @@ func TestCopy(t *testing.T) {
 	src := util.CreatePlatformPath(model.CacheDir, "md", fileKey+".md")
 	target := util.CreatePlatformPath(model.UserHomeDir, "Downloads", fileKey+".md")
 	util.Copy(src, target)
+}
+
+func TestLicence(t *testing.T) {
+	mgr.ValidateLicence()
 }

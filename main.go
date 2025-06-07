@@ -2,6 +2,7 @@ package main
 
 import (
 	"changeme/handler"
+	"changeme/model"
 	"embed"
 	_ "embed"
 	"log"
@@ -71,6 +72,8 @@ func main() {
 			time.Sleep(time.Second)
 		}
 	}()
+
+	model.UpdateApp(app)
 
 	// Run the application. This blocks until the application has been exited.
 	err := app.Run()

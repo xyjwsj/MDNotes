@@ -2,7 +2,6 @@ package util
 
 import (
 	"errors"
-	"log"
 	"time"
 )
 
@@ -27,7 +26,6 @@ func (d *Datetime) UnmarshalJSON(b []byte) error {
 	b = b[1 : len(b)-1]
 
 	// 2. Parse the time using Go's time.Parse function.
-	log.Println("======" + string(b))
 	t, err := time.Parse("2006-01-02 15:04:05", string(b))
 	if err != nil {
 		return err

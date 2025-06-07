@@ -12,7 +12,7 @@ func ImageApi(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// 示例：拦截 /api 请求
 		path := r.URL.Path
-		log.Println("xxxxxxxx" + r.URL.Path)
+		//log.Println("xxxxxxxx" + r.URL.Path)
 		if strings.HasPrefix(path, "/api/upload") {
 			// 设置最大内存为 10MB
 			r.Body = http.MaxBytesReader(w, r.Body, 10<<20)

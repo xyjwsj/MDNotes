@@ -22,5 +22,6 @@ func (system *SystemHandler) PreferenceInfo() model.Preference {
 
 func (system *SystemHandler) Start() bool {
 	mgr.Start()
+	mgr.ValidateLicence()
 	return true
 }
