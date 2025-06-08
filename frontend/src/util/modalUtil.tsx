@@ -3,6 +3,8 @@ import styled from "vue3-styled-components";
 import {CloseOutlined, InfoCircleOutlined} from "@ant-design/icons-vue";
 import {settingInfoStore} from "@/store/modules/settings.ts";
 
+// const {t} = useI18n();
+
 const ActionBtn = styled.div`
     width: 100%;
     display: flex;
@@ -27,13 +29,15 @@ const ActionBtn = styled.div`
 class ModalView {
     public content: any
     public ok?: () => void
+    public okCall?: () => Promise<boolean>
     public cancel?: () => void
+    public cancelCall?: () => Promise<boolean>
     public close?: () => void
     public closed: boolean
     public title: string
     public okText: string
     public cancelText: string
-    public width: number
+    public width: number | string
     public icon: any
 
     constructor() {
@@ -48,7 +52,7 @@ class ModalView {
     public show() {
         const modal = Modal.confirm({
             style: {
-                backgroundColor: settingInfoStore.DarkTheme() ? '#1E1F22' : 'white',
+                backgroundColor: settingInfoStore.DarkTheme() ? '#1E1F22  !important' : 'white',
                 color: settingInfoStore.DarkTheme() ? 'white' : 'black',
                 borderRadius: '10px',
                 boxShadow: '0 0 20px 1px gray'
@@ -73,7 +77,14 @@ class ModalView {
                 return <ActionBtn>
                     <Button
                         class={"btn"}
-                        onClick={() => {
+                        onClick={async () => {
+                            if (this.cancelCall) {
+                                let booleanPromise = await this.cancelCall();
+                                if (booleanPromise) {
+                                    modal.destroy()
+                                }
+                                return
+                            }
                             if (this.cancel) {
                                 this.cancel()
                             }
@@ -85,6 +96,13 @@ class ModalView {
                     <Button
                         class={"btn"}
                         onClick={async () => {
+                            if (this.okCall) {
+                                let booleanPromise = await this.okCall();
+                                if (booleanPromise) {
+                                    modal.destroy()
+                                }
+                                return
+                            }
                             if (this.ok) {
                                 this.ok()
                             }
@@ -100,5 +118,5 @@ class ModalView {
 }
 
 export {
-    ModalView
+    ModalView,
 }

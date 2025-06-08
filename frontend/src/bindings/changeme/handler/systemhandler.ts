@@ -14,6 +14,11 @@ export function ConfigStore(url: string, username: string, token: string): Promi
     return $resultPromise;
 }
 
+export function CreateLicense(license: string): Promise<boolean> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1943132996, license) as any;
+    return $resultPromise;
+}
+
 export function PreferenceInfo(): Promise<model$0.Preference> & { cancel(): void } {
     let $resultPromise = $Call.ByID(1342871400) as any;
     let $typingPromise = $resultPromise.then(($result: any) => {
@@ -25,6 +30,11 @@ export function PreferenceInfo(): Promise<model$0.Preference> & { cancel(): void
 
 export function Start(): Promise<boolean> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3716840919) as any;
+    return $resultPromise;
+}
+
+export function Trial(create: boolean): Promise<boolean> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1901518091, create) as any;
     return $resultPromise;
 }
 

@@ -18,5 +18,7 @@ func TestCopy(t *testing.T) {
 }
 
 func TestLicence(t *testing.T) {
-	mgr.ValidateLicence()
+	//mgr.ValidateLicence()
+	mgr.TrailUse(true)
+	//mgr.TrialLicense()
 }

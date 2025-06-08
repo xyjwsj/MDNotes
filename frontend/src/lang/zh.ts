@@ -21,6 +21,12 @@ const zhLocale = {
   today: '今天',
   yesterday: '昨天',
   editorPlaceholder: '请在这里输入内容',
+  license: '许可证',
+  licenseTip: '正式许可证请微信联系',
+  licenseIncorrect: '许可证不正确',
+  validate: '验证',
+  trial: '试用',
+  trialEnd: '试用结束',
 }
 
 export default zhLocale

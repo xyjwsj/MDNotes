@@ -10,7 +10,10 @@ message.config({
 });
 
 const TipSuccess = (msg: string) => {
-  message.success(msg)
+  message.success({
+    content: msg,
+    class: settingInfoStore.DarkTheme() ? 'modalDark' : '',
+  })
 }
 
 const TipWarning = (msg: string) => {
@@ -21,7 +24,10 @@ const TipWarning = (msg: string) => {
 }
 
 const TipError = (msg: string) => {
-  message.error(msg)
+  message.error({
+    content: msg,
+    class: settingInfoStore.DarkTheme() ? 'modalDark' : '',
+  })
 }
 
 export {

@@ -17,26 +17,18 @@ export default defineComponent({
             height: 100%;
             width: 100%;
             border: none;
+            position: relative;
             
-            .settingDialog {
-                background: transparent;
-                //内容
-
-                :global(.ant-modal-content) {
-                    background-color: rgba(0, 0, 0, 0.1) !important;
-                    border-radius: 5px !important;
-                    //width: 350px !important;
-
-                    .ant-modal-header {
-                        //background: transparent !important;
-                        border-radius: 0 !important;
-                    }
-
-                    :global(.ant-modal-title) {
-                        color: gray !important;
-                        background-color: rgba(0, 0, 0, 0.1) !important;
-                    }
-                }
+            .counter {
+                position: absolute;
+                top: 0;
+                right: 0;
+                height: 15px;
+                width: 30px;
+                background-color: ${() => settingInfoStore.DarkTheme() ? '#2B2D30' : '#E0E0E3'};
+                color: gray;
+                text-align: center;
+                font-size: 12px;
             }
         `;
 
@@ -57,6 +49,7 @@ export default defineComponent({
 
         const updateFileSize: any = inject("updateFileSize");
 
+        const wordCounter = ref(0)
         const vditorRef = ref<any>(null);
         const vditor = ref<Vditor | null>(null);
 
@@ -85,6 +78,7 @@ export default defineComponent({
                     if (success !== "") {
                         updateFileSize(editorInfo.fileKey, success);
                     }
+                    wordCounter.value = val.length
                     console.log("SyncFile", editorInfo.fileName, success);
                 },
                 upload: {
@@ -140,6 +134,7 @@ export default defineComponent({
                 const content = await FileContent(info.uuid);
                 console.log("ref", vditorRef);
                 vditor.value!.setValue(content, true);
+                wordCounter.value = content.length
             }
             editorInfo.fileName = info.fileName;
             editorInfo.create = info.create;
@@ -149,13 +144,14 @@ export default defineComponent({
         expose({updateContent, updateTheme});
         // expose({updateTheme})
 
-        
+
         return () => (
             <Container>
                 <EditorView
                     id="vditor"
                     ref={(el) => (vditorRef.value = el)}
                 ></EditorView>
+                <span class={'counter'}>{wordCounter.value}</span>
             </Container>
         );
     },

@@ -63,6 +63,14 @@ func main() {
 		URL:              "/",
 	})
 
+	//// 创建菜单
+	//menu := app.NewMenu()
+	//
+	//// 文件菜单
+	//_ = menu.Add("文件")
+	//
+	//app.SetMenu(menu)
+
 	// Create a goroutine that emits an event containing the current time every second.
 	// The frontend can listen to this event and update the UI accordingly.
 	go func() {

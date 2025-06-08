@@ -1,12 +1,14 @@
-import {defineComponent, onBeforeMount, onMounted} from "vue";
+import {defineComponent, onBeforeMount, onMounted, ref} from "vue";
 import styled from "vue3-styled-components";
-import {Image} from "ant-design-vue";
+import {Image, Input} from "ant-design-vue";
 import appIcon from '@/assets/png/appicon.png'
-import {Start} from "@/bindings/changeme/handler/systemhandler.ts";
+import {CreateLicense, Start, Trial} from "@/bindings/changeme/handler/systemhandler.ts";
 
 import {useI18n} from "vue-i18n";
 import {settingInfoStore} from "@/store/modules/settings.ts";
 import router from "@/router";
+import {TipError, TipWarning} from "@/util/messageUtil.tsx";
+import {ModalView} from "@/util/modalUtil.tsx";
 
 export default defineComponent({
     name: "Guide",
@@ -67,15 +69,102 @@ export default defineComponent({
             }
         `
 
-        onMounted(() => {
-            setTimeout(() => {
+        const InputView = styled(Input)`
+            background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.6)'};
+            margin: 5px 0;
+            color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.8)' : 'gray'};
+
+            .ant-input {
+                &::placeholder {
+                    color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.4)' : 'gray'};
+                }
+            }
+
+            &:hover {
+                background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.4)' : '#fafafa'};
+            }
+
+            &:focus {
+                background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.4)' : 'white'};;
+            }
+        `;
+
+        const showLicense = (ok?: (res: boolean) => void, cancel?: () => Promise<boolean>) => {
+
+            const license = ref("")
+
+            const modalView = new ModalView()
+            modalView.width = '50%'
+            modalView.title = t('license')
+            modalView.okText = t('validate')
+            modalView.cancelText = t('trial')
+            modalView.closed = true
+            modalView.content = <div>
+                <InputView
+                    class={"inputC"}
+                    bordered={false}
+                    placeholder={t('input') + t('license')}
+                    defaultValue={license.value}
+                    onChange={(e) => (license.value = e.target.value!)}
+                ></InputView>
+                <span style={{
+                    color: settingInfoStore.DarkTheme()?"lightgray":"gray",
+                }}>{`${t('licenseTip')}：xyjwsj`}</span>
+            </div>
+            modalView.cancelCall = async () => {
+                if (cancel) {
+                    return await cancel()
+                }
+                return true
+            }
+            modalView.okCall = async () => {
+                if (license.value === "") {
+                    TipWarning(t('input') + t('license'))
+                    return false
+                }
+                let createLicense = await CreateLicense(license.value);
+                if(createLicense) {
+                    TipWarning(t('success'))
+                } else {
+                    TipError(t('licenseIncorrect'))
+                }
+                if (ok) {
+                    ok(createLicense)
+                }
+                return createLicense
+            }
+
+            modalView.show()
+        }
+
+        // const showLicense: any = inject('showLicense')
+
+        onMounted(async () => {
+            const res = await Trial(false)
+            if (res) {
                 router.replace({name: 'Home'})
-            }, 4000)
+            } else {
+                showLicense((res: boolean) => {
+                    if (res) {
+                        router.replace({name: 'Home'})
+                    }
+                }, async () => {
+                    const res = await Trial(true)
+                    if (res) {
+                        router.replace({name: 'Home'})
+                        return true
+                    } else {
+                        TipError(t('trialEnd'))
+                        return false
+                    }
+                })
+            }
         })
 
         onBeforeMount(async () => {
             await Start()
         })
+
 
         return () => (
             <Container>

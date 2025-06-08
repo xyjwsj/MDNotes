@@ -18,12 +18,12 @@ import {
     MenuOutlined,
     MoreOutlined,
     PlusOutlined,
-    RightOutlined,
     SearchOutlined,
     SettingOutlined,
+    SolutionOutlined,
 } from "@ant-design/icons-vue";
 import {Dropdown, Image, Input, Menu, MenuItem} from "ant-design-vue";
-import {defineComponent, KeepAlive, onMounted, provide, reactive, ref, Transition,} from "vue";
+import {defineComponent, inject, KeepAlive, onMounted, provide, reactive, ref, Transition, TransitionGroup,} from "vue";
 import {RouterView} from "vue-router";
 import styled from "vue3-styled-components";
 import {ModalView} from "@/util/modalUtil.tsx";
@@ -67,6 +67,7 @@ export default defineComponent({
                 font-size: 18px;
                 align-items: center;
                 justify-content: flex-end;
+                position: relative;
                 gap: 15px;
 
                 .zoom-enter-active {
@@ -104,9 +105,12 @@ export default defineComponent({
                 }
 
                 .search {
+                    position: absolute;
                     background-color: ${() => settingInfoStore.DarkTheme() ? '#242424' : '#fafafa'};;
                     border-radius: 15px;
-                    height: 28px;
+                    height: 25px;
+                    width: 80%;
+                    z-index: ${() => search.value ? 1 : -1};
 
                     .ant-input {
                         padding-left: 10px;
@@ -116,10 +120,29 @@ export default defineComponent({
                             color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.4)'};
                         }
                     }
+
+                    /* 添加宽度过渡动画 */
+
+                    &.expand-enter-active,
+                    &.expand-leave-active {
+                        transition: width 0.5s ease;
+                        overflow: hidden;
+                    }
+
+                    &.expand-enter-from,
+                    &.expand-leave-to {
+                        width: 0;
+                    }
+
+                    &.expand-enter-to,
+                    &.expand-leave-from {
+                        width: 100%;
+                    }
                 }
             }
+
             .tools {
-                //background-color: ${() => settingInfoStore.DarkTheme() ? '#2b2d31' : 'rgba(239, 239, 242, 0.6)'};
+                    //background-color: ${() => settingInfoStore.DarkTheme() ? '#2b2d31' : 'rgba(239, 239, 242, 0.6)'};
                 height: 40px;
                 display: flex;
                 justify-content: space-between;
@@ -128,7 +151,7 @@ export default defineComponent({
                 //z-index: 99;
                 //width: calc(100% - 145px);
                 flex: 1;
-                
+
                 .create {
                     font-size: 12px;
                     color: gray;
@@ -166,7 +189,7 @@ export default defineComponent({
         `
 
         const ListView = styled.div`
-            width: ${() => showList.value ? '230px': 0};
+            width: ${() => showList.value ? '230px' : 0};
             background-color: ${() => settingInfoStore.DarkTheme() ? '#2b2d30' : '#efeff2'};
             height: 100%;
             display: flex;
@@ -183,15 +206,9 @@ export default defineComponent({
                 bottom: 0;
             }
 
-            .editInput {
-                .ant-input {
-                    color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.9)' : 'black'};
-                }
-            }
-
             .selectDefault {
                 line-height: 30px;
-                width: calc(100% - 40px);
+                width: 190px;
                 padding: 0 20px;
                 font-size: 14px;
                 display: flex;
@@ -200,6 +217,12 @@ export default defineComponent({
 
                 &:hover {
                     background-color: ${() => settingInfoStore.DarkTheme() ? '#323233' : '#e7e7ea'};
+                }
+
+                .editInput {
+                    .ant-input {
+                        color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.9)' : 'black'};
+                    }
                 }
 
                 .left {
@@ -224,21 +247,21 @@ export default defineComponent({
             }
         `;
 
-        // const TransitionGroupCon = styled(TransitionGroup)`
-        //     width: 100%;
-        //     flex: 1;
-        //     /* fade */
-        //
-        //     .fade-enter-active,
-        //     .fade-leave-active {
-        //         transition: opacity 0.5s ease;
-        //     }
-        //
-        //     .fade-enter-from,
-        //     .fade-leave-to {
-        //         opacity: 0;
-        //     }
-        // `
+        const TransitionGroupCon = styled(TransitionGroup)`
+            width: 230px;
+            height: 100%;
+            flex: 1;
+            /* fade */
+
+            .fade-enter-active,
+            .fade-leave-active {
+                transition: opacity 0.5s ease;
+            }
+
+            .fade-enter-from,
+            .fade-leave-to {
+                opacity: 0;
+            }`;
 
         const RouterViewCon = styled.div`
             min-height: 500px; /* 固定最小高度，防抖动 */
@@ -307,6 +330,8 @@ export default defineComponent({
             }
         `
 
+        const showLicense: any = inject('showLicense')
+
         const search = ref(false)
         const showList = ref(true)
         const fileList = ref<RecordInfo[]>([]);
@@ -320,7 +345,6 @@ export default defineComponent({
         const currentCom = ref<any>(null);
 
         const updateFileName = () => {
-            debugger
             const res = fileList.value.filter(
                 (item) => item.uuid === selectFileKey.value
             );
@@ -335,13 +359,16 @@ export default defineComponent({
 
         onMounted(async () => {
             const docs = await DocList();
-            console.log("kkkkkk", docs)
             fileList.value.splice(0, fileList.value.length);
             docs.forEach((item) => {
                 if (item !== null) {
                     fileList.value.push(item);
                 }
             });
+            if (docs.length > 0) {
+                selectFileKey.value = docs[0]?.uuid!
+                updateFileName()
+            }
         });
 
         const deleteFile = () => {
@@ -573,7 +600,7 @@ export default defineComponent({
                             class={"add"}
                             onClick={() => search.value = true}
                         />}
-                        {search.value && <Transition name="zoom" mode="out-in">
+                        <Transition name="expand" mode="out-in">
                             <Input
                                 class={"search"}
                                 placeholder={t("fileName")}
@@ -592,7 +619,7 @@ export default defineComponent({
                                     searchDoc(e.target.value!)
                                 }}
                             ></Input>
-                        </Transition>}
+                        </Transition>
                     </div>
                     <div class={"tools"}>
                         <div class={"info"}>
@@ -602,12 +629,12 @@ export default defineComponent({
                             <div class={'action'} onClick={() => {
                                 showList.value = !showList.value
                             }}>
-                                <MenuOutlined />
+                                <MenuOutlined/>
                             </div>
                             <Dropdown
                                 class={"action"}
                                 overlay={<Menu style={{
-                                    backgroundColor: '#2B2D31'
+                                    backgroundColor: settingInfoStore.DarkTheme() ? '#2B2D31' : '#E9E9ED',
                                 }}>
                                     <MenuItemView onClick={() => exportFile()}>
                                         <ExportOutlined/>
@@ -624,6 +651,9 @@ export default defineComponent({
                                     <MenuItemView onClick={configStore}>
                                         <SettingOutlined/>
                                     </MenuItemView>
+                                    <MenuItemView onClick={() => showLicense()}>
+                                        <SolutionOutlined/>
+                                    </MenuItemView>
                                 </Menu>
                                 }
                             >
@@ -634,55 +664,54 @@ export default defineComponent({
                 </ToolView>
                 <BodyView>
                     <ListView>
-                        {/*<TransitionGroupCon name="fade" tag="div">*/}
+                        <TransitionGroupCon name="fade" tag="div">
                             {fileList.value
                                 .filter((item) => item.fileName !== "")
                                 .map((item: RecordInfo) => {
-                                        return editFileKey.value === item.uuid ? (
-                                            <Input
+                                        return <div
+                                            key={item.uuid}
+                                            class={[
+                                                "selectDefault",
+                                                selectFileKey.value === item.uuid ? "select" : "",
+                                            ]}
+                                            onDblclick={() => {
+                                                selectFileKey.value = item.uuid;
+                                                editFileKey.value = item.uuid;
+                                                tempInfo.name = item.fileName;
+                                                updateFileName();
+                                            }}
+                                            onClick={() => {
+                                                selectFileKey.value = item.uuid;
+                                                updateFileName();
+                                            }}
+                                        >
+                                            {editFileKey.value === item.uuid && <Input
                                                 key={item.uuid}
                                                 class={'editInput'}
                                                 bordered={false}
-                                                style={{
-                                                    backgroundColor: settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.4)' : "white",
-                                                    borderRadius: "0"
-                                                }}
+                                                // style={{
+                                                //     // backgroundColor: settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.4)' : "white",
+                                                //     borderRadius: "0"
+                                                // }}
                                                 onPressEnter={okModify}
-                                                suffix={<CheckOutlined onClick={okModify}/>}
+                                                suffix={<CheckOutlined style={{
+                                                    color: settingInfoStore.DarkTheme() ? 'white' : 'black',
+                                                }} onClick={okModify}/>}
                                                 onChange={(e) => (tempInfo.name = e.target.value!)}
                                                 value={tempInfo.name}
-                                            ></Input>
-                                        ) : (
-                                            <div
-                                                key={item.uuid}
-                                                class={[
-                                                    "selectDefault",
-                                                    selectFileKey.value === item.uuid ? "select" : "",
-                                                ]}
-                                                onDblclick={() => {
-                                                    selectFileKey.value = item.uuid;
-                                                    editFileKey.value = item.uuid;
-                                                    tempInfo.name = item.fileName;
-                                                    updateFileName();
-                                                }}
-                                                onClick={() => {
-                                                    selectFileKey.value = item.uuid;
-                                                    updateFileName();
-                                                }}
-                                            >
-                                                <div class={"left"}>
-                                                    <Image src={mdIcon} width={20} preview={false}/>
-                                                    <span>{item.fileName}</span>
-                                                </div>
-                                                <div class={"right"}>
-                                                    <span>{item.sizeStr}</span>
-                                                    <RightOutlined/>
-                                                </div>
-                                            </div>
-                                        )
+                                            ></Input>}
+                                            {editFileKey.value !== item.uuid && <div class={"left"}>
+                                                <Image src={mdIcon} width={20} preview={false}/>
+                                                <span>{item.fileName}</span>
+                                            </div>}
+                                            {editFileKey.value !== item.uuid && <div class={"right"}>
+                                                <span>{item.sizeStr}</span>
+                                            </div>}
+                                        </div>
+
                                     }
                                 )}
-                        {/*</TransitionGroupCon>*/}
+                        </TransitionGroupCon>
                         <span class={"footer"}>{`${fileList.value.length} ${t("file")}`}</span>
                     </ListView>
                     <RouterViewCon>

@@ -21,6 +21,12 @@ const enLocale = {
     today: 'Today',
     yesterday: 'Yesterday',
     editorPlaceholder: 'Enter content here',
+    license: 'License',
+    licenseTip: 'Please contact us via WeChat for the official license',
+    licenseIncorrect: 'The license is incorrect',
+    validate: 'Validate',
+    trial: 'Trial',
+    trialEnd: 'Trial end',
 }
 
 export default enLocale

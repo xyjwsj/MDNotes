@@ -1,23 +1,49 @@
 package mgr
 
 import (
-	"changeme/model"
 	"changeme/util"
+	"crypto"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha256"
+	"crypto/x509"
+	"embed"
+	"encoding/base64"
+	"encoding/json"
+	"encoding/pem"
+	"errors"
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
 
-var licensePath = []string{
-	"/tmp/.MDNote_license",
-	model.CacheDir + "/.MDNote_license",
+//go:embed all:public.pem
+var assets embed.FS
+
+type LicenseType string
+
+const (
+	Trial      LicenseType = "trial"
+	Production LicenseType = "production"
+)
+
+type LicenseInfo struct {
+	DeviceID   string      `json:"device_id"`
+	Type       LicenseType `json:"type"`
+	ExpiryTime time.Time   `json:"expiry_time"`
+	Signature  string      `json:"signature"` // 使用私钥签名后的值
 }
 
-var license = ""
+var licensePath = []string{
+	"/tmp/MDNote/.license",
+}
 
 func init() {
 	for _, path := range licensePath {
@@ -65,9 +91,157 @@ func getSerialNumber() string {
 	return serialNumber
 }
 
-func ValidateLicence() {
+func validateLicense(licenseStr string) (LicenseInfo, error) {
+	var license LicenseInfo
+	err := json.Unmarshal([]byte(licenseStr), &license)
+	if err != nil {
+		return license, err
+	}
+
+	// 检查是否过期
+	if time.Now().After(license.ExpiryTime) {
+		return license, errors.New("Liceense Expired")
+	}
+
+	// 重新构造原始数据并计算签名
+	rawData := fmt.Sprintf("%s:%d", license.DeviceID, license.ExpiryTime.Unix())
+	hashed := sha256.Sum256([]byte(rawData))
+
+	// 加载公钥
+	pubKeyBytes, _ := assets.ReadFile("public.pem")
+	block, _ := pem.Decode(pubKeyBytes)
+	pubInterface, _ := x509.ParsePKIXPublicKey(block.Bytes)
+	pubKey := pubInterface.(*rsa.PublicKey)
+
+	// 解码签名
+	sigBytes, _ := base64.StdEncoding.DecodeString(license.Signature)
+
+	// 验证签名
+	err = rsa.VerifyPKCS1v15(pubKey, crypto.SHA256, hashed[:], sigBytes)
+	return license, err
+}
+
+func CreateLicence(license string) bool {
+	_, err := validateLicense(license)
+	if err != nil {
+		return false
+	}
+	for _, path := range licensePath {
+		if util.Exists(path) {
+			_ = os.Remove(path)
+		}
+		_ = os.WriteFile(path, []byte(license), 0600)
+	}
+	return true
+}
+
+func ValidateLicence() string {
+	for _, path := range licensePath {
+		if util.Exists(path) {
+			licenseData, err := os.ReadFile(path)
+			if err != nil {
+				continue
+			}
+			license, err := validateLicense(string(licenseData))
+			if err != nil {
+				return ""
+			}
+			return license.ExpiryTime.Format("2006-01-02 15:04:05")
+		}
+	}
+	return ""
+}
+
+var firstRunFile = "/tmp/MDNote/.first_run"
+
+func TrailUse(create bool) bool {
+	base := filepath.Dir(firstRunFile)
+	if !util.Exists(base) {
+		err := os.MkdirAll(base, 0755)
+		if err != nil {
+			log.Println(err)
+		}
+	}
 	id := getMac() + getSerialNumber()
-	format := time.Now().Format("2006-01-02 15:04:05")
-	sprintf := fmt.Sprintf("%s.%s", id, format)
-	log.Println(sprintf)
+	if util.Exists(firstRunFile) {
+		fileCon, _ := os.ReadFile(firstRunFile)
+		split := strings.Split(string(fileCon), ".")
+		if len(split) != 2 {
+			return false
+		}
+		pubKeyBytes, _ := assets.ReadFile("public.pem")
+		md5 := util.MD5(id + split[1] + string(pubKeyBytes))
+		if split[0] != md5 {
+			return false
+		}
+		timestamp, _ := strconv.Atoi(split[1])
+		if time.Now().Unix()-int64(timestamp) > 14*24*3600 {
+			return false
+		}
+		return true
+	}
+	if !create {
+		return false
+	}
+	unix := time.Now().Unix()
+
+	pubKeyBytes, _ := assets.ReadFile("public.pem")
+	itoa := strconv.Itoa(int(unix))
+	md5 := util.MD5(id + itoa + string(pubKeyBytes))
+	err := os.WriteFile(firstRunFile, []byte(md5+"."+itoa), 0600)
+	if err != nil {
+		log.Println(err)
+	}
+	return true
+}
+
+// 生成许可证
+
+func generateLicense(lType LicenseType, privateKeyPath string, expiryDays int) (string, error) {
+	expiry := time.Now().AddDate(0, 0, expiryDays)
+	dataToSign := fmt.Sprintf("%s:%s:%d", lType, getMac()+getSerialNumber(), expiry.Unix())
+
+	// 加载私钥
+	privateKeyBytes, _ := os.ReadFile(privateKeyPath)
+	block, _ := pem.Decode(privateKeyBytes)
+	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	if err != nil {
+		return "", err
+	}
+
+	// 计算签名
+	hashed := sha256.Sum256([]byte(dataToSign))
+	signature, err := rsa.SignPKCS1v15(rand.Reader, privateKey, crypto.SHA256, hashed[:])
+	if err != nil {
+		return "", err
+	}
+
+	// 构建 License JSON
+	license := LicenseInfo{
+		Type:       lType,
+		DeviceID:   getMac() + getSerialNumber(),
+		ExpiryTime: expiry,
+		Signature:  base64.StdEncoding.EncodeToString(signature),
+	}
+
+	jsonData, _ := json.Marshal(license)
+	return string(jsonData), nil
+}
+
+func TrialLicense() {
+
+	id := getMac() + getSerialNumber()
+
+	now := time.Now()
+	now = now.AddDate(0, 0, -16)
+
+	unix := now.Unix()
+
+	pubKeyBytes, _ := assets.ReadFile("public.pem")
+	itoa := strconv.Itoa(int(unix))
+	md5 := util.MD5(id + itoa + string(pubKeyBytes))
+	err := os.WriteFile(firstRunFile, []byte(md5+"."+itoa), 0600)
+	if err != nil {
+		log.Println(err)
+	}
 }
