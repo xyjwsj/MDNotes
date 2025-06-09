@@ -247,9 +247,7 @@ func GenerateLicense(lType LicenseType, privateKeyPath string, expiryDays int) (
 	return string(jsonData), nil
 }
 
-func TrialLicense() {
-
-	id := getMac() + getSerialNumber()
+func TrialLicense(deviceId string) {
 
 	now := time.Now()
 	now = now.AddDate(0, 0, -16)
@@ -258,7 +256,7 @@ func TrialLicense() {
 
 	pubKeyBytes, _ := assets.ReadFile("public.pem")
 	itoa := strconv.Itoa(int(unix))
-	md5 := util.MD5(id + itoa + string(pubKeyBytes))
+	md5 := util.MD5(deviceId + itoa + string(pubKeyBytes))
 	err := os.WriteFile(firstRunFile, []byte(md5+"."+itoa), 0600)
 	if err != nil {
 		log.Println(err)

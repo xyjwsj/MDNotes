@@ -39,6 +39,7 @@ class ModalView {
     public cancelText: string
     public width: number | string
     public icon: any
+    public modal: any
 
     constructor() {
         this.title = "删除"
@@ -50,14 +51,14 @@ class ModalView {
     }
 
     public show() {
-        const modal = Modal.confirm({
+        this.modal = Modal.confirm({
             style: {
                 backgroundColor: settingInfoStore.DarkTheme() ? '#1E1F22  !important' : 'white',
                 color: settingInfoStore.DarkTheme() ? 'white' : 'black',
                 borderRadius: '10px',
                 boxShadow: '0 0 20px 1px gray'
             },
-            closeIcon: <CloseOutlined style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}} onClick={() => modal.destroy()}/>,
+            closeIcon: <CloseOutlined style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}} onClick={() => this.modal.destroy()}/>,
             width: this.width,
             title: <span style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}}>{this.title}</span>,
             mask: false,
@@ -81,14 +82,14 @@ class ModalView {
                             if (this.cancelCall) {
                                 let booleanPromise = await this.cancelCall();
                                 if (booleanPromise) {
-                                    modal.destroy()
+                                    this.modal.destroy()
                                 }
                                 return
                             }
                             if (this.cancel) {
                                 this.cancel()
                             }
-                            modal.destroy()
+                            this.modal.destroy()
                         }}
                     >
                         {this.cancelText}
@@ -99,14 +100,14 @@ class ModalView {
                             if (this.okCall) {
                                 let booleanPromise = await this.okCall();
                                 if (booleanPromise) {
-                                    modal.destroy()
+                                    this.modal.destroy()
                                 }
                                 return
                             }
                             if (this.ok) {
                                 this.ok()
                             }
-                            modal.destroy()
+                            this.modal.destroy()
                         }}
                     >
                         {this.okText}
@@ -114,6 +115,12 @@ class ModalView {
                 </ActionBtn>
             }
         });
+    }
+
+    public destroy = () => {
+        if (this.modal) {
+            this.modal.destroy()
+        }
     }
 }
 

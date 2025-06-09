@@ -13,13 +13,13 @@ import {
     BulbOutlined,
     CheckOutlined,
     CloseOutlined,
+    CloudUploadOutlined,
     DeleteOutlined,
     ExportOutlined,
-    MenuOutlined,
+    LayoutOutlined,
     MoreOutlined,
     PlusOutlined,
     SearchOutlined,
-    SettingOutlined,
     SolutionOutlined,
 } from "@ant-design/icons-vue";
 import {Dropdown, Image, Input, Menu, MenuItem} from "ant-design-vue";
@@ -629,7 +629,7 @@ export default defineComponent({
                             <div class={'action'} onClick={() => {
                                 showList.value = !showList.value
                             }}>
-                                <MenuOutlined/>
+                                <LayoutOutlined />
                             </div>
                             <Dropdown
                                 class={"action"}
@@ -639,17 +639,17 @@ export default defineComponent({
                                     <MenuItemView onClick={() => exportFile()}>
                                         <ExportOutlined/>
                                     </MenuItemView>
+                                    <MenuItemView onClick={() => deleteFile()}>
+                                        <DeleteOutlined/>
+                                    </MenuItemView>
                                     <MenuItemView onClick={changeLang}>
                                         {locale.value === 'zh-CN' ? 'EN' : '中'}
                                     </MenuItemView>
                                     <MenuItemView onClick={SwitchTheme}>
                                         <BulbOutlined/>
                                     </MenuItemView>
-                                    <MenuItemView onClick={() => deleteFile()}>
-                                        <DeleteOutlined/>
-                                    </MenuItemView>
                                     <MenuItemView onClick={configStore}>
-                                        <SettingOutlined/>
+                                        <CloudUploadOutlined />
                                     </MenuItemView>
                                     <MenuItemView onClick={() => showLicense()}>
                                         <SolutionOutlined/>

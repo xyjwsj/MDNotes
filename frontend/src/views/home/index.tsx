@@ -5,6 +5,9 @@ import {defineComponent, inject, onMounted, reactive, ref} from "vue";
 import styled from "vue3-styled-components";
 import {settingInfoStore} from "@/store/modules/settings.ts";
 import {useI18n} from "vue-i18n";
+import {Image} from "ant-design-vue";
+import {ModalView} from "@/util/modalUtil.tsx";
+import appicon from '@/assets/png/appicon.png'
 
 export default defineComponent({
     name: "Home",
@@ -33,13 +36,70 @@ export default defineComponent({
         `;
 
         const EditorView = styled.div`
-            border: none;
+            border: none !important;
             height: 100px;
 
             .vditor-toolbar {
                 border: none;
             }
         `;
+
+        const TemplateView = styled.div`
+            max-height: 450px;
+            overflow-y: auto;
+            border-radius: 8px;
+            padding: 20px 5px;
+
+            ::-webkit-scrollbar {
+                display: none;
+            }
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-around;
+            .item {
+                color: ${() => settingInfoStore.DarkTheme() ? 'white' : 'black'};
+                //width: 120px;
+                //height: 120px;
+                width: 40%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 5px;
+            }
+        `
+
+        const templateInfo = reactive([
+            {
+                name: '五线谱',
+                icon: appicon,
+            },
+            {
+                name: '数学公式',
+                icon: appicon,
+            },
+            {
+                name: '大纲',
+                icon: appicon,
+            },
+            {
+                name: '大纲',
+                icon: appicon,
+            },
+            {
+                name: '大纲',
+                icon: appicon,
+            },
+            {
+                name: '大纲',
+                icon: appicon,
+            },
+            {
+                name: '大纲',
+                icon: appicon,
+            }
+        ])
 
         const editorInfo = reactive({
             fileKey: "",
@@ -145,12 +205,48 @@ export default defineComponent({
         expose({updateContent, updateTheme});
         // expose({updateTheme})
 
+        const command = ref(false)
+        const action = ref(false)
+
+        const showMDTemplate = () => {
+            if (!command.value || !action.value) {
+                return
+            }
+            command.value = false
+            action.value = false
+            const modalView =  new ModalView()
+            modalView.title = "选择插入模版"
+            modalView.okText = ""
+            modalView.cancelText = ""
+            modalView.closed = true
+            modalView.width = "60%"
+            modalView.content = <TemplateView>
+                {templateInfo.map(item => {
+                    return <div class={'item'} onDblclick={() => {
+                        modalView.destroy()
+                    }}>
+                        <Image src={item.icon} preview={false}></Image>
+                        <span>{item.name}</span>
+                    </div>
+                })}
+            </TemplateView>
+            modalView.show()
+        }
 
         return () => (
             <Container>
                 <EditorView
                     id="vditor"
                     ref={(el) => (vditorRef.value = el)}
+                    onKeydown={(event) => {
+                        if (event.keyCode === 91) {
+                            command.value = true
+                        }
+                        if (event.keyCode === 73) {
+                            action.value = true
+                        }
+                        showMDTemplate()
+                    }}
                 ></EditorView>
                 <span class={'counter'}>{wordCounter.value}</span>
             </Container>
