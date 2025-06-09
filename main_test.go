@@ -4,6 +4,7 @@ import (
 	"changeme/mgr"
 	"changeme/model"
 	"changeme/util"
+	"log"
 	"testing"
 )
 
@@ -19,6 +20,7 @@ func TestCopy(t *testing.T) {
 
 func TestLicence(t *testing.T) {
 	//mgr.ValidateLicence()
-	mgr.TrailUse(true)
+	use := mgr.TrailUse(false)
+	log.Println(use)
 	//mgr.TrialLicense()
 }

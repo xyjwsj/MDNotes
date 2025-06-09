@@ -27,6 +27,8 @@ const enLocale = {
     validate: 'Validate',
     trial: 'Trial',
     trialEnd: 'Trial end',
+    trialTip: 'You have a 14-day trial period. We kindly request that you purchase the official license promptly.',
+    licenseExpired: 'Your license has expired at',
 }
 
 export default enLocale

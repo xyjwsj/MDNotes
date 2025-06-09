@@ -5,18 +5,19 @@ import {useI18n} from "vue-i18n";
 import {settingInfoStore} from "@/store/modules/settings.ts";
 import {ModalView} from "@/util/modalUtil.tsx";
 import {TipError, TipWarning} from "@/util/messageUtil.tsx";
-import {CreateLicense} from "@/bindings/changeme/handler/systemhandler.ts";
+import {CreateLicense, Trial} from "@/bindings/changeme/handler/systemhandler.ts";
 import {Input} from "ant-design-vue";
 
 export default defineComponent({
     setup() {
 
-        const { t, locale} = useI18n();
+        const {t, locale} = useI18n();
 
         const RootView = styled.div`
             width: 100vw;
             height: 850px;
             position: relative; /* 设置相对定位，以便伪元素可以相对于此元素定位 */
+
             > * {
                 position: relative;
                 z-index: 2; /* 确保子元素在伪元素之上 */
@@ -69,7 +70,14 @@ export default defineComponent({
 
         })
 
-        const showLicense = (ok?: (res: boolean) => void, cancel?: () => Promise<boolean>) => {
+        const LicenseView = styled.div`
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        `
+
+        const showLicense = async (ok?: () => void) => {
+            const expired = await Trial(false)
 
             const license = ref("")
 
@@ -77,9 +85,13 @@ export default defineComponent({
             modalView.width = '50%'
             modalView.title = t('license')
             modalView.okText = t('validate')
-            modalView.cancelText = t('trial')
+            if (expired === "") {
+                modalView.cancelText = t('trial')
+            } else {
+                modalView.cancelText = ""
+            }
             modalView.closed = true
-            modalView.content = <div>
+            modalView.content = <LicenseView>
                 <InputView
                     class={"inputC"}
                     bordered={false}
@@ -88,12 +100,20 @@ export default defineComponent({
                     onChange={(e) => (license.value = e.target.value!)}
                 ></InputView>
                 <span style={{
-                    color: settingInfoStore.DarkTheme()?"lightgray":"gray",
+                    color: settingInfoStore.DarkTheme() ? "lightgray" : "gray",
                 }}>{`${t('licenseTip')}：xyjwsj`}</span>
-            </div>
+                {expired !== ""  && <span style={{
+                    color: settingInfoStore.DarkTheme() ? "lightgray" : "gray",
+                }}>{`${t('licenseExpired')} ${expired}`}</span>}
+            </LicenseView>
             modalView.cancelCall = async () => {
-                if (cancel) {
-                    return await cancel()
+                const res = await Trial(true)
+                if (res == "") {
+                    TipError(t('trialEnd'))
+                    return false
+                }
+                if (ok) {
+                    ok()
                 }
                 return true
             }
@@ -103,13 +123,13 @@ export default defineComponent({
                     return false
                 }
                 let createLicense = await CreateLicense(license.value);
-                if(createLicense) {
+                if (createLicense) {
                     TipWarning(t('success'))
                 } else {
                     TipError(t('licenseIncorrect'))
                 }
                 if (ok) {
-                    ok(createLicense)
+                    ok()
                 }
                 return createLicense
             }

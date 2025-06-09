@@ -61,6 +61,7 @@ export default defineComponent({
         const initVditor = (defaultVal: string) => {
             vditor.value = new Vditor("vditor", {
                 theme: settingInfoStore.DarkTheme() ? 'dark' : 'classic',
+                // theme: 'dark',
                 height: "810px",
                 toolbar: [],
                 toolbarConfig: {

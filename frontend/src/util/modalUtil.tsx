@@ -57,7 +57,7 @@ class ModalView {
                 borderRadius: '10px',
                 boxShadow: '0 0 20px 1px gray'
             },
-            closeIcon: <CloseOutlined style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}}/>,
+            closeIcon: <CloseOutlined style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}} onClick={() => modal.destroy()}/>,
             width: this.width,
             title: <span style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}}>{this.title}</span>,
             mask: false,
@@ -75,7 +75,7 @@ class ModalView {
             },
             footer: () => {
                 return <ActionBtn>
-                    <Button
+                    {this.cancelText !== ""  && <Button
                         class={"btn"}
                         onClick={async () => {
                             if (this.cancelCall) {
@@ -92,7 +92,7 @@ class ModalView {
                         }}
                     >
                         {this.cancelText}
-                    </Button>
+                    </Button>}
                     <Button
                         class={"btn"}
                         onClick={async () => {

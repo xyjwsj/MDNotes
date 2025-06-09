@@ -27,6 +27,8 @@ const zhLocale = {
   validate: '验证',
   trial: '试用',
   trialEnd: '试用结束',
+  trialTip: '试用时间为14天，请您尽快购买正式许可证',
+  licenseExpired: '许可证过期时间',
 }
 
 export default zhLocale

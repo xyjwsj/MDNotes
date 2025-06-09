@@ -33,7 +33,7 @@ export function Start(): Promise<boolean> & { cancel(): void } {
     return $resultPromise;
 }
 
-export function Trial(create: boolean): Promise<boolean> & { cancel(): void } {
+export function Trial(create: boolean): Promise<string> & { cancel(): void } {
     let $resultPromise = $Call.ByID(1901518091, create) as any;
     return $resultPromise;
 }

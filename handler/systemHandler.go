@@ -24,14 +24,12 @@ func (system *SystemHandler) CreateLicense(license string) bool {
 	return mgr.CreateLicence(license)
 }
 
-func (system *SystemHandler) Trial(create bool) bool {
+func (system *SystemHandler) Trial(create bool) string {
 	licence := mgr.ValidateLicence()
 	if licence == "" {
-		if !mgr.TrailUse(create) {
-			return false
-		}
+		return mgr.TrailUse(create)
 	}
-	return true
+	return ""
 }
 
 func (system *SystemHandler) Start() bool {

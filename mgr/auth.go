@@ -154,7 +154,7 @@ func ValidateLicence() string {
 
 var firstRunFile = "/tmp/MDNote/.first_run"
 
-func TrailUse(create bool) bool {
+func TrailUse(create bool) string {
 	base := filepath.Dir(firstRunFile)
 	if !util.Exists(base) {
 		err := os.MkdirAll(base, 0755)
@@ -167,21 +167,23 @@ func TrailUse(create bool) bool {
 		fileCon, _ := os.ReadFile(firstRunFile)
 		split := strings.Split(string(fileCon), ".")
 		if len(split) != 2 {
-			return false
+			return ""
 		}
 		pubKeyBytes, _ := assets.ReadFile("public.pem")
 		md5 := util.MD5(id + split[1] + string(pubKeyBytes))
 		if split[0] != md5 {
-			return false
+			return ""
 		}
 		timestamp, _ := strconv.Atoi(split[1])
 		if time.Now().Unix()-int64(timestamp) > 14*24*3600 {
-			return false
+			return ""
 		}
-		return true
+		unix := time.Unix(int64(timestamp), 0)
+		unix = unix.AddDate(0, 0, 14)
+		return unix.Format("2006-01-02 15:04:05")
 	}
 	if !create {
-		return false
+		return ""
 	}
 	unix := time.Now().Unix()
 
@@ -192,7 +194,7 @@ func TrailUse(create bool) bool {
 	if err != nil {
 		log.Println(err)
 	}
-	return true
+	return time.UnixMilli(unix).Format("2006-01-02 15:04:05")
 }
 
 // 生成许可证
