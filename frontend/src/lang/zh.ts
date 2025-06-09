@@ -29,6 +29,7 @@ const zhLocale = {
   trialEnd: '试用结束',
   trialTip: '试用时间为14天，请您尽快购买正式许可证',
   licenseExpired: '许可证过期时间',
+  uniqueId: '机器码ID',
 }
 
 export default zhLocale

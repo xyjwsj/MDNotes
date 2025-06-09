@@ -9,6 +9,10 @@ import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 // @ts-ignore: Unused imports
 import * as model$0 from "../model/models.js";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as $models from "./models.js";
+
 export function ConfigStore(url: string, username: string, token: string): Promise<boolean> & { cancel(): void } {
     let $resultPromise = $Call.ByID(1691545528, url, username, token) as any;
     return $resultPromise;
@@ -33,10 +37,15 @@ export function Start(): Promise<boolean> & { cancel(): void } {
     return $resultPromise;
 }
 
-export function Trial(create: boolean): Promise<string> & { cancel(): void } {
+export function Trial(create: boolean): Promise<$models.License> & { cancel(): void } {
     let $resultPromise = $Call.ByID(1901518091, create) as any;
-    return $resultPromise;
+    let $typingPromise = $resultPromise.then(($result: any) => {
+        return $$createType1($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
 }
 
 // Private type creation functions
 const $$createType0 = model$0.Preference.createFrom;
+const $$createType1 = $models.License.createFrom;

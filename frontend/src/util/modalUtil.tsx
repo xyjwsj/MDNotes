@@ -93,7 +93,7 @@ class ModalView {
                     >
                         {this.cancelText}
                     </Button>}
-                    <Button
+                    {this.okText !== ""  && <Button
                         class={"btn"}
                         onClick={async () => {
                             if (this.okCall) {
@@ -110,7 +110,7 @@ class ModalView {
                         }}
                     >
                         {this.okText}
-                    </Button>
+                    </Button>}
                 </ActionBtn>
             }
         });

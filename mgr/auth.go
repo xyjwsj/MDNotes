@@ -91,6 +91,15 @@ func getSerialNumber() string {
 	return serialNumber
 }
 
+func UniqueId() string {
+	id := getMac() + getSerialNumber()
+	return util.MD5(id)
+}
+
+func ValidateLicense(license string) {
+	validateLicense(license)
+}
+
 func validateLicense(licenseStr string) (LicenseInfo, error) {
 	var license LicenseInfo
 	err := json.Unmarshal([]byte(licenseStr), &license)
@@ -104,7 +113,7 @@ func validateLicense(licenseStr string) (LicenseInfo, error) {
 	}
 
 	// 重新构造原始数据并计算签名
-	rawData := fmt.Sprintf("%s:%d", license.DeviceID, license.ExpiryTime.Unix())
+	rawData := fmt.Sprintf("%s:%s:%d", Production, license.DeviceID, license.ExpiryTime.Unix())
 	hashed := sha256.Sum256([]byte(rawData))
 
 	// 加载公钥
@@ -122,7 +131,8 @@ func validateLicense(licenseStr string) (LicenseInfo, error) {
 }
 
 func CreateLicence(license string) bool {
-	_, err := validateLicense(license)
+	decode, _ := util.Base64Decode(license, true)
+	_, err := validateLicense(decode)
 	if err != nil {
 		return false
 	}
@@ -142,7 +152,8 @@ func ValidateLicence() string {
 			if err != nil {
 				continue
 			}
-			license, err := validateLicense(string(licenseData))
+			decode, _ := util.Base64Decode(string(licenseData), true)
+			license, err := validateLicense(decode)
 			if err != nil {
 				return ""
 			}
@@ -162,7 +173,7 @@ func TrailUse(create bool) string {
 			log.Println(err)
 		}
 	}
-	id := getMac() + getSerialNumber()
+	uniqueId := UniqueId()
 	if util.Exists(firstRunFile) {
 		fileCon, _ := os.ReadFile(firstRunFile)
 		split := strings.Split(string(fileCon), ".")
@@ -170,7 +181,7 @@ func TrailUse(create bool) string {
 			return ""
 		}
 		pubKeyBytes, _ := assets.ReadFile("public.pem")
-		md5 := util.MD5(id + split[1] + string(pubKeyBytes))
+		md5 := util.MD5(uniqueId + split[1] + string(pubKeyBytes))
 		if split[0] != md5 {
 			return ""
 		}
@@ -189,7 +200,7 @@ func TrailUse(create bool) string {
 
 	pubKeyBytes, _ := assets.ReadFile("public.pem")
 	itoa := strconv.Itoa(int(unix))
-	md5 := util.MD5(id + itoa + string(pubKeyBytes))
+	md5 := util.MD5(uniqueId + itoa + string(pubKeyBytes))
 	err := os.WriteFile(firstRunFile, []byte(md5+"."+itoa), 0600)
 	if err != nil {
 		log.Println(err)
@@ -199,21 +210,27 @@ func TrailUse(create bool) string {
 
 // 生成许可证
 
-func generateLicense(lType LicenseType, privateKeyPath string, expiryDays int) (string, error) {
+func GenerateLicense(lType LicenseType, privateKeyPath string, expiryDays int) (string, error) {
 	expiry := time.Now().AddDate(0, 0, expiryDays)
-	dataToSign := fmt.Sprintf("%s:%s:%d", lType, getMac()+getSerialNumber(), expiry.Unix())
+	dataToSign := fmt.Sprintf("%s:%s:%d", lType, UniqueId(), expiry.Unix())
 
 	// 加载私钥
 	privateKeyBytes, _ := os.ReadFile(privateKeyPath)
 	block, _ := pem.Decode(privateKeyBytes)
-	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	privateKey, err := x509.ParsePKCS8PrivateKey(block.Bytes)
 	if err != nil {
 		return "", err
 	}
 
+	// 确保是 *rsa.PrivateKey 类型
+	rsaPrivateKey, ok := privateKey.(*rsa.PrivateKey)
+	if !ok {
+		return "", fmt.Errorf("not an RSA private key")
+	}
+
 	// 计算签名
 	hashed := sha256.Sum256([]byte(dataToSign))
-	signature, err := rsa.SignPKCS1v15(rand.Reader, privateKey, crypto.SHA256, hashed[:])
+	signature, err := rsa.SignPKCS1v15(rand.Reader, rsaPrivateKey, crypto.SHA256, hashed[:])
 	if err != nil {
 		return "", err
 	}

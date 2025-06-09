@@ -69,16 +69,19 @@ export default defineComponent({
 
         const showLicense: any = inject('showLicense')
 
+        const HomePage = () => {
+            setTimeout(()=> {
+                router.replace({name: 'Home'})
+            }, 3000)
+        }
+
         onMounted(async () => {
             const res = await Trial(false)
             if (res) {
-                router.replace({name: 'Home'})
+                HomePage()
             } else {
                 showLicense(() => {
-                    debugger
-                    setTimeout(() => {
-                        router.replace({name: 'Home'})
-                    }, 500)
+                    HomePage()
                 })
             }
         })

@@ -17,6 +17,7 @@ export default defineComponent({
             width: 100vw;
             height: 850px;
             position: relative; /* 设置相对定位，以便伪元素可以相对于此元素定位 */
+            background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.8)' : 'white'};
 
             > * {
                 position: relative;
@@ -77,38 +78,48 @@ export default defineComponent({
         `
 
         const showLicense = async (ok?: () => void) => {
-            const expired = await Trial(false)
+            const licenseInfo = await Trial(false)
 
             const license = ref("")
 
             const modalView = new ModalView()
             modalView.width = '50%'
             modalView.title = t('license')
-            modalView.okText = t('validate')
-            if (expired === "") {
+            if (licenseInfo.content === "") {
                 modalView.cancelText = t('trial')
+                modalView.okText = t('validate')
             } else {
-                modalView.cancelText = ""
+                if (licenseInfo.type === 'production') {
+                    modalView.okText = ""
+                    modalView.cancelText = ""
+                }
+                if (licenseInfo.type === 'trial') {
+                    modalView.okText = t('validate')
+                    modalView.cancelText = ""
+                }
             }
             modalView.closed = true
             modalView.content = <LicenseView>
-                <InputView
+                {licenseInfo.deviceId !== ""  && <span style={{
+                    color: settingInfoStore.DarkTheme() ? "lightgray" : "gray",
+                }}>{`${t('uniqueId')}：${licenseInfo.deviceId}`}</span>}
+                {modalView.okText !== "" && <InputView
                     class={"inputC"}
                     bordered={false}
                     placeholder={t('input') + t('license')}
                     defaultValue={license.value}
                     onChange={(e) => (license.value = e.target.value!)}
-                ></InputView>
+                ></InputView>}
                 <span style={{
                     color: settingInfoStore.DarkTheme() ? "lightgray" : "gray",
                 }}>{`${t('licenseTip')}：xyjwsj`}</span>
-                {expired !== ""  && <span style={{
+                {licenseInfo.content !== ""  && <span style={{
                     color: settingInfoStore.DarkTheme() ? "lightgray" : "gray",
-                }}>{`${t('licenseExpired')} ${expired}`}</span>}
+                }}>{`${t('licenseExpired')} ${licenseInfo.content}`}</span>}
             </LicenseView>
             modalView.cancelCall = async () => {
                 const res = await Trial(true)
-                if (res == "") {
+                if (res.content === "") {
                     TipError(t('trialEnd'))
                     return false
                 }

@@ -5,6 +5,12 @@ import (
 	"changeme/model"
 )
 
+type License struct {
+	DeviceId string `json:"deviceId"`
+	Content  string `json:"content"`
+	Type     string `json:"type"`
+}
+
 type SystemHandler struct {
 }
 
@@ -24,12 +30,21 @@ func (system *SystemHandler) CreateLicense(license string) bool {
 	return mgr.CreateLicence(license)
 }
 
-func (system *SystemHandler) Trial(create bool) string {
+func (system *SystemHandler) Trial(create bool) License {
 	licence := mgr.ValidateLicence()
-	if licence == "" {
-		return mgr.TrailUse(create)
+	if licence != "" {
+		return License{
+			DeviceId: mgr.UniqueId(),
+			Content:  licence,
+			Type:     "production",
+		}
 	}
-	return ""
+	use := mgr.TrailUse(create)
+	return License{
+		DeviceId: mgr.UniqueId(),
+		Content:  use,
+		Type:     "trial",
+	}
 }
 
 func (system *SystemHandler) Start() bool {
