@@ -96,6 +96,78 @@ export default defineComponent({
         '  }\n' +
         '}'
 
+    const lctContent = '```mermaid\n' +
+        'graph TB\n' +
+        '    c1-->a2\n' +
+        '    subgraph one\n' +
+        '    a1-->a2\n' +
+        '    end\n' +
+        '    subgraph two\n' +
+        '    b1-->b2\n' +
+        '    end\n' +
+        '    subgraph three\n' +
+        '    c1-->c2\n' +
+        '    end'
+
+    const ntContent = '```mindmap\n' +
+        '- 教程\n' +
+        '- 语法指导\n' +
+        '  - 普通内容\n' +
+        '  - 提及用户\n' +
+        '  - 表情符号 Emoji\n' +
+        '    - 一些表情例子\n' +
+        '  - 大标题 - Heading 3\n' +
+        '    - Heading 4\n' +
+        '      - Heading 5\n' +
+        '        - Heading 6\n' +
+        '  - 图片\n' +
+        '  - 代码块\n' +
+        '    - 普通\n' +
+        '    - 语法高亮支持\n' +
+        '      - 演示 Go 代码高亮\n' +
+        '      - 演示 Java 高亮\n' +
+        '  - 有序、无序、任务列表\n' +
+        '    - 无序列表\n' +
+        '    - 有序列表\n' +
+        '    - 任务列表\n' +
+        '  - 表格\n' +
+        '- 快捷键'
+
+    const sxtContent = '```mermaid\n' +
+        'sequenceDiagram\n' +
+        '    Alice->>John: Hello John, how are you?\n' +
+        '    loop Every minute\n' +
+        '        John-->>Alice: Great!\n' +
+        '    end'
+
+    const gttContent = '```mermaid\n' +
+        'gantt\n' +
+        '    title A Gantt Diagram\n' +
+        '    dateFormat  YYYY-MM-DD\n' +
+        '    section Section\n' +
+        '    A task           :a1, 2019-01-01, 30d\n' +
+        '    Another task     :after a1  , 20d\n' +
+        '    section Another\n' +
+        '    Task in sec      :2019-01-12  , 12d\n' +
+        '    another task      : 24d'
+
+    const graphvizContent = '```graphviz\n' +
+        'digraph finite_state_machine {\n' +
+        '    rankdir=LR;\n' +
+        '    size="8,5"\n' +
+        '    node [shape = doublecircle]; S;\n' +
+        '    node [shape = point ]; qi\n' +
+        '\n' +
+        '    node [shape = circle];\n' +
+        '    qi -> S;\n' +
+        '    S  -> q1 [ label = "a" ];\n' +
+        '    S  -> S  [ label = "a" ];\n' +
+        '    q1 -> S  [ label = "a" ];\n' +
+        '    q1 -> q2 [ label = "ddb" ];\n' +
+        '    q2 -> q1 [ label = "b" ];\n' +
+        '    q2 -> q2 [ label = "b" ];\n' +
+        '}'
+
     const templateInfo = reactive([
       {
         name: "五线谱",
@@ -116,30 +188,35 @@ export default defineComponent({
         lightIcon: ntLightIcon,
         darkIcon: ntDarkIcon,
         key: 'nt',
+        template: ntContent,
       },
       {
         name: "流程图",
         lightIcon: lctLightIcon,
         darkIcon: lctDarkIcon,
         key: 'lct',
+        template: lctContent,
       },
       {
         name: "时序图",
         lightIcon: sxtLightIcon,
         darkIcon: sxtDarkIcon,
         key: 'sxt',
+        template: sxtContent,
       },
       {
         name: "甘特图",
         lightIcon: gttLightIcon,
         darkIcon: gttDarkIcon,
         key: 'gtt',
+        template: gttContent,
       },
       {
         name: "Graphviz",
         lightIcon: graphvizLightIcon,
         darkIcon: graphvizDarkIcon,
         key: 'graphviz',
+        template: graphvizContent,
       },
     ]);
 
@@ -159,6 +236,15 @@ export default defineComponent({
       console.log("vditorRerf", vditorRef);
       initVditor("");
     });
+
+    const syncContent = async (content: string) => {
+      const success = await SyncFile(editorInfo.fileKey, content);
+      if (success !== "") {
+        updateFileSize(editorInfo.fileKey, success);
+      }
+      wordCounter.value = content.length;
+      console.log("SyncFile", editorInfo.fileName, success);
+    }
 
     const initVditor = (defaultVal: string) => {
       vditor.value = new Vditor("vditor", {
@@ -180,12 +266,7 @@ export default defineComponent({
           );
         },
         input: async (val: string) => {
-          const success = await SyncFile(editorInfo.fileKey, val);
-          if (success !== "") {
-            updateFileSize(editorInfo.fileKey, success);
-          }
-          wordCounter.value = val.length;
-          console.log("SyncFile", editorInfo.fileName, success);
+          syncContent(val)
         },
         upload: {
           accept: "image/*",
@@ -263,9 +344,10 @@ export default defineComponent({
             return (
               <div
                 class={"item"}
-                onDblclick={() => {
+                onDblclick={async () => {
                   const content = vditor.value?.getValue() + "\n" + item.template;
                   vditor.value!.setValue(content, true);
+                  await syncContent(content)
                   DestroyModal()
                 }}
               >

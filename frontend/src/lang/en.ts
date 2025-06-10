@@ -43,6 +43,8 @@ const enLocale = {
     system: 'System',
     showSidebar: 'Show Sidebar',
     hiddenSidebar: 'Hide Sidebar',
+    selectUp: 'Select Previous',
+    selectDown: 'Select Next',
 }
 
 export default enLocale

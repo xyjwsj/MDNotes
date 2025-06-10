@@ -42,7 +42,9 @@ const zhLocale = {
   english: '英文',
   system: '系统',
   showSidebar: '显示侧边栏',
-  hiddenSidebar: '隐藏侧边栏'
+  hiddenSidebar: '隐藏侧边栏',
+  selectUp: '选择上一个',
+  selectDown: '选择下一个',
 }
 
 export default zhLocale

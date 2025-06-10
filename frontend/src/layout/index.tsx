@@ -35,7 +35,7 @@ import moment from "moment/moment";
 import {
     defineComponent,
     inject,
-    KeepAlive,
+    KeepAlive, nextTick,
     onMounted,
     onUnmounted,
     provide,
@@ -474,11 +474,19 @@ export default defineComponent({
                 deleteFile()
             })
             Mousetrap.bind("command+r", () => {
-                // TipWarning('新建文件')
+                rename()
             })
 
             Mousetrap.bind("command+l", () => {
                 changeLang()
+            })
+
+            Mousetrap.bind("command+up", () => {
+                selectFile(true)
+            })
+
+            Mousetrap.bind("command+down", () => {
+                selectFile(false)
             })
 
             Mousetrap.bind("command+shift+l", () => {
@@ -490,6 +498,10 @@ export default defineComponent({
             Mousetrap.bind("command+shift+right", () => {
                 showList.value = true;
             })
+        }
+
+        const selectFile = (previous: boolean) => {
+
         }
 
         const hotKeyInfo = reactive([
@@ -507,6 +519,12 @@ export default defineComponent({
                         desc: t('deleteFile'),
                     }, {
                         key: '⌘+R',
+                        desc: t('rename'),
+                    },{
+                        key: '⌘+↑',
+                        desc: t('rename'),
+                    },{
+                        key: '⌘+↓',
                         desc: t('rename'),
                     },
                 ]
@@ -590,6 +608,25 @@ export default defineComponent({
         onUnmounted(() => {
 
         });
+
+        const renameCom = ref<any>(null)
+
+        const rename = () => {
+            const filter = fileList.value.filter(item => item.uuid === selectFileKey.value);
+            if (filter.length > 0) {
+                editFileKey.value = selectFileKey.value
+                tempInfo.name = filter[0].fileName;
+                // renameCom.value.focus()
+                updateFileName();
+                nextTick(() => {
+                    const inputEl = renameCom.value?.$el?.querySelector('input');
+                    if (inputEl) {
+                        inputEl.focus();
+                        inputEl.select();
+                    }
+                });
+            }
+        }
 
         const languageInfo = reactive([
             {
@@ -976,6 +1013,7 @@ export default defineComponent({
                                         >
                                             {editFileKey.value === item.uuid && (
                                                 <Input
+                                                    ref={(e) => renameCom.value = e}
                                                     key={item.uuid}
                                                     class={"editInput"}
                                                     bordered={false}
