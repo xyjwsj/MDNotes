@@ -7,15 +7,12 @@ import {
   ModifyName,
   Search,
 } from "@/bindings/changeme/handler/filehandler.ts";
-import {
-  ConfigStore,
-  PreferenceInfo,
-} from "@/bindings/changeme/handler/systemhandler.ts";
-import { RecordInfo } from "@/bindings/changeme/model";
-import { settingInfoStore } from "@/store/modules/settings.ts";
-import { SameDay } from "@/util/dateUtil.ts";
-import { TipSuccess, TipWarning } from "@/util/messageUtil.tsx";
-import { ModalView } from "@/util/modalUtil.tsx";
+import {ConfigStore, PreferenceInfo,} from "@/bindings/changeme/handler/systemhandler.ts";
+import {RecordInfo} from "@/bindings/changeme/model";
+import {settingInfoStore} from "@/store/modules/settings.ts";
+import {SameDay} from "@/util/dateUtil.ts";
+import {TipSuccess, TipWarning} from "@/util/messageUtil.tsx";
+import {DestroyModal, ModalView, ShowModal} from "@/util/modalUtil.tsx";
 import {
   BulbOutlined,
   CheckOutlined,
@@ -29,7 +26,7 @@ import {
   SearchOutlined,
   SolutionOutlined,
 } from "@ant-design/icons-vue";
-import { Dropdown, Image, Input, Menu, MenuItem } from "ant-design-vue";
+import {Dropdown, Image, Input, Menu, MenuItem} from "ant-design-vue";
 import moment from "moment/moment";
 import {
   defineComponent,
@@ -43,13 +40,14 @@ import {
   Transition,
   TransitionGroup,
 } from "vue";
-import { useI18n } from "vue-i18n";
-import { RouterView } from "vue-router";
+import {useI18n} from "vue-i18n";
+import {RouterView} from "vue-router";
 import styled from "vue3-styled-components";
+import Mousetrap from "mousetrap";
 
 export default defineComponent({
   name: "Layout",
-  setup(_, { expose }) {
+  setup(_) {
     const Container = styled.div`
       margin: 0 auto;
       width: 100%;
@@ -114,13 +112,13 @@ export default defineComponent({
           color: ${() =>
             settingInfoStore.DarkTheme()
               ? "rgba(255, 255, 255, 0.4)"
-              : "lightgray"};
+              : "rgba(0, 0, 0, 0.4)"};
 
           &:hover {
             color: ${() =>
               settingInfoStore.DarkTheme()
                 ? "rgba(255, 255, 255, 0.8)"
-                : "gray"};
+                : "rgba(0, 0, 0, 0.7)"};
           }
         }
 
@@ -197,7 +195,7 @@ export default defineComponent({
           .action {
             height: 45px;
             color: ${() =>
-              settingInfoStore.DarkTheme() ? "gray" : "lightgray"};
+              settingInfoStore.DarkTheme() ? "gray" : "rgba(0, 0, 0, 0.4)"};
             font-size: 17px;
             display: flex;
             justify-content: flex-end;
@@ -205,7 +203,7 @@ export default defineComponent({
 
             &:hover {
               color: ${() =>
-                settingInfoStore.DarkTheme() ? "lightgray" : "gray"};
+                settingInfoStore.DarkTheme() ? "lightgray" : "rgba(0, 0, 0, 0.7)"};
             }
           }
         }
@@ -375,11 +373,11 @@ export default defineComponent({
 
     const MenuItemView = styled(MenuItem)`
       color: ${() =>
-        settingInfoStore.DarkTheme() ? "gray" : "lightgray"} !important;
+        settingInfoStore.DarkTheme() ? "gray" : "rgba(0, 0, 0, 0.4)"} !important;
 
       &:hover {
         color: ${() =>
-          settingInfoStore.DarkTheme() ? "lightgray" : "gray"} !important;
+          settingInfoStore.DarkTheme() ? "lightgray" : "rgba(0, 0, 0, 0.7)"} !important;
       }
     `;
 
@@ -410,19 +408,22 @@ export default defineComponent({
       }
     };
 
-    const keyEvent = (event: KeyboardEvent) => {
-      if (event.metaKey) {
-        if (event.key === "k") {
-          TipWarning("快捷键");
-        }
-        if (event.key === "n") {
-          TipWarning("新建");
-        }
-      }
-    };
+    const keyEvent = () => {
+      Mousetrap.bind('esc', () => {
+        DestroyModal()
+      })
+      Mousetrap.bind("command+k", () => {
+        // TipWarning('快捷键')
+      })
+      Mousetrap.bind("command+n", () => {
+        // TipWarning('新建文件')
+      })
+    }
+
+
 
     onMounted(async () => {
-      window.addEventListener("keydown", keyEvent);
+      keyEvent()
       const docs = await DocList();
       fileList.value.splice(0, fileList.value.length);
       docs.forEach((item) => {
@@ -437,7 +438,7 @@ export default defineComponent({
     });
 
     onUnmounted(() => {
-      window.removeEventListener("keydown", keyEvent);
+
     });
 
     const deleteFile = () => {
@@ -483,7 +484,8 @@ export default defineComponent({
           }
         }
       };
-      modalView.show();
+      // modalView.show();
+      ShowModal(modalView)
     };
 
     const exportFile = () => {
@@ -522,7 +524,8 @@ export default defineComponent({
           TipSuccess(`${t("exportAll")}${t("failure")}`);
         }
       };
-      modalView.show();
+      // modalView.show();
+      ShowModal(modalView)
     };
 
     const updateFileSize = (key: string, sizeStr: string) => {
@@ -598,7 +601,8 @@ export default defineComponent({
         }
       };
 
-      modalView.show();
+      // modalView.show();
+      ShowModal(modalView)
     };
 
     provide("updateFileSize", updateFileSize);

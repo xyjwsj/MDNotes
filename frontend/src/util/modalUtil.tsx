@@ -26,6 +26,8 @@ const ActionBtn = styled.div`
     }
 `;
 
+let modalViewStore: ModalView|null = null
+
 class ModalView {
     public content: any
     public ok?: () => void
@@ -60,7 +62,7 @@ class ModalView {
             },
             closeIcon: <CloseOutlined style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}} onClick={() => this.modal.destroy()}/>,
             width: this.width,
-            title: <span style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}}>{this.title}</span>,
+            title: <span style={{color: settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0,0,0,0.6)'}}>{this.title}</span>,
             mask: false,
             class: 'aaa',
             closable: this.closed,
@@ -82,14 +84,14 @@ class ModalView {
                             if (this.cancelCall) {
                                 let booleanPromise = await this.cancelCall();
                                 if (booleanPromise) {
-                                    this.modal.destroy()
+                                    DestroyModal()
                                 }
                                 return
                             }
                             if (this.cancel) {
                                 this.cancel()
                             }
-                            this.modal.destroy()
+                            DestroyModal()
                         }}
                     >
                         {this.cancelText}
@@ -100,14 +102,14 @@ class ModalView {
                             if (this.okCall) {
                                 let booleanPromise = await this.okCall();
                                 if (booleanPromise) {
-                                    this.modal.destroy()
+                                    DestroyModal()
                                 }
                                 return
                             }
                             if (this.ok) {
                                 this.ok()
                             }
-                            this.modal.destroy()
+                            DestroyModal()
                         }}
                     >
                         {this.okText}
@@ -124,6 +126,26 @@ class ModalView {
     }
 }
 
+const ShowModal = (modalView: ModalView) => {
+    if (modalViewStore !== null) {
+        modalViewStore.destroy()
+        modalViewStore = null
+    }
+    modalViewStore = modalView
+    if (modalViewStore !== null) {
+        modalViewStore.show()
+    }
+}
+
+const DestroyModal = () => {
+    if (modalViewStore !== null) {
+        modalViewStore.destroy()
+        modalViewStore = null
+    }
+}
+
 export {
     ModalView,
+    ShowModal,
+    DestroyModal,
 }

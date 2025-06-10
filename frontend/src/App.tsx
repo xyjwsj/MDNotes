@@ -4,7 +4,7 @@ import {
 } from "@/bindings/changeme/handler/systemhandler.ts";
 import { settingInfoStore } from "@/store/modules/settings.ts";
 import { TipError, TipWarning } from "@/util/messageUtil.tsx";
-import { ModalView } from "@/util/modalUtil.tsx";
+import {ModalView, ShowModal} from "@/util/modalUtil.tsx";
 import { Input } from "ant-design-vue";
 import { defineComponent, onMounted, provide, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -172,7 +172,8 @@ export default defineComponent({
         return createLicense;
       };
 
-      modalView.show();
+      // modalView.show();
+      ShowModal(modalView)
     };
 
     provide("showLicense", showLicense);

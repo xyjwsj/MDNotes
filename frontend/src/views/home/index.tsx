@@ -18,7 +18,7 @@ import {
 } from "@/bindings/changeme/handler/filehandler.js";
 import { RecordInfo } from "@/bindings/changeme/model";
 import { settingInfoStore } from "@/store/modules/settings.ts";
-import { ModalView } from "@/util/modalUtil.tsx";
+import {DestroyModal, ModalView, ShowModal} from "@/util/modalUtil.tsx";
 import { Image } from "ant-design-vue";
 import Vditor from "vditor";
 import { defineComponent, inject, onMounted, reactive, ref } from "vue";
@@ -245,7 +245,7 @@ export default defineComponent({
               <div
                 class={"item"}
                 onDblclick={() => {
-                  modalView.destroy();
+                  DestroyModal()
                 }}
               >
                 <Image
@@ -265,7 +265,8 @@ export default defineComponent({
           })}
         </TemplateView>
       );
-      modalView.show();
+      // modalView.show();
+      ShowModal(modalView)
     };
 
     expose({ updateContent, updateTheme });
