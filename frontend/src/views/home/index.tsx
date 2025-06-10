@@ -86,41 +86,60 @@ export default defineComponent({
       }
     `;
 
+    const wxpContent = ''
+    const gsContent = '$$\n' +
+        '\\frac{1}{\n' +
+        '  \\Bigl(\\sqrt{\\phi \\sqrt{5}}-\\phi\\Bigr) e^{\n' +
+        '  \\frac25 \\pi}} = 1+\\frac{e^{-2\\pi}} {1+\\frac{e^{-4\\pi}} {\n' +
+        '    1+\\frac{e^{-6\\pi}}\n' +
+        '    {1+\\frac{e^{-8\\pi}}{1+\\cdots}}\n' +
+        '  }\n' +
+        '}'
+
     const templateInfo = reactive([
       {
         name: "五线谱",
         lightIcon: wxpLightIcon,
         darkIcon: wxpDarkIcon,
+        key: 'wxp',
+        template: wxpContent
       },
       {
         name: "数学公式",
         lightIcon: gsLightIcon,
         darkIcon: gsDarkIcon,
+        key: 'gs',
+        template: gsContent,
       },
       {
         name: "脑图",
         lightIcon: ntLightIcon,
         darkIcon: ntDarkIcon,
+        key: 'nt',
       },
       {
         name: "流程图",
         lightIcon: lctLightIcon,
         darkIcon: lctDarkIcon,
+        key: 'lct',
       },
       {
         name: "时序图",
         lightIcon: sxtLightIcon,
         darkIcon: sxtDarkIcon,
+        key: 'sxt',
       },
       {
         name: "甘特图",
         lightIcon: gttLightIcon,
         darkIcon: gttDarkIcon,
+        key: 'gtt',
       },
       {
         name: "Graphviz",
         lightIcon: graphvizLightIcon,
         darkIcon: graphvizDarkIcon,
+        key: 'graphviz',
       },
     ]);
 
@@ -245,6 +264,8 @@ export default defineComponent({
               <div
                 class={"item"}
                 onDblclick={() => {
+                  const content = vditor.value?.getValue() + "\n" + item.template;
+                  vditor.value!.setValue(content, true);
                   DestroyModal()
                 }}
               >

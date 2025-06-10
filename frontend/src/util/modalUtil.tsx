@@ -2,6 +2,7 @@ import {Button, Modal} from "ant-design-vue";
 import styled from "vue3-styled-components";
 import {CloseOutlined, InfoCircleOutlined} from "@ant-design/icons-vue";
 import {settingInfoStore} from "@/store/modules/settings.ts";
+import './modal.css'
 
 // const {t} = useI18n();
 
@@ -25,6 +26,7 @@ const ActionBtn = styled.div`
         }
     }
 `;
+
 
 let modalViewStore: ModalView|null = null
 
@@ -62,7 +64,7 @@ class ModalView {
             },
             closeIcon: <CloseOutlined style={{color: settingInfoStore.DarkTheme() ? 'white' : 'black'}} onClick={() => this.modal.destroy()}/>,
             width: this.width,
-            title: <span style={{color: settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0,0,0,0.6)'}}>{this.title}</span>,
+            title: <span style={{color: settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0,0,0,0.6)', paddingLeft: '10px'}}>{this.title}</span>,
             mask: false,
             class: 'aaa',
             closable: this.closed,

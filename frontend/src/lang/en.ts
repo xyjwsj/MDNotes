@@ -30,6 +30,19 @@ const enLocale = {
     trialTip: 'You have a 14-day trial period. We kindly request that you purchase the official license promptly.',
     licenseExpired: 'Your license has expired at',
     uniqueId: 'Unique Device Identifier',
+    showHotKey: 'Show Shortcut Panel',
+    hotKey: 'Hotkey',
+    rename: 'Rename',
+    editArea: 'Edit Area',
+    insertTemplate: 'Insert Template',
+    deleteFile: 'Delete File',
+    createFile: 'Create File',
+    language: 'Language',
+    chinese: 'Chinese',
+    english: 'English',
+    system: 'System',
+    showSidebar: 'Show Sidebar',
+    hiddenSidebar: 'Hide Sidebar',
 }
 
 export default enLocale
