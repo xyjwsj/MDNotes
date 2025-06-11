@@ -17,11 +17,9 @@ func ImageApi(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// 示例：拦截 /api 请求
 		path := r.URL.Path
-		log.Println("xxxxxxxx" + r.URL.Path)
 		if strings.HasPrefix(path, "/mdNotes/vditor") {
 			absPath := strings.TrimPrefix(path, "/mdNotes/vditor")
 			join := filepath.Join("vditor", absPath)
-			log.Println("cdn path: " + join)
 			file, err := vditorAssets.ReadFile(join)
 			if err != nil {
 				http.NotFound(w, r)
@@ -42,7 +40,6 @@ func ImageApi(next http.Handler) http.Handler {
 				w.Header().Set("Content-Type", "application/octet-stream")
 			}
 
-			log.Println("cdn type: " + ext)
 			w.Write(file)
 			return
 		}
