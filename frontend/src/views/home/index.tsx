@@ -75,6 +75,7 @@ export default defineComponent({
       gap: 40px;
       justify-content: space-around;
       .item {
+        padding: 10px 5px;
         color: ${() => (settingInfoStore.DarkTheme() ? "white" : "black")};
         //width: 120px;
         height: 120px;
@@ -83,6 +84,12 @@ export default defineComponent({
         flex-direction: column;
         align-items: center;
         gap: 5px;
+        &:hover {
+          box-shadow: 0 0 5px 2px ${() =>
+              settingInfoStore.DarkTheme()
+                  ? "rgba(255, 255, 255, 0.8)"
+                  : "gray"};
+        }
       }
     `;
 

@@ -47,7 +47,7 @@ const zhLocale = {
   selectDown: "选择下一个",
   edit: "编辑",
   sure: "确认行为",
-  chageTheme: "切换主题",
+  changeTheme: "切换主题",
 };
 
 export default zhLocale;

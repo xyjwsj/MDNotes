@@ -405,7 +405,7 @@ export default defineComponent({
         width: 50%;
         line-height: 35px;
         color: ${() =>
-          settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.8)" : "gray"};
+          settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.8)"};
       }
     `;
 
@@ -424,7 +424,7 @@ export default defineComponent({
         color: ${() =>
           settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
         background-color: ${() =>
-          settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.2)" : ""};
+          settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.7)"};
 
         &:hover {
           box-shadow: 0 0 5px 1px
@@ -433,7 +433,7 @@ export default defineComponent({
                 ? "rgba(255, 255, 255, 0.8)"
                 : "gray"};
           color: ${() =>
-            settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.8)" : "gray"};
+            settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.8)"};
         }
       }
     `;
@@ -486,7 +486,7 @@ export default defineComponent({
       Mousetrap.bind("enter", () => {
         OkModal();
       });
-      Mousetrap.bind("command+k", () => {
+      Mousetrap.bind("command+shift+k", () => {
         // TipWarning('快捷键')
         hotKey();
       });
@@ -536,20 +536,21 @@ export default defineComponent({
       });
     };
 
-    let counter = 0;
+    let timer: any | null = null;
+    let timestamp = 0
 
     const startUpdateTask = () => {
-      counter++;
-      if (counter > 1) {
+      timestamp = Date.now()
+      if (timer !== null) {
         return;
       }
-      let timmer = setInterval(() => {
-        counter--;
-        if (counter === 0) {
-          clearInterval(timmer);
+      timer = setInterval(() => {
+        if (Date.now() - timestamp > 800) {
+          clearInterval(timer);
           updateFileName();
+          timer = null
         }
-      }, 1000);
+      }, 500);
     };
 
     const selectFile = (previous: boolean) => {
@@ -575,10 +576,6 @@ export default defineComponent({
       {
         desc: "",
         data: [
-          {
-            key: "⌘+K",
-            desc: t("showHotKey"),
-          },
           {
             key: "⌘+N",
             desc: t("createFile"),
@@ -622,6 +619,10 @@ export default defineComponent({
             desc: t("sure"),
           },
           {
+            key: "⌘+Shift+K",
+            desc: t("showHotKey"),
+          },
+          {
             key: "⌘+L",
             desc: t("language"),
           },
@@ -635,11 +636,11 @@ export default defineComponent({
           },
           {
             key: "⌘+Shift+C",
-            desc: t("export"),
+            desc: t("configStore"),
           },
           {
             key: "⌘+Shift+T",
-            desc: t("chageTheme"),
+            desc: t("changeTheme"),
           },
           {
             key: "⌘+Shift+Left",

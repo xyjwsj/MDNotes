@@ -48,7 +48,7 @@ const enLocale = {
   selectDown: "Select Next",
   edit: "Edit",
   sure: "Sure Action",
-  chageTheme: "Change Theme",
+  changeTheme: "Change Theme",
 };
 
 export default enLocale;
