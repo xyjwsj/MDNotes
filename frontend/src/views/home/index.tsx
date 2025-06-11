@@ -37,6 +37,10 @@ export default defineComponent({
       border: none;
       position: relative;
 
+      .vditor-reset {
+        padding: 10px 30px !important;
+      }
+
       .counter {
         position: absolute;
         top: 0;
@@ -85,10 +89,11 @@ export default defineComponent({
         align-items: center;
         gap: 5px;
         &:hover {
-          box-shadow: 0 0 5px 2px ${() =>
+          box-shadow: 0 0 5px 2px
+            ${() =>
               settingInfoStore.DarkTheme()
-                  ? "rgba(255, 255, 255, 0.8)"
-                  : "gray"};
+                ? "rgba(255, 255, 255, 0.8)"
+                : "gray"};
         }
       }
     `;
@@ -263,7 +268,9 @@ export default defineComponent({
       vditor.value = new Vditor("vditor", {
         theme: settingInfoStore.DarkTheme() ? "dark" : "classic",
         // theme: 'dark',
-        height: "810px",
+        // height: "810px",
+        height: "100%",
+        width: "100%",
         toolbar: [],
         toolbarConfig: {
           hide: false,
@@ -403,7 +410,14 @@ export default defineComponent({
               if (event.key === "i") {
                 showMDTemplate();
                 event.stopPropagation();
+                return;
               }
+            }
+            if (event.key === "Escape") {
+              DestroyModal();
+              vditor.value?.focus();
+              event.stopPropagation();
+              return;
             }
           }}
         ></EditorView>

@@ -48,6 +48,10 @@ const zhLocale = {
   edit: "编辑",
   sure: "确认行为",
   changeTheme: "切换主题",
+  french: "法语",
+  portuguese: "葡萄牙语",
+  japanese: "日语",
+  traditional: "繁体",
 };
 
 export default zhLocale;

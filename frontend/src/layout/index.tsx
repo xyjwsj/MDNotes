@@ -14,6 +14,7 @@ import {
 import {
   ConfigStore,
   PreferenceInfo,
+  ScreenFullSwitch,
 } from "@/bindings/changeme/handler/systemhandler.ts";
 import { RecordInfo } from "@/bindings/changeme/model";
 import { settingInfoStore } from "@/store/modules/settings.ts";
@@ -405,7 +406,9 @@ export default defineComponent({
         width: 50%;
         line-height: 35px;
         color: ${() =>
-          settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.8)"};
+          settingInfoStore.DarkTheme()
+            ? "rgba(255, 255, 255, 0.8)"
+            : "rgba(0, 0, 0, 0.8)"};
       }
     `;
 
@@ -415,16 +418,25 @@ export default defineComponent({
       align-items: center;
       margin-left: 34px;
       gap: 10px;
+      height: 30%;
+      overflow-y: auto;
+      padding: 10px;
+
+      ::-webkit-scrollbar {
+        display: none;
+      }
 
       .langItem {
         line-height: 40px;
-        width: 100%;
+        width: 95%;
         border-radius: 5px;
         text-align: center;
         color: ${() =>
           settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
         background-color: ${() =>
-          settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.7)"};
+          settingInfoStore.DarkTheme()
+            ? "rgba(255, 255, 255, 0.2)"
+            : "rgba(255, 255, 255, 0.7)"};
 
         &:hover {
           box-shadow: 0 0 5px 1px
@@ -433,7 +445,9 @@ export default defineComponent({
                 ? "rgba(255, 255, 255, 0.8)"
                 : "gray"};
           color: ${() =>
-            settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.8)"};
+            settingInfoStore.DarkTheme()
+              ? "rgba(255, 255, 255, 0.8)"
+              : "rgba(0, 0, 0, 0.8)"};
         }
       }
     `;
@@ -537,10 +551,10 @@ export default defineComponent({
     };
 
     let timer: any | null = null;
-    let timestamp = 0
+    let timestamp = 0;
 
     const startUpdateTask = () => {
-      timestamp = Date.now()
+      timestamp = Date.now();
       if (timer !== null) {
         return;
       }
@@ -548,7 +562,7 @@ export default defineComponent({
         if (Date.now() - timestamp > 800) {
           clearInterval(timer);
           updateFileName();
-          timer = null
+          timer = null;
         }
       }, 500);
     };
@@ -582,7 +596,7 @@ export default defineComponent({
           },
           {
             key: "⌘+D",
-            descKey:"deleteFile",
+            descKey: "deleteFile",
           },
           {
             key: "⌘+R",
@@ -674,10 +688,14 @@ export default defineComponent({
           {hotKeyInfo.map((item) => {
             return (
               <>
-                {item.desc !== "" && <span class={"title"}>{t(item.desc)}</span>}
+                {item.desc !== "" && (
+                  <span class={"title"}>{t(item.desc)}</span>
+                )}
                 {item.data.map((itm) => {
                   return (
-                    <span class={"item"}>{`[${itm.key}] ${t(itm.descKey)}`}</span>
+                    <span class={"item"}>{`[${itm.key}] ${t(
+                      itm.descKey
+                    )}`}</span>
                   );
                 })}
               </>
@@ -736,6 +754,22 @@ export default defineComponent({
         lang: "en-US",
         descKey: "english",
       },
+      {
+        lang: "fr-FR",
+        descKey: "french",
+      },
+      {
+        lang: "pt_BR",
+        descKey: "portuguese",
+      },
+      {
+        lang: "ja_JP",
+        descKey: "japanese",
+      },
+      {
+        lang: "zh_TW",
+        descKey: "traditional",
+      },
     ]);
 
     const deleteFile = () => {
@@ -748,11 +782,15 @@ export default defineComponent({
         (item) => item.uuid === selectFileKey.value
       );
       if (files.length > 0) {
-        const contentStr = `${t("confirmDelete")} '${files[0].fileName}' ${t("file")}？`;
+        const contentStr = `${t("confirmDelete")} '${files[0].fileName}' ${t(
+          "file"
+        )}？`;
         modalView.content = (
           <span
             style={{ color: settingInfoStore.DarkTheme() ? "white" : "black" }}
-          >{contentStr}</span>
+          >
+            {contentStr}
+          </span>
         );
       }
       modalView.icon = (
@@ -1045,7 +1083,12 @@ export default defineComponent({
               ></Input>
             </Transition>
           </div>
-          <div class={"tools"}>
+          <div
+            class={"tools"}
+            onDblclick={() => {
+              ScreenFullSwitch();
+            }}
+          >
             <div class={"info"}>
               <span class={"create"}>{createDatetime()}</span>
             </div>

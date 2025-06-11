@@ -49,6 +49,10 @@ const enLocale = {
   edit: "Edit",
   sure: "Sure Action",
   changeTheme: "Change Theme",
+  french: "French",
+  portuguese: "Portuguese",
+  japanese: "Japanese",
+  traditional: "Traditional Chinese",
 };
 
 export default enLocale;

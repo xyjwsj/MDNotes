@@ -4,7 +4,7 @@ import {
 } from "@/bindings/changeme/handler/systemhandler.ts";
 import { settingInfoStore } from "@/store/modules/settings.ts";
 import { TipError, TipWarning } from "@/util/messageUtil.tsx";
-import {ModalView, ShowModal} from "@/util/modalUtil.tsx";
+import { ModalView, ShowModal } from "@/util/modalUtil.tsx";
 import { Input } from "ant-design-vue";
 import { defineComponent, onMounted, provide, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -17,7 +17,7 @@ export default defineComponent({
 
     const RootView = styled.div`
       width: 100vw;
-      height: 850px;
+      height: 100vh;
       position: relative; /* 设置相对定位，以便伪元素可以相对于此元素定位 */
       background-color: ${() =>
         settingInfoStore.DarkTheme() ? "rgba(0, 0, 0, 0.8)" : "white"};
@@ -173,7 +173,7 @@ export default defineComponent({
       };
 
       // modalView.show();
-      ShowModal(modalView)
+      ShowModal(modalView);
     };
 
     provide("showLicense", showLicense);

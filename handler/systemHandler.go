@@ -51,3 +51,13 @@ func (system *SystemHandler) Start() bool {
 	mgr.Start()
 	return true
 }
+
+func (system *SystemHandler) ScreenFullSwitch() {
+	max := model.FetchAppInfo().App.CurrentWindow().IsMaximised()
+	if !max {
+		model.FetchAppInfo().App.CurrentWindow().Maximise()
+	} else {
+		model.FetchAppInfo().App.CurrentWindow().UnMaximise()
+	}
+
+}
