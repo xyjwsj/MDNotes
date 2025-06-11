@@ -272,10 +272,11 @@ export default defineComponent({
         cache: {
           enable: true,
         },
+        cdn: "/mdNotes/vditor",
         after: () => {
           vditor.value?.setTheme(
             settingInfoStore.DarkTheme() ? "dark" : "classic",
-            settingInfoStore.DarkTheme() ? "dark" : "github"
+            settingInfoStore.DarkTheme() ? "dark" : "wechat"
           );
         },
         input: async (val: string) => {

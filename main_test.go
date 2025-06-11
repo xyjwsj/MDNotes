@@ -4,6 +4,8 @@ import (
 	"changeme/mgr"
 	"changeme/model"
 	"changeme/util"
+	"fmt"
+	"io/fs"
 	"testing"
 )
 
@@ -32,4 +34,17 @@ func TestLicence(t *testing.T) {
 	//log.Println(encode)
 	//
 	//mgr.ValidateLicense(license)
+}
+
+func TestAssets(t *testing.T) {
+	err := fs.WalkDir(vditorAssets, ".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		fmt.Printf("文件: %s\n", path)
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
 }

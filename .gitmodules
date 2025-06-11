@@ -1,0 +1,3 @@
+[submodule "vditor"]
+	path = vditor
+	url = git@github.com:Vanessa219/vditor.git
