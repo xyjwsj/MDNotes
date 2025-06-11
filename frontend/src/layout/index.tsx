@@ -578,77 +578,77 @@ export default defineComponent({
         data: [
           {
             key: "⌘+N",
-            desc: t("createFile"),
+            descKey: "createFile",
           },
           {
             key: "⌘+D",
-            desc: t("deleteFile"),
+            descKey:"deleteFile",
           },
           {
             key: "⌘+R",
-            desc: t("rename"),
+            descKey: "rename",
           },
           {
             key: "⌘+↑",
-            desc: t("selectUp"),
+            descKey: "selectUp",
           },
           {
             key: "⌘+↓",
-            desc: t("selectDown"),
+            descKey: "selectDown",
           },
         ],
       },
       {
-        desc: t("editArea"),
+        desc: "editArea",
         data: [
           {
             key: "⌘+I",
-            desc: t("insertTemplate"),
+            descKey: "insertTemplate",
           },
           {
             key: "⌘+E",
-            desc: t("edit"),
+            descKey: "edit",
           },
         ],
       },
       {
-        desc: t("system"),
+        desc: "system",
         data: [
           {
             key: "Enter",
-            desc: t("sure"),
+            descKey: "sure",
           },
           {
             key: "⌘+Shift+K",
-            desc: t("showHotKey"),
+            descKey: "showHotKey",
           },
           {
             key: "⌘+L",
-            desc: t("language"),
+            descKey: "language",
           },
           {
             key: "⌘+Shift+L",
-            desc: t("license"),
+            descKey: "license",
           },
           {
             key: "⌘+Shift+E",
-            desc: t("export"),
+            descKey: "export",
           },
           {
             key: "⌘+Shift+C",
-            desc: t("configStore"),
+            descKey: "configStore",
           },
           {
             key: "⌘+Shift+T",
-            desc: t("changeTheme"),
+            descKey: "changeTheme",
           },
           {
             key: "⌘+Shift+Left",
-            desc: t("hiddenSidebar"),
+            descKey: "hiddenSidebar",
           },
           {
             key: "⌘+Shift+Right",
-            desc: t("showSidebar"),
+            descKey: "showSidebar",
           },
         ],
       },
@@ -661,7 +661,7 @@ export default defineComponent({
       modalView.title = t("hotKey");
       modalView.okText = "";
       modalView.closed = true;
-      modalView.width = "60%";
+      modalView.width = "70%";
       modalView.icon = (
         <Image
           preview={false}
@@ -674,10 +674,10 @@ export default defineComponent({
           {hotKeyInfo.map((item) => {
             return (
               <>
-                {item.desc !== "" && <span class={"title"}>{item.desc}</span>}
+                {item.desc !== "" && <span class={"title"}>{t(item.desc)}</span>}
                 {item.data.map((itm) => {
                   return (
-                    <span class={"item"}>{`[${itm.key}] ${itm.desc}`}</span>
+                    <span class={"item"}>{`[${itm.key}] ${t(itm.descKey)}`}</span>
                   );
                 })}
               </>
@@ -730,11 +730,11 @@ export default defineComponent({
     const languageInfo = reactive([
       {
         lang: "zh-CN",
-        desc: t("chinese"),
+        descKey: "chinese",
       },
       {
         lang: "en-US",
-        desc: t("english"),
+        descKey: "english",
       },
     ]);
 
@@ -748,10 +748,11 @@ export default defineComponent({
         (item) => item.uuid === selectFileKey.value
       );
       if (files.length > 0) {
+        const contentStr = `${t("confirmDelete")} '${files[0].fileName}' ${t("file")}？`;
         modalView.content = (
           <span
             style={{ color: settingInfoStore.DarkTheme() ? "white" : "black" }}
-          >{`${t("confirmDelete")}'${files[0].fileName}'${t("file")}？`}</span>
+          >{contentStr}</span>
         );
       }
       modalView.icon = (
@@ -979,7 +980,7 @@ export default defineComponent({
                   DestroyModal();
                 }}
               >
-                {item.desc}
+                {t(item.descKey)}
               </span>
             );
           })}
