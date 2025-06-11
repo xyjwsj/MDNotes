@@ -1107,13 +1107,13 @@ export default defineComponent({
                         "selectDefault",
                         selectFileKey.value === item.uuid ? "select" : "",
                       ]}
-                      onDblclick={() => {
+                      onDblclick={async () => {
                         selectFileKey.value = item.uuid;
                         editFileKey.value = item.uuid;
                         tempInfo.name = item.fileName;
                         updateFileName();
                       }}
-                      onClick={() => {
+                      onClick={async () => {
                         selectFileKey.value = item.uuid;
                         updateFileName();
                       }}
