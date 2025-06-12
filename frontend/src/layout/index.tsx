@@ -675,7 +675,7 @@ export default defineComponent({
       modalView.title = t("hotKey");
       modalView.okText = "";
       modalView.closed = true;
-      modalView.width = "70%";
+      modalView.width = "700px";
       modalView.icon = (
         <Image
           preview={false}
@@ -755,7 +755,7 @@ export default defineComponent({
         descKey: "english",
       },
       {
-        lang: "fr-FR",
+        lang: "fr_FR",
         descKey: "french",
       },
       {

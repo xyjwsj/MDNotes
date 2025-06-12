@@ -6,6 +6,7 @@ import (
 	"changeme/util"
 	"fmt"
 	"io/fs"
+	"log"
 	"testing"
 )
 
@@ -47,4 +48,13 @@ func TestAssets(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func TestCache(t *testing.T) {
+	path := util.CreatePlatformPath(model.CacheDir, "md", "903b573e-a70c-4cc3-b37a-b4539bebf0d2.md")
+	contents, err := mgr.StartEdit(path)
+	if err != nil {
+		log.Println("FileContent Error:" + err.Error())
+	}
+	log.Println(contents)
 }

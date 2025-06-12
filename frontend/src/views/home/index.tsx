@@ -98,7 +98,23 @@ export default defineComponent({
       }
     `;
 
-    const wxpContent = "";
+    const wxpContent = "```abc\n" +
+        "X: 24\n" +
+        "T: Clouds Thicken\n" +
+        "C: Paul Rosen\n" +
+        "S: Copyright 2005, Paul Rosen\n" +
+        "M: 6/8\n" +
+        "L: 1/8\n" +
+        "Q: 3/8=116\n" +
+        "R: Creepy Jig\n" +
+        "K: Em\n" +
+        "|:\"Em\"EEE E2G|\"C7\"_B2A G2F|\"Em\"EEE E2G|\\\\\n" +
+        "\"C7\"_B2A \"B7\"=B3|\"Em\"EEE E2G|\n" +
+        "\"C7\"_B2A G2F|\"Em\"GFE \"D (Bm7)\"F2D|\\\\\n" +
+        "1\"Em\"E3-E3:|2\"Em\"E3-E2B|:\"Em\"e2e gfe|\n" +
+        "\"G\"g2ab3|\"Em\"gfeg2e|\"D\"fedB2A|\"Em\"e2e gfe|\\\\\n" +
+        "\"G\"g2ab3|\"Em\"gfe\"D\"f2d|\"Em\"e3-e3:|\n" +
+        "```";
     const gsContent =
       "$$\n" +
       "\\frac{1}{\n" +
@@ -277,7 +293,7 @@ export default defineComponent({
         },
         placeholder: t("editorPlaceholder"),
         cache: {
-          enable: true,
+          enable: false,
         },
         cdn: "/mdNotes/vditor",
         after: () => {

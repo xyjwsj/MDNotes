@@ -64,27 +64,16 @@ func IsDir(path string) bool {
 	return s.IsDir()
 }
 
-func IsFileExists(filename string) bool {
-	file, err := os.Open(filename)
-	defer file.Close()
-	if err != nil {
-		if os.IsNotExist(err) {
-			return false
-		}
-	}
-	return true
-}
-
 func WriteToFile(fileName string, content string) error {
 	f, err := os.OpenFile(fileName, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
 	if err != nil {
-		fmt.Println("file create failed. err: " + err.Error())
+		log.Println("file create failed. err: " + err.Error())
 	} else {
 		// offset
 		//os.Truncate(filename, 0) //clear
 		n, _ := f.Seek(0, os.SEEK_END)
 		_, err = f.WriteAt([]byte(content), n)
-		fmt.Println("write succeed!")
+		log.Println("write succeed!")
 		defer f.Close()
 	}
 	return err
@@ -280,4 +269,20 @@ func FileSizeCovert(size int64) string {
 		return fmt.Sprintf("%.2f GB", float64(size/1024.0/1024/1024))
 	}
 	return fmt.Sprintf("%.2f TB", float64(size/1024.0/1024/1024/1024))
+}
+
+func OpenFileByPath(path string) (*os.File, error) {
+	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		log.Println("file create failed. err: " + err.Error())
+		return nil, err
+	}
+	return f, nil
+}
+
+func CloseFile(file *os.File) error {
+	if file != nil {
+		return file.Close()
+	}
+	return nil
 }

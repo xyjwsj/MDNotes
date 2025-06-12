@@ -5,7 +5,6 @@ import (
 	"changeme/model"
 	"changeme/util"
 	"log"
-	"os"
 	"strings"
 )
 
@@ -14,14 +13,10 @@ type FileHandler struct {
 
 func (file *FileHandler) SyncFile(fileKey, content string) string {
 	path := util.CreatePlatformPath(model.CacheDir, "md", fileKey+".md")
-	err := util.WriteToFile(path, content)
-	if err != nil {
-		log.Println("SyncFile Error:" + err.Error())
-		return ""
-	}
-	stat, _ := os.Stat(path)
-	size := stat.Size()
-	mgr.ModifyInfo(fileKey, "", size)
+	mgr.AsyncFile(path, content)
+	bytes := []byte(content)
+	size := int64(len(bytes))
+	go mgr.ModifyInfo(fileKey, "", size)
 	return util.FileSizeCovert(size)
 }
 
@@ -49,7 +44,8 @@ func (file *FileHandler) Search(name string) []*model.RecordInfo {
 }
 
 func (file *FileHandler) FileContent(fileKey string) string {
-	contents, err := util.ReadFileContents(util.CreatePlatformPath(model.CacheDir, "md", fileKey+".md"))
+	path := util.CreatePlatformPath(model.CacheDir, "md", fileKey+".md")
+	contents, err := mgr.StartEdit(path)
 	if err != nil {
 		log.Println("FileContent Error:" + err.Error())
 		return ""

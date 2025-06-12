@@ -18,7 +18,7 @@ var startAsync bool
 
 func init() {
 	path := util.CreatePlatformPath(model.CacheDir, "info.db")
-	if !util.IsFileExists(path) {
+	if !util.Exists(path) {
 		recordCache = make([]*model.RecordInfo, 0)
 	} else {
 		contents, err := util.ReadFileContents(path)
@@ -33,7 +33,7 @@ func init() {
 	}
 
 	path = util.CreatePlatformPath(model.CacheDir, "preference.db")
-	if !util.IsFileExists(path) {
+	if !util.Exists(path) {
 		preference = &model.Preference{
 			Username:  "",
 			Token:     "",

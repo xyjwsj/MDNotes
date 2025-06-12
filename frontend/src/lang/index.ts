@@ -26,7 +26,7 @@ const messages = {
     ...frLocale,
   },
 };
-const lang = (navigator.language || "en").toLocaleLowerCase();
+const lang = (navigator.language || "en-US").toLocaleLowerCase();
 
 const i18n = createI18n({
   legacy: false,

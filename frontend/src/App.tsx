@@ -96,7 +96,7 @@ export default defineComponent({
       const license = ref("");
 
       const modalView = new ModalView();
-      modalView.width = "50%";
+      modalView.width = "700px";
       modalView.title = t("license");
       if (licenseInfo.content === "") {
         modalView.cancelText = t("trial");
