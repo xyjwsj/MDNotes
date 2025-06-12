@@ -408,6 +408,22 @@ export default defineComponent({
           settingInfoStore.DarkTheme()
             ? "rgba(255, 255, 255, 0.8)"
             : "rgba(0, 0, 0, 0.8)"};
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        .key {
+          background-color: ${() =>
+              settingInfoStore.DarkTheme()
+                  ? "gray"
+                  : "lightgray"};
+          line-height: 20px;
+          padding: 0 5px;
+          border-radius: 3px;
+          color: ${() =>
+              settingInfoStore.DarkTheme()
+                  ? "rgba(255, 255, 255, 0.7)"
+                  : "rgba(0, 0, 0, 0.8)"};
+        }
       }
     `;
 
@@ -701,10 +717,14 @@ export default defineComponent({
                   <span class={"title"}>{t(item.desc)}</span>
                 )}
                 {item.data.map((itm) => {
+                  const split = itm.key.split("+");
                   return (
-                    <span class={"item"}>{`[${itm.key}] ${t(
-                      itm.descKey
-                    )}`}</span>
+                    <div class={"item"}>
+                      {split.map(it => {
+                        return <span class={'key'}>{it}</span>
+                      })}
+                      <span>{t(itm.descKey)}</span>
+                    </div>
                   );
                 })}
               </>

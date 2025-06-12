@@ -5,11 +5,12 @@ import {
 import { settingInfoStore } from "@/store/modules/settings.ts";
 import { TipError, TipWarning } from "@/util/messageUtil.tsx";
 import { ModalView, ShowModal } from "@/util/modalUtil.tsx";
-import { Input } from "ant-design-vue";
+import {Image, Input} from "ant-design-vue";
 import { defineComponent, onMounted, provide, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { RouterView } from "vue-router";
 import styled from "vue3-styled-components";
+import appIcon from '@/assets/png/appicon.png'
 
 export default defineComponent({
   setup() {
@@ -87,7 +88,12 @@ export default defineComponent({
     const LicenseView = styled.div`
       display: flex;
       flex-direction: column;
+      justify-content: center;
       gap: 5px;
+      .icon {
+        text-align: center;
+        padding: 10px 0;
+      }
     `;
 
     const showLicense = async (ok?: () => void) => {
@@ -96,7 +102,7 @@ export default defineComponent({
       const license = ref("");
 
       const modalView = new ModalView();
-      modalView.width = "700px";
+      modalView.width = "500px";
       modalView.title = t("license");
       if (licenseInfo.content === "") {
         modalView.cancelText = t("trial");
@@ -114,6 +120,9 @@ export default defineComponent({
       modalView.closed = true;
       modalView.content = (
         <LicenseView>
+          <div class={'icon'}>
+            <Image src={appIcon} width={85}/>
+          </div>
           {licenseInfo.deviceId !== "" && (
             <span
               style={{
