@@ -1,6 +1,7 @@
 const frLocale = {
   file: "Fichier",
   create: "Créer",
+  update: "Mise à jour",
   fileName: "Nom du fichier",
   selectFile: "Veuillez sélectionner un fichier",
   confirmDelete: "Confirmer la suppression",

@@ -1,6 +1,7 @@
 const zhTwLocale = {
   file: "文件",
   create: "創建",
+  update: "更新",
   filename: "檔案名稱",
   selectFile: "請選擇文件",
   confirmDelete: "確認刪除",

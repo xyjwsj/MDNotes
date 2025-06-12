@@ -1,6 +1,7 @@
 const ptLocale = {
   file: "Arquivo",
   create: "Criar",
+  update: "Atualização",
   fileName: "Nome do arquivo",
   selectFile: "Por favor, selecione um arquivo",
   confirmDelete: "Confirmar exclusão",

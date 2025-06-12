@@ -1,6 +1,7 @@
 const enLocale = {
   file: "File",
   create: "Create",
+  update: "Update",
   fileName: "File Name",
   selectFile: "Please select a file",
   confirmDelete: "Confirm Deletion",

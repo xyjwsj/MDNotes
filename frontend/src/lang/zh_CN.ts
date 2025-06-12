@@ -1,6 +1,7 @@
 const zhLocale = {
   file: "文件",
   create: "创建",
+  update: "更新",
   fileName: "文件名",
   selectFile: "请选择文件",
   confirmDelete: "确认删除",

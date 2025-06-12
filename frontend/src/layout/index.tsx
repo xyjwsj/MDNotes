@@ -11,21 +11,11 @@ import {
   ModifyName,
   Search,
 } from "@/bindings/changeme/handler/filehandler.ts";
-import {
-  ConfigStore,
-  PreferenceInfo,
-  ScreenFullSwitch,
-} from "@/bindings/changeme/handler/systemhandler.ts";
-import { RecordInfo } from "@/bindings/changeme/model";
-import { settingInfoStore } from "@/store/modules/settings.ts";
-import { SameDay } from "@/util/dateUtil.ts";
-import { TipSuccess, TipWarning } from "@/util/messageUtil.tsx";
-import {
-  DestroyModal,
-  ModalView,
-  OkModal,
-  ShowModal,
-} from "@/util/modalUtil.tsx";
+import {ConfigStore, PreferenceInfo, ScreenFullSwitch,} from "@/bindings/changeme/handler/systemhandler.ts";
+import {RecordInfo} from "@/bindings/changeme/model";
+import {settingInfoStore} from "@/store/modules/settings.ts";
+import {TipSuccess, TipWarning} from "@/util/messageUtil.tsx";
+import {DestroyModal, ModalView, OkModal, ShowModal,} from "@/util/modalUtil.tsx";
 import {
   BulbOutlined,
   CheckOutlined,
@@ -40,8 +30,7 @@ import {
   SearchOutlined,
   SolutionOutlined,
 } from "@ant-design/icons-vue";
-import { Dropdown, Image, Input, Menu, MenuItem } from "ant-design-vue";
-import moment from "moment/moment";
+import {Dropdown, Image, Input, Menu, MenuItem} from "ant-design-vue";
 import Mousetrap from "mousetrap";
 import {
   defineComponent,
@@ -56,8 +45,8 @@ import {
   Transition,
   TransitionGroup,
 } from "vue";
-import { useI18n } from "vue-i18n";
-import { RouterView } from "vue-router";
+import {useI18n} from "vue-i18n";
+import {RouterView} from "vue-router";
 import styled from "vue3-styled-components";
 
 export default defineComponent({
@@ -241,13 +230,6 @@ export default defineComponent({
       height: calc(100% - 40px);
       display: flex;
       position: relative;
-      .info {
-        position: absolute;
-        right: 10px;
-        bottom: 5px;
-        font-size: 10px;
-        color: ${() => settingInfoStore.DarkTheme() ? 'lightgray' : 'gray'};
-      }
     `;
 
     const ListView = styled.div`
@@ -992,25 +974,6 @@ export default defineComponent({
       });
     };
 
-    const formatDate = (str: string) => {
-      const dateStr = str.split(" ");
-      const dateObj = moment(str);
-      const now = moment();
-      let formatStr = str;
-      if (SameDay(now.toDate(), dateObj.toDate())) {
-        formatStr = `${t("today")} ` + dateStr[1];
-      }
-      let res = dateObj.add(1, "days");
-      if (SameDay(now.toDate(), res.toDate())) {
-        formatStr = `${t("yesterday")} ` + dateStr[1];
-      }
-      // res = dateObj.add(2, "days");
-      // if (SameDay(now.toDate(), res.toDate())) {
-      //   formatStr = "前天 " + dateStr[1];
-      // }
-      return formatStr;
-    };
-
     const SwitchTheme = () => {
       settingInfoStore.SwitchTheme();
       if (currentCom.value) {
@@ -1025,7 +988,7 @@ export default defineComponent({
       modalView.title = t("language");
       modalView.okText = "";
       modalView.closed = true;
-      modalView.width = "30%";
+      modalView.width = "300px";
       modalView.icon = (
         <Image
           preview={false}
@@ -1053,20 +1016,6 @@ export default defineComponent({
       );
       // modalView.show();
       ShowModal(modalView);
-    };
-
-    const createDatetime = () => {
-      if (selectFileKey.value === "") {
-        return "";
-      }
-      let dateStr = "";
-      fileList.value.forEach((item) => {
-        if (item.uuid === selectFileKey.value) {
-          dateStr = item.create;
-          return;
-        }
-      });
-      return formatDate(dateStr) + t("create");
     };
 
     const createFile = async () => {
@@ -1250,9 +1199,6 @@ export default defineComponent({
               }}
             />
           </RouterViewCon>
-          <div class={"info"}>
-            <span class={"create"}>{createDatetime()}</span>
-          </div>
         </BodyView>
       </Container>
     );

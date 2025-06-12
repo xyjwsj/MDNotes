@@ -23,8 +23,10 @@ type Operator struct {
 }
 
 func (op *Operator) UpdateContent(content string) {
-	op.content = content
-	op.Change = true
+	if op.content != content {
+		op.content = content
+		op.Change = true
+	}
 }
 
 func (op *Operator) Content() string {

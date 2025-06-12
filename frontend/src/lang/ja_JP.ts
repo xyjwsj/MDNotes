@@ -1,6 +1,7 @@
 const jaLocale = {
   file: "ファイル",
   create: "作成",
+  update: "更新",
   fileName: "ファイル名",
   selectFile: "ファイルを選択してください",
   confirmDelete: "削除を確認",

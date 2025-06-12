@@ -12,18 +12,18 @@ import sxtDarkIcon from "@/assets/png/sxt-black.png";
 import sxtLightIcon from "@/assets/png/sxt-white.png";
 import wxpDarkIcon from "@/assets/png/wxp-black.png";
 import wxpLightIcon from "@/assets/png/wxp-white.png";
-import {
-  FileContent,
-  SyncFile,
-} from "@/bindings/changeme/handler/filehandler.js";
-import { RecordInfo } from "@/bindings/changeme/model";
-import { settingInfoStore } from "@/store/modules/settings.ts";
-import { DestroyModal, ModalView, ShowModal } from "@/util/modalUtil.tsx";
-import { Image } from "ant-design-vue";
+import {FileContent, SyncFile,} from "@/bindings/changeme/handler/filehandler.js";
+import {RecordInfo} from "@/bindings/changeme/model";
+import {settingInfoStore} from "@/store/modules/settings.ts";
+import {DestroyModal, ModalView, ShowModal} from "@/util/modalUtil.tsx";
+import {Image} from "ant-design-vue";
 import Vditor from "vditor";
-import { defineComponent, inject, onMounted, reactive, ref } from "vue";
-import { useI18n } from "vue-i18n";
+import {defineComponent, inject, onMounted, reactive, ref} from "vue";
+import {useI18n} from "vue-i18n";
 import styled from "vue3-styled-components";
+import moment from "moment";
+import {SameDay} from "@/util/dateUtil.ts";
+import {ReloadOutlined} from "@ant-design/icons-vue";
 
 export default defineComponent({
   name: "Home",
@@ -52,6 +52,36 @@ export default defineComponent({
         color: gray;
         text-align: center;
         font-size: 12px;
+      }
+      
+      .info {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 25px;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        font-size: 10px;
+        align-items: center;
+        color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.3)' : 'lightgray'};
+        gap: 15px;
+        .item {
+          line-height: 15px;
+          margin-right: 10px;
+        }
+        .icon-wrapper {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 15px;
+          width: 30px;
+          height: 25px;
+        }
+        
+        .async-ing {
+          color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.6)' : 'gray'};;
+        }
       }
     `;
 
@@ -258,6 +288,7 @@ export default defineComponent({
       fileKey: "",
       fileName: "",
       create: "",
+      update: "",
     });
 
     const updateFileSize: any = inject("updateFileSize");
@@ -285,7 +316,7 @@ export default defineComponent({
         theme: settingInfoStore.DarkTheme() ? "dark" : "classic",
         // theme: 'dark',
         // height: "810px",
-        height: "100%",
+        height: '100%',
         width: "100%",
         toolbar: [],
         toolbarConfig: {
@@ -303,6 +334,7 @@ export default defineComponent({
           );
         },
         input: async (val: string) => {
+          startSpin()
           syncContent(val);
         },
         upload: {
@@ -365,6 +397,7 @@ export default defineComponent({
       editorInfo.fileName = info.fileName;
       editorInfo.create = info.create;
       editorInfo.fileKey = info.uuid;
+      editorInfo.update = info.modify
     };
     // expose({updateTheme})
 
@@ -416,6 +449,42 @@ export default defineComponent({
 
     expose({ updateContent, updateTheme, startEdit });
 
+    const formatDate = (str: string) => {
+      const dateStr = str.split(" ");
+      const dateObj = moment(str);
+      const now = moment();
+      let formatStr = str;
+      if (SameDay(now.toDate(), dateObj.toDate())) {
+        formatStr = `${t("today")} ` + dateStr[1];
+      }
+      let res = dateObj.add(1, "days");
+      if (SameDay(now.toDate(), res.toDate())) {
+        formatStr = `${t("yesterday")} ` + dateStr[1];
+      }
+      // res = dateObj.add(2, "days");
+      // if (SameDay(now.toDate(), res.toDate())) {
+      //   formatStr = "前天 " + dateStr[1];
+      // }
+      return formatStr;
+    };
+
+    const createDatetime = () => {
+      return `${formatDate(editorInfo.create)} ${t("create")}`;
+    };
+
+    const updateDatetime = () => {
+      return `${formatDate(editorInfo.update)} ${t("update")}`;
+    }
+
+    const async = ref(false)
+
+    const startSpin = () => {
+      async.value = true
+      setTimeout(() => {
+        async.value = false
+      }, 2000)
+    }
+
     return () => (
       <Container>
         <EditorView
@@ -438,6 +507,13 @@ export default defineComponent({
           }}
         ></EditorView>
         <span class={"counter"}>{wordCounter.value}</span>
+        <div class={"info"}>
+          {editorInfo.create !== "" && <span class={"item"}>{createDatetime()}</span>}
+          {editorInfo.update !== "" && <span class={"item"}>{updateDatetime()}</span>}
+          <div class={['icon-wrapper', async.value ? 'async-ing' : '']}>
+            <ReloadOutlined spin={async.value} />
+          </div>
+        </div>
       </Container>
     );
   },
