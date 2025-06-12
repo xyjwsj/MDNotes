@@ -11,9 +11,10 @@ const ActionBtn = styled.div`
   display: flex;
   flex-direction: row;
   margin-top: 10px;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
+  flex-wrap: wrap;
 
   .btn {
     background-color: ${() =>

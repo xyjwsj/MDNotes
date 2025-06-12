@@ -82,7 +82,16 @@ export default defineComponent({
       //background-color: red;
       justify-content: space-between;
       flex-direction: row;
+      position: relative;
 
+      .file {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 13px;
+        color: ${() => (settingInfoStore.DarkTheme() ? "lightgray" : "gray")};
+      }
+      
       .title {
         width: 130px;
         height: 40px;
@@ -186,7 +195,7 @@ export default defineComponent({
             : "rgba(239, 239, 242, 0.6)"}; */
         height: 40px;
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-end;
         align-items: center;
         padding: 0 20px;
         //z-index: 99;
@@ -197,7 +206,7 @@ export default defineComponent({
           font-size: 12px;
           color: gray;
         }
-
+        
         .actions {
           height: 45px;
           color: lightgray;
@@ -206,7 +215,7 @@ export default defineComponent({
           justify-content: flex-end;
           align-items: center;
           gap: 15px;
-
+          
           .action {
             height: 45px;
             color: ${() =>
@@ -231,6 +240,14 @@ export default defineComponent({
       width: 100%;
       height: calc(100% - 40px);
       display: flex;
+      position: relative;
+      .info {
+        position: absolute;
+        right: 10px;
+        bottom: 5px;
+        font-size: 10px;
+        color: ${() => settingInfoStore.DarkTheme() ? 'lightgray' : 'gray'};
+      }
     `;
 
     const ListView = styled.div`
@@ -479,6 +496,16 @@ export default defineComponent({
     });
 
     const currentCom = ref<any>(null);
+
+    const fileName = () => {
+      const res = fileList.value.filter(
+          (item) => item.uuid === selectFileKey.value
+      );
+      if (res.length == 0) {
+        return "";
+      }
+      return res[0].fileName
+    }
 
     const updateFileName = () => {
       const res = fileList.value.filter(
@@ -1052,6 +1079,7 @@ export default defineComponent({
     return () => (
       <Container>
         <ToolView>
+          <span class={'file'}>{fileName()}</span>
           <div class={"title"}>
             {!search.value && (
               <PlusOutlined class={"add"} onClick={createFile} />
@@ -1089,9 +1117,6 @@ export default defineComponent({
               ScreenFullSwitch();
             }}
           >
-            <div class={"info"}>
-              <span class={"create"}>{createDatetime()}</span>
-            </div>
             <div class={"actions"}>
               <div
                 class={"action"}
@@ -1225,6 +1250,9 @@ export default defineComponent({
               }}
             />
           </RouterViewCon>
+          <div class={"info"}>
+            <span class={"create"}>{createDatetime()}</span>
+          </div>
         </BodyView>
       </Container>
     );
