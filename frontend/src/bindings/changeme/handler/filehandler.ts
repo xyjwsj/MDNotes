@@ -9,6 +9,11 @@ import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 // @ts-ignore: Unused imports
 import * as model$0 from "../model/models.js";
 
+export function ChangeTag(fileKey: string, tag: string): Promise<boolean> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2145614858, fileKey, tag) as any;
+    return $resultPromise;
+}
+
 export function CreateFile(): Promise<model$0.RecordInfo> & { cancel(): void } {
     let $resultPromise = $Call.ByID(1643363620) as any;
     let $typingPromise = $resultPromise.then(($result: any) => {

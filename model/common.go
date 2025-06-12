@@ -9,6 +9,7 @@ type RecordInfo struct {
 	FileName string         `json:"fileName"`
 	Status   int            `json:"status"`
 	Size     int64          `json:"size"`
+	Tag      string         `json:"tag"`
 	SizeStr  string         `json:"sizeStr"`
 	Create   *util.Datetime `json:"create"`
 	Modify   *util.Datetime `json:"modify"`

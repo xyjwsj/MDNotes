@@ -4,6 +4,7 @@ import langDark from "@/assets/png/language-dark.png";
 import langLight from "@/assets/png/language-light.png";
 import mdIcon from "@/assets/png/markdown.png";
 import {
+  ChangeTag,
   CreateFile,
   DeleteFile,
   DocList,
@@ -11,11 +12,20 @@ import {
   ModifyName,
   Search,
 } from "@/bindings/changeme/handler/filehandler.ts";
-import {ConfigStore, PreferenceInfo, ScreenFullSwitch,} from "@/bindings/changeme/handler/systemhandler.ts";
-import {RecordInfo} from "@/bindings/changeme/model";
-import {settingInfoStore} from "@/store/modules/settings.ts";
-import {TipSuccess, TipWarning} from "@/util/messageUtil.tsx";
-import {DestroyModal, ModalView, OkModal, ShowModal,} from "@/util/modalUtil.tsx";
+import {
+  ConfigStore,
+  PreferenceInfo,
+  ScreenFullSwitch,
+} from "@/bindings/changeme/handler/systemhandler.ts";
+import { RecordInfo } from "@/bindings/changeme/model";
+import { settingInfoStore } from "@/store/modules/settings.ts";
+import { TipSuccess, TipWarning } from "@/util/messageUtil.tsx";
+import {
+  DestroyModal,
+  ModalView,
+  OkModal,
+  ShowModal,
+} from "@/util/modalUtil.tsx";
 import {
   BulbOutlined,
   CheckOutlined,
@@ -30,7 +40,14 @@ import {
   SearchOutlined,
   SolutionOutlined,
 } from "@ant-design/icons-vue";
-import {Dropdown, Image, Input, Menu, MenuItem} from "ant-design-vue";
+import {
+  Dropdown,
+  Image,
+  Input,
+  Menu,
+  MenuItem,
+  Popover,
+} from "ant-design-vue";
 import Mousetrap from "mousetrap";
 import {
   defineComponent,
@@ -45,8 +62,8 @@ import {
   Transition,
   TransitionGroup,
 } from "vue";
-import {useI18n} from "vue-i18n";
-import {RouterView} from "vue-router";
+import { useI18n } from "vue-i18n";
+import { RouterView } from "vue-router";
 import styled from "vue3-styled-components";
 
 export default defineComponent({
@@ -73,14 +90,28 @@ export default defineComponent({
       flex-direction: row;
       position: relative;
 
-      .file {
+      .fileTitle {
         position: absolute;
         left: 50%;
         transform: translateX(-50%);
-        font-size: 13px;
-        color: ${() => (settingInfoStore.DarkTheme() ? "lightgray" : "gray")};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        .file {
+          font-size: 13px;
+          color: ${() => (settingInfoStore.DarkTheme() ? "lightgray" : "gray")};
+        }
+
+        .tag {
+          width: 10px;
+          height: 10px;
+          border-radius: 5px;
+          background-color: aliceblue;
+        }
       }
-      
+
       .title {
         width: 130px;
         height: 40px;
@@ -195,7 +226,7 @@ export default defineComponent({
           font-size: 12px;
           color: gray;
         }
-        
+
         .actions {
           height: 45px;
           color: lightgray;
@@ -204,7 +235,7 @@ export default defineComponent({
           justify-content: flex-end;
           align-items: center;
           gap: 15px;
-          
+
           .action {
             height: 45px;
             color: ${() =>
@@ -258,6 +289,7 @@ export default defineComponent({
         padding: 0 20px;
         font-size: 14px;
         display: flex;
+        position: relative;
         color: ${() =>
           settingInfoStore.DarkTheme()
             ? "rgba(255, 255, 255, 0.6)"
@@ -267,6 +299,17 @@ export default defineComponent({
         &:hover {
           background-color: ${() =>
             settingInfoStore.DarkTheme() ? "#323233" : "#e7e7ea"};
+        }
+
+        .tag {
+          position: absolute;
+          width: 10px;
+          height: 10px;
+          background-color: red;
+          right: 8px;
+          top: 50%;
+          transform: translateY(-50%);
+          border-radius: 5px;
         }
 
         .editInput {
@@ -287,6 +330,7 @@ export default defineComponent({
 
         .right {
           font-size: 12px;
+          padding-right: 10px;
           color: ${() =>
             settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.4)" : "gray"};
           display: flex;
@@ -413,16 +457,14 @@ export default defineComponent({
         gap: 3px;
         .key {
           background-color: ${() =>
-              settingInfoStore.DarkTheme()
-                  ? "gray"
-                  : "lightgray"};
+            settingInfoStore.DarkTheme() ? "gray" : "lightgray"};
           line-height: 20px;
           padding: 0 5px;
           border-radius: 3px;
           color: ${() =>
-              settingInfoStore.DarkTheme()
-                  ? "rgba(255, 255, 255, 0.7)"
-                  : "rgba(0, 0, 0, 0.8)"};
+            settingInfoStore.DarkTheme()
+              ? "rgba(255, 255, 255, 0.7)"
+              : "rgba(0, 0, 0, 0.8)"};
         }
       }
     `;
@@ -481,6 +523,34 @@ export default defineComponent({
       }
     `;
 
+    const PopoverView = styled(Popover)`
+      background-color: red;
+      :global(.ant-popover-arrow) {
+        &:before {
+          background: rgba(0, 0, 0, 0.4) !important;
+        }
+      }
+      :global(.ant-popover-inner) {
+        background-color: rgba(0, 0, 0, 0.4) !important;
+      }
+    `;
+
+    const TagView = styled.div`
+      width: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      /* background-color: gray; */
+      gap: 12px;
+
+      span {
+        width: 14px;
+        height: 14px;
+        border-radius: 7px;
+        background-color: red;
+      }
+    `;
+
     const showLicense: any = inject("showLicense");
 
     const search = ref(false);
@@ -497,13 +567,13 @@ export default defineComponent({
 
     const fileName = () => {
       const res = fileList.value.filter(
-          (item) => item.uuid === selectFileKey.value
+        (item) => item.uuid === selectFileKey.value
       );
       if (res.length == 0) {
         return "";
       }
-      return res[0].fileName
-    }
+      return res[0].fileName;
+    };
 
     const updateFileName = () => {
       const res = fileList.value.filter(
@@ -720,8 +790,8 @@ export default defineComponent({
                   const split = itm.key.split("+");
                   return (
                     <div class={"item"}>
-                      {split.map(it => {
-                        return <span class={'key'}>{it}</span>
+                      {split.map((it) => {
+                        return <span class={"key"}>{it}</span>;
                       })}
                       <span>{t(itm.descKey)}</span>
                     </div>
@@ -749,7 +819,7 @@ export default defineComponent({
         selectFileKey.value = docs[0]?.uuid!;
         setTimeout(() => {
           updateFileName();
-        }, 300)
+        }, 300);
       }
     });
 
@@ -1047,10 +1117,71 @@ export default defineComponent({
       updateFileName();
     };
 
+    const tagColor = [
+      "orange",
+      "yellow",
+      "red",
+      "green",
+      "blue",
+      "purple",
+      "gray",
+    ];
+
+    const changeTag = async (color: string) => {
+      if (color === "" || selectFileKey.value === "") {
+        return;
+      }
+      const res = await ChangeTag(selectFileKey.value, color);
+      if (res) {
+        fileList.value.forEach((item) => {
+          if (item.uuid === selectFileKey.value) {
+            item.tag = color;
+            return;
+          }
+        });
+      }
+    };
+
+    const selectTag = () => {
+      let tag = "";
+      fileList.value.forEach((item) => {
+        if (item.uuid === selectFileKey.value) {
+          tag = item.tag;
+          return;
+        }
+      });
+      return tag;
+    };
+
     return () => (
       <Container>
         <ToolView>
-          <span class={'file'}>{fileName()}</span>
+          <div class={"fileTitle"}>
+            <span class={"file"}>{fileName()}</span>
+            <PopoverView
+              content={
+                <TagView>
+                  {tagColor.map((itm) => (
+                    <span
+                      style={{
+                        backgroundColor: itm,
+                      }}
+                      onClick={() => {
+                        changeTag(itm);
+                      }}
+                    ></span>
+                  ))}
+                </TagView>
+              }
+            >
+              <span
+                class={"tag"}
+                style={{
+                  backgroundColor: selectTag(),
+                }}
+              ></span>
+            </PopoverView>
+          </div>
           <div class={"title"}>
             {!search.value && (
               <PlusOutlined class={"add"} onClick={createFile} />
@@ -1192,6 +1323,14 @@ export default defineComponent({
                         <div class={"right"}>
                           <span>{item.sizeStr}</span>
                         </div>
+                      )}
+                      {item.tag !== "" && (
+                        <div
+                          class={"tag"}
+                          style={{
+                            backgroundColor: item.tag,
+                          }}
+                        ></div>
                       )}
                     </div>
                   );

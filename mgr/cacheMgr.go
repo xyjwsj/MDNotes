@@ -4,12 +4,13 @@ import (
 	"changeme/model"
 	"changeme/util"
 	"errors"
+	"log"
+	"time"
+
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
-	"log"
-	"time"
 )
 
 var recordCache []*model.RecordInfo
@@ -196,14 +197,19 @@ func SyncData() {
 	util.WriteToFile(path, util.Struct2Json(recordCache))
 }
 
-func ModifyInfo(key, filename string, size int64) {
+func ModifyInfo(key, filename, tag string, size int64) {
+	log.Println("xxxxx", key, filename, tag, size)
 	record := findRecord(key)
 	now := util.Datetime(time.Now())
 	if record != nil {
 		if filename != "" {
 			record.FileName = filename
 		}
-		if size >= 0 {
+		if tag != "" {
+			record.Tag = tag
+		}
+		if size > 0 {
+			log.Println("修改文件大小")
 			record.Size = size
 			record.SizeStr = util.FileSizeCovert(record.Size)
 		}

@@ -43,6 +43,7 @@ export class RecordInfo {
     "fileName": string;
     "status": number;
     "size": number;
+    "tag": string;
     "sizeStr": string;
     "create": util$0.Datetime | null;
     "modify": util$0.Datetime | null;
@@ -61,6 +62,9 @@ export class RecordInfo {
         }
         if (!("size" in $$source)) {
             this["size"] = 0;
+        }
+        if (!("tag" in $$source)) {
+            this["tag"] = "";
         }
         if (!("sizeStr" in $$source)) {
             this["sizeStr"] = "";

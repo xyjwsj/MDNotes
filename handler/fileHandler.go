@@ -18,12 +18,20 @@ func (file *FileHandler) SyncFile(fileKey, content string) string {
 	mgr.AsyncFile(path, content)
 	bytes := []byte(content)
 	size := int64(len(bytes))
-	go mgr.ModifyInfo(fileKey, "", size)
+	go mgr.ModifyInfo(fileKey, "", "", size)
 	return util.FileSizeCovert(size)
 }
 
 func (file *FileHandler) ModifyName(fileKey, fileName string) bool {
-	mgr.ModifyInfo(fileKey, fileName, 0)
+	mgr.ModifyInfo(fileKey, fileName, "", 0)
+	return true
+}
+
+func (file *FileHandler) ChangeTag(fileKey, tag string) bool {
+	if fileKey == "" {
+		return false
+	}
+	mgr.ModifyInfo(fileKey, "", tag, 0)
 	return true
 }
 
