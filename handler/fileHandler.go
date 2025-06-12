@@ -4,8 +4,10 @@ import (
 	"changeme/mgr"
 	"changeme/model"
 	"changeme/util"
+	"fmt"
 	"log"
 	"strings"
+	"time"
 )
 
 type FileHandler struct {
@@ -62,15 +64,26 @@ func (file *FileHandler) CreateFile() model.RecordInfo {
 }
 
 func (file *FileHandler) ExportFile(all bool, fileKey string) bool {
+	list := mgr.CacheList()
 	if all {
-		src := util.CreatePlatformPath(model.CacheDir)
+		src := util.CreatePlatformPath(model.CacheDir, "md")
 		target := util.CreatePlatformPath(model.UserHomeDir, "Downloads", "Notes")
-		util.Copy(src, target)
+		for _, item := range list {
+			s := util.CreatePlatformPath(src, item.Uuid+".md")
+			t := util.CreatePlatformPath(target, fmt.Sprintf("%s-%d.md", item.FileName, time.Now().Unix()))
+			util.Copy(s, t)
+		}
+		util.SelectLocation(target)
 		return true
 	} else {
-		src := util.CreatePlatformPath(model.CacheDir, "md", fileKey+".md")
-		target := util.CreatePlatformPath(model.UserHomeDir, "Downloads", fileKey+".md")
-		util.Copy(src, target)
+		for _, item := range list {
+			if item.Uuid == fileKey {
+				src := util.CreatePlatformPath(model.CacheDir, "md", fileKey+".md")
+				target := util.CreatePlatformPath(model.UserHomeDir, "Downloads", item.FileName+".md")
+				util.Copy(src, target)
+				util.SelectLocation(target)
+			}
+		}
 		return true
 	}
 }

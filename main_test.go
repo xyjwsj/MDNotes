@@ -58,3 +58,7 @@ func TestCache(t *testing.T) {
 	}
 	log.Println(contents)
 }
+
+func TestPdf(t *testing.T) {
+
+}
