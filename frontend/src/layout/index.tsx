@@ -727,7 +727,9 @@ export default defineComponent({
       });
       if (docs.length > 0) {
         selectFileKey.value = docs[0]?.uuid!;
-        updateFileName();
+        setTimeout(() => {
+          updateFileName();
+        }, 300)
       }
     });
 
@@ -1191,7 +1193,9 @@ export default defineComponent({
                       <Component
                         is={Component}
                         key={route.path}
-                        ref={(e) => (currentCom.value = e)}
+                        ref={(el) => {
+                          currentCom.value = el;
+                        }}
                       ></Component>
                     </KeepAlive>
                   </Transition>

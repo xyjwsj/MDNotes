@@ -35,10 +35,15 @@ export default defineComponent({
       height: 100%;
       width: 100%;
       border: none;
-      position: relative;
+      //position: relative; // 这里会引起编辑区在最后一行发生跳动问题
 
       .vditor-reset {
-        padding: 10px 30px !important;
+        padding: 30px 30px !important;
+        overflow-y: auto;
+
+        ::-webkit-scrollbar {
+          display: none;
+        }
       }
 
       .counter {
@@ -58,6 +63,7 @@ export default defineComponent({
         position: absolute;
         bottom: 0;
         width: 100%;
+        right: 0;
         height: 25px;
         display: flex;
         flex-direction: row;
@@ -65,10 +71,11 @@ export default defineComponent({
         font-size: 10px;
         align-items: center;
         color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.3)' : 'lightgray'};
-        gap: 15px;
+        //gap: 15px;
         .item {
           line-height: 15px;
           margin-right: 10px;
+          padding-left: 15px;
         }
         .icon-wrapper {
           display: inline-flex;
@@ -87,11 +94,12 @@ export default defineComponent({
 
     const EditorView = styled.div`
       border: none !important;
-      height: 100px;
+      //height: 100px;
 
       .vditor-toolbar {
         border: none;
       }
+      
     `;
 
     const TemplateView = styled.div`
@@ -289,6 +297,8 @@ export default defineComponent({
       fileName: "",
       create: "",
       update: "",
+      row: 0,
+      column: 0
     });
 
     const updateFileSize: any = inject("updateFileSize");
@@ -402,6 +412,11 @@ export default defineComponent({
     // expose({updateTheme})
 
     const showMDTemplate = () => {
+      let cursorPosition = vditor.value?.getCursorPosition();
+      if (cursorPosition) {
+        editorInfo.row = cursorPosition.top
+        editorInfo.column = cursorPosition.left
+      }
       const modalView = new ModalView();
       modalView.title = "选择插入模版";
       modalView.okText = "";
@@ -480,6 +495,7 @@ export default defineComponent({
 
     const startSpin = () => {
       async.value = true
+      editorInfo.update = moment().format('YYYY-MM-DD HH:mm:ss')
       setTimeout(() => {
         async.value = false
       }, 2000)

@@ -126,10 +126,12 @@ func startFlushDisk() {
 					continue
 				}
 				cleanWrite(operate)
+				operate.Change = false
 			}
 		case op := <-fileQueue:
 			if op.Change {
 				cleanWrite(op)
+				operate.Change = false
 			}
 			op.EditeFile.Close()
 			op.EditeFile = nil
