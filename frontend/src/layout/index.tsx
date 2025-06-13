@@ -352,9 +352,12 @@ export default defineComponent({
             border-radius: 50px;
             z-index: 10;
 
+            transition: transform 0.3s ease;
+            
             &:hover {
                 opacity: 0.9;
                 box-shadow: 0 0 5px 2px lightgray;
+                transform: translate(5px, -5px);
             }
         `
 
@@ -660,6 +663,9 @@ export default defineComponent({
             Mousetrap.bind("command+shift+right", () => {
                 showList.value = true;
             });
+            Mousetrap.bind("command+shift+d", () => {
+                showDelFile()
+            });
         };
 
         let timer: any | null = null;
@@ -713,6 +719,10 @@ export default defineComponent({
                     {
                         key: "⌘+R",
                         descKey: "rename",
+                    },
+                    {
+                        key: "⌘+Shift+D",
+                        descKey: "deleteFileList",
                     },
                     {
                         key: "⌘+↑",
