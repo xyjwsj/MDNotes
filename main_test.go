@@ -21,20 +21,30 @@ func TestCopy(t *testing.T) {
 }
 
 func TestLicence(t *testing.T) {
-	mgr.ValidateLicence()
+	license, err := mgr.GenerateLicense(mgr.Production, "/Users/wushaojie/Documents/wsj/application/mdNote/license/private.pem", 30)
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println(util.Base64Encode(license, true))
+	//mgr.ValidateLicence()
 	//use := mgr.TrailUse(false)
 	//log.Println(use)
 	//mgr.TrialLicense()
-	//license, err := mgr.GenerateLicense(mgr.Production, "/Users/wushaojie/Documents/wsj/application/mdNote/license/private.pem", 30)
-	//if err != nil {
-	//	log.Println(err)
-	//}
-	//log.Println(license)
+
 	//
 	//encode := util.Base64Encode(license, true)
 	//log.Println(encode)
 	//
-	//mgr.ValidateLicense(license)
+	err = mgr.ValidateLicense(license)
+	if err != nil {
+		log.Panic(err)
+	}
+}
+
+func TestCreateLicense(t *testing.T) {
+	str := "f7ftCXNWVG6y0O8vPF6Q32IIHVwpGr78KU9L2JqJLLmh/ooK9uloHmGaMJIomChEssuc8U6GVSUywhvDJKbyd//QG+IybchDbb7nXNUcJ1oWNJ0ysLlB//HyTvS/ujzGk1ErBzY03kEYMjV/Zrm0MbS85mS3p3N4LPV3rrdK67SY5Nxq/X5trGepZV6B0ak5d13Bvk76Oz6kXmzGNC1epg+GExOPV5WF0rL2V6thLZH2mqeGYtqirJRXCHPi94LLMGQchR0sVxBrtWsX+5qmlwR5iSbJwkWgH/wATahxhEiGq7KkGc/MSjgw4F04rjrvk6KoNYq+eLgkKBwYQjDKvg=="
+	licence := mgr.CreateLicence(str)
+	log.Println(licence)
 }
 
 func TestAssets(t *testing.T) {

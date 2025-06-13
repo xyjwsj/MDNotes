@@ -31,7 +31,7 @@ const zhTwLocale = {
   trialTip: "試用時間為14天，請您儘快購買正式許可證",
   licenseExpired: "許可證過期時間",
   uniqueEd: "機器碼ID",
-  showHotKey: "顯示快捷視窗",
+  showHotKey: "快捷鍵視窗",
   hotKey: "快捷鍵",
   rename: "重新命名",
   editArea: "編輯區",
@@ -53,6 +53,8 @@ const zhTwLocale = {
   portuguese: "葡萄牙語",
   japanese: "日語",
   traditional: "繁體",
+  deleteFileList: '刪除檔案列表',
+  recoveryFailure: '恢復檔案失敗'
 };
 
 export default zhTwLocale;

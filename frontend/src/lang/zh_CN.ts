@@ -31,7 +31,7 @@ const zhLocale = {
   trialTip: "试用时间为14天，请您尽快购买正式许可证",
   licenseExpired: "许可证过期时间",
   uniqueId: "机器码ID",
-  showHotKey: "显示快捷窗口",
+  showHotKey: "快捷键窗口",
   hotKey: "快捷键",
   rename: "重命名",
   editArea: "编辑区",
@@ -53,6 +53,8 @@ const zhLocale = {
   portuguese: "葡萄牙语",
   japanese: "日语",
   traditional: "繁体",
+  deleteFileList: '删除文件列表',
+  recoveryFailure: '恢复文件失败'
 };
 
 export default zhLocale;

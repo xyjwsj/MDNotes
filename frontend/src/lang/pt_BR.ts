@@ -32,7 +32,7 @@ const ptLocale = {
     "O período de teste é de 14 dias, compre rapidamente uma licença oficial",
   licenseExpired: "Data de expiração da licença",
   uniqueId: "ID da máquina",
-  showHotKey: "Mostrar janela de atalho",
+  showHotKey: "Janela de atalhos do teclado",
   hotKey: "Atalho de teclado",
   rename: "Renomear",
   editArea: "Área de edição",
@@ -54,6 +54,8 @@ const ptLocale = {
   portuguese: "Português",
   japanese: "Japonês",
   traditional: "Tradicional",
+  deleteFileList: 'Excluir lista de arquivos',
+  recoveryFailure: 'Falha ao restaurar o arquivo'
 };
 
 export default ptLocale;

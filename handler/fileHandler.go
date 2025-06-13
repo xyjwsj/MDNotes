@@ -63,8 +63,15 @@ func (file *FileHandler) FileContent(fileKey string) string {
 	return contents
 }
 
+func (file *FileHandler) DeleteList() []*model.RecordInfo {
+	return mgr.DelList()
+}
 func (file *FileHandler) DeleteFile(fileKey string) bool {
 	return mgr.DeleteFile(fileKey)
+}
+
+func (file *FileHandler) Recovery(fileKey string) bool {
+	return mgr.RecoveryDel(fileKey)
 }
 
 func (file *FileHandler) CreateFile() model.RecordInfo {

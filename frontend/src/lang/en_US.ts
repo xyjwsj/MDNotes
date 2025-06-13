@@ -32,7 +32,7 @@ const enLocale = {
     "You have a 14-day trial period. We kindly request that you purchase the official license promptly.",
   licenseExpired: "Your license has expired at",
   uniqueId: "Unique Device Identifier",
-  showHotKey: "Show Shortcut Panel",
+  showHotKey: "Keyboard Shortcut Window",
   hotKey: "Hotkey",
   rename: "Rename",
   editArea: "Edit Area",
@@ -54,6 +54,8 @@ const enLocale = {
   portuguese: "Portuguese",
   japanese: "Japanese",
   traditional: "Traditional Chinese",
+  deleteFileList: 'Delete File List',
+  recoveryFailure: 'Failed to restore file'
 };
 
 export default enLocale;

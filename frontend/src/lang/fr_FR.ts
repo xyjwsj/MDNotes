@@ -34,7 +34,7 @@ const frLocale = {
     "La période d'essai est de 14 jours, veuillez acheter une licence officielle rapidement",
   licenseExpired: "Date d'expiration de la licence",
   uniqueId: "ID de machine",
-  showHotKey: "Afficher la fenêtre des raccourcis",
+  showHotKey: "Fenêtre des raccourcis clavier",
   hotKey: "Raccourci clavier",
   rename: "Renommer",
   editArea: "Zone d'édition",
@@ -56,6 +56,8 @@ const frLocale = {
   portuguese: "Portugais",
   japanese: "Japonais",
   traditional: "Traditionnel",
+  deleteFileList: 'Supprimer la liste de fichiers',
+  recoveryFailure: 'Échec de la restauration du fichier'
 };
 
 export default frLocale;

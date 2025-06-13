@@ -31,7 +31,7 @@ const jaLocale = {
   trialTip: "トライアル期間は14日間です。早急に正式ライセンスをご購入ください",
   licenseExpired: "ライセンス有効期限",
   uniqueId: "マシンID",
-  showHotKey: "ショートカットウィンドウを表示",
+  showHotKey: "キーボードショットカットウィンドウ",
   hotKey: "ショートカットキー",
   rename: "名前変更",
   editArea: "編集領域",
@@ -53,6 +53,8 @@ const jaLocale = {
   portuguese: "ポルトガル語",
   japanese: "日本語",
   traditional: "繁体字",
+  deleteFileList: 'ファイルリストを削除',
+  recoveryFailure: 'ファイルの復元に失敗しました'
 };
 
 export default jaLocale;

@@ -96,8 +96,9 @@ func UniqueId() string {
 	return util.MD5(id)
 }
 
-func ValidateLicense(license string) {
-	validateLicense(license)
+func ValidateLicense(license string) error {
+	_, err := validateLicense(license)
+	return err
 }
 
 func validateLicense(licenseStr string) (LicenseInfo, error) {
@@ -113,7 +114,7 @@ func validateLicense(licenseStr string) (LicenseInfo, error) {
 	}
 
 	// 重新构造原始数据并计算签名
-	rawData := fmt.Sprintf("%s:%s:%d", Production, license.DeviceID, license.ExpiryTime.Unix())
+	rawData := fmt.Sprintf("%s:%s:%d", Production, UniqueId(), license.ExpiryTime.Unix())
 	hashed := sha256.Sum256([]byte(rawData))
 
 	// 加载公钥
@@ -132,6 +133,9 @@ func validateLicense(licenseStr string) (LicenseInfo, error) {
 
 func CreateLicence(license string) bool {
 	decode, _ := util.Base64Decode(license, true)
+	if decode == "" {
+		decode = license
+	}
 	_, err := validateLicense(decode)
 	if err != nil {
 		return false
@@ -238,9 +242,9 @@ func GenerateLicense(lType LicenseType, privateKeyPath string, expiryDays int) (
 	// 构建 License JSON
 	license := LicenseInfo{
 		Type:       lType,
-		DeviceID:   getMac() + getSerialNumber(),
+		DeviceID:   UniqueId(),
 		ExpiryTime: expiry,
-		Signature:  base64.StdEncoding.EncodeToString(signature),
+		Signature:  util.Base64Encode(string(signature), true),
 	}
 
 	jsonData, _ := json.Marshal(license)

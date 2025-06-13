@@ -28,6 +28,15 @@ export function DeleteFile(fileKey: string): Promise<boolean> & { cancel(): void
     return $resultPromise;
 }
 
+export function DeleteList(): Promise<(model$0.RecordInfo | null)[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(434763757) as any;
+    let $typingPromise = $resultPromise.then(($result: any) => {
+        return $$createType2($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
+}
+
 export function DocList(): Promise<(model$0.RecordInfo | null)[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3028887424) as any;
     let $typingPromise = $resultPromise.then(($result: any) => {
@@ -49,6 +58,11 @@ export function FileContent(fileKey: string): Promise<string> & { cancel(): void
 
 export function ModifyName(fileKey: string, fileName: string): Promise<boolean> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3872922023, fileKey, fileName) as any;
+    return $resultPromise;
+}
+
+export function Recovery(fileKey: string): Promise<boolean> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2787769377, fileKey) as any;
     return $resultPromise;
 }
 

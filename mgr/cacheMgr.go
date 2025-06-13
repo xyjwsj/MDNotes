@@ -247,6 +247,33 @@ func CacheList() []*model.RecordInfo {
 	return infos
 }
 
+func DelList() []*model.RecordInfo {
+	infos := make([]*model.RecordInfo, 0)
+	for _, item := range recordCache {
+		if item.Status == 0 {
+			infos = append(infos, item)
+		}
+	}
+	return infos
+}
+
+func RecoveryDel(fileKey string) bool {
+	for _, item := range recordCache {
+		if item.Uuid == fileKey && item.Status == 0 {
+			target := util.CreatePlatformPath(model.CacheDel, fileKey+".md")
+			if !util.Exists(target) {
+				return false
+			}
+			item.Status = 1
+			src := util.CreatePlatformPath(model.CacheDel, fileKey+".md")
+			util.Move(src, target)
+			SyncData()
+			return true
+		}
+	}
+	return false
+}
+
 func DeleteFile(fileKey string) bool {
 	for _, item := range recordCache {
 		if item.Uuid == fileKey {
