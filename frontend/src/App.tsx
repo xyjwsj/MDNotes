@@ -82,7 +82,9 @@ export default defineComponent({
     const rootRef = ref<any>(null);
 
     onMounted(() => {
-      locale.value = settingInfoStore.getState().lang || "zh";
+      if (settingInfoStore.getState().lang && settingInfoStore.getState().lang !== "") {
+        locale.value = settingInfoStore.getState().lang
+      }
     });
 
     const LicenseView = styled.div`

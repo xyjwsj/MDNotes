@@ -20,6 +20,7 @@ func ImageApi(next http.Handler) http.Handler {
 		if strings.HasPrefix(path, "/mdNotes/vditor") {
 			absPath := strings.TrimPrefix(path, "/mdNotes/vditor")
 			join := filepath.Join("vditor", absPath)
+			join = strings.ReplaceAll(join, `\`, `/`)
 			file, err := vditorAssets.ReadFile(join)
 			if err != nil {
 				http.NotFound(w, r)
