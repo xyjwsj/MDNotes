@@ -31,7 +31,7 @@ import {
     MoreOutlined,
     PlusOutlined,
     SearchOutlined,
-    SolutionOutlined,
+    SolutionOutlined, TagOutlined,
     UndoOutlined,
 } from "@ant-design/icons-vue";
 import {Dropdown, Image, Input, Menu, MenuItem, Popover,} from "ant-design-vue";
@@ -221,7 +221,7 @@ export default defineComponent({
                     display: flex;
                     justify-content: flex-end;
                     align-items: center;
-                    gap: 15px;
+                    gap: 20px;
 
                     .action {
                         height: 45px;
@@ -274,7 +274,7 @@ export default defineComponent({
             }
 
             .selectDefault {
-                line-height: 30px;
+                line-height: 35px;
                 width: 190px;
                 padding: 0 20px;
                 font-size: 14px;
@@ -303,6 +303,8 @@ export default defineComponent({
                 }
 
                 .editInput {
+                    height: 35px;
+
                     .ant-input {
                         color: ${() =>
                                 settingInfoStore.DarkTheme()
@@ -345,7 +347,7 @@ export default defineComponent({
             opacity: 0.5;
             padding-right: 10px;
             padding-top: 10px;
-            background-color: ${() => settingInfoStore.DarkTheme() ? 'gray' : 'lightgray'};
+            background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.3)' : 'lightgray'};
             display: flex;
             align-items: flex-start;
             justify-content: flex-end;
@@ -353,10 +355,10 @@ export default defineComponent({
             z-index: 10;
 
             transition: transform 0.3s ease;
-            
+
             &:hover {
                 opacity: 0.9;
-                box-shadow: 0 0 5px 2px lightgray;
+                box-shadow: 0 0 5px 2px ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.3)'};
                 transform: translate(5px, -5px);
             }
         `
@@ -539,22 +541,21 @@ export default defineComponent({
         `;
 
         const PopoverView = styled(Popover)`
-            background-color: red;
 
             :global(.ant-popover-arrow) {
                 &:before {
-                    background: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.4)' : 'lightgray'} !important;
+                    background: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.3)' : 'lightgray'} !important;
                 }
             }
 
             :global(.ant-popover-inner) {
-                background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.4)' : 'lightgray'} !important;
+                background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.3)' : 'lightgray'} !important;
             }
         `;
 
         const TagView = styled.div`
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
             //background-color: gray;
             gap: 12px;
@@ -1170,17 +1171,6 @@ export default defineComponent({
             }
         };
 
-        const selectTag = () => {
-            let tag = "";
-            fileList.value.forEach((item) => {
-                if (item.uuid === selectFileKey.value) {
-                    tag = item.tag;
-                    return;
-                }
-            });
-            return tag;
-        };
-
         const DeleteView = styled.div`
             display: flex;
             flex-direction: column;
@@ -1194,6 +1184,7 @@ export default defineComponent({
             gap: 8px;
             max-height: 350px;
             overflow-y: auto;
+
             ::-webkit-scrollbar {
                 display: none;
             }
@@ -1230,7 +1221,11 @@ export default defineComponent({
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                gap: 10px
+                gap: 10px;
+
+                .time {
+                    font-size: 12px;
+                }
             }
         `
 
@@ -1256,7 +1251,7 @@ export default defineComponent({
                         return <div class={'item'}>
                             <span>{item?.fileName}</span>
                             <div class={'right'}>
-                                <span>{item?.del}</span>
+                                <span class={'time'}>{`${item?.del} ${t("delete")}`}</span>
                                 <UndoOutlined class={'recovery'} onClick={async () => {
                                     const res = await Recovery(item?.uuid!)
                                     if (res) {
@@ -1280,38 +1275,14 @@ export default defineComponent({
                 <ToolView>
                     <div class={"fileTitle"}>
                         <span class={"file"}>{fileName()}</span>
-                        <PopoverView
-                            // open={showTag.value}
-                            content={
-                                <TagView>
-                                    {tagColor.map((itm) => (
-                                        <span
-                                            style={{
-                                                backgroundColor: itm,
-                                            }}
-                                            onClick={() => {
-                                                changeTag(itm);
-                                            }}
-                                        ></span>
-                                    ))}
-                                </TagView>
-                            }
-                        >
-                          <span
-                              class={"tag"}
-                              style={{
-                                  backgroundColor: selectTag(),
-                              }}
-                          >
-                          </span>
-                        </PopoverView>
                     </div>
                     <div class={"title"}>
                         {!search.value && (
-                            <PlusOutlined class={"add"} onClick={createFile}/>
+                            <PlusOutlined title={t('create')} class={"add"} onClick={createFile}/>
                         )}
                         {!search.value && (
                             <SearchOutlined
+                                title={t('search')}
                                 class={"add"}
                                 onClick={() => (search.value = true)}
                             />
@@ -1346,6 +1317,29 @@ export default defineComponent({
                         <div class={"actions"}>
                             <div
                                 class={"action"}
+                                >
+                                <PopoverView
+                                    // open={showTag.value}
+                                    content={
+                                        <TagView>
+                                            {tagColor.map((itm) => (
+                                                <span
+                                                    style={{
+                                                        backgroundColor: itm,
+                                                    }}
+                                                    onClick={() => {
+                                                        changeTag(itm);
+                                                    }}
+                                                ></span>
+                                            ))}
+                                        </TagView>
+                                    }
+                                >
+                                    <TagOutlined/>
+                                </PopoverView>
+                            </div>
+                            <div
+                                class={"action"}
                                 onClick={() => {
                                     showList.value = !showList.value;
                                 }}
@@ -1356,29 +1350,33 @@ export default defineComponent({
                                 class={"action"}
                                 overlay={
                                     <Menu
+                                        mode="inline"
                                         style={{
                                             backgroundColor: settingInfoStore.DarkTheme()
                                                 ? "#2B2D31"
                                                 : "#E9E9ED",
+                                            // minWidth: '200px',
+                                            display: 'flex',
+                                            justifyContent: 'flex-start'
                                         }}
                                     >
-                                        <MenuItemView onClick={exportFile}>
-                                            <ExportOutlined/>
+                                        <MenuItemView title={t('export')} onClick={exportFile}>
+                                            <ExportOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
-                                        <MenuItemView onClick={deleteFile}>
-                                            <DeleteOutlined/>
+                                        <MenuItemView title={t('delete')} onClick={deleteFile}>
+                                            <DeleteOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
-                                        <MenuItemView onClick={changeLang}>
-                                            <DribbbleOutlined/>
+                                        <MenuItemView title={t('language')} onClick={changeLang}>
+                                            <DribbbleOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
-                                        <MenuItemView onClick={SwitchTheme}>
-                                            <BulbOutlined/>
+                                        <MenuItemView title={t('changeTheme')} onClick={SwitchTheme}>
+                                            <BulbOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
-                                        <MenuItemView onClick={configStore}>
-                                            <CloudUploadOutlined/>
+                                        <MenuItemView title={t('configStore')} onClick={configStore}>
+                                            <CloudUploadOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
-                                        <MenuItemView onClick={showLicense}>
-                                            <SolutionOutlined/>
+                                        <MenuItemView title={t('license')} onClick={showLicense}>
+                                            <SolutionOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
                                     </Menu>
                                 }

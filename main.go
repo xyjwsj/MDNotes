@@ -6,6 +6,7 @@ import (
 	"embed"
 	_ "embed"
 	"log"
+	"runtime"
 	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -43,6 +44,9 @@ func main() {
 		Mac: application.MacOptions{
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 		},
+		Windows: application.WindowsOptions{
+			DisableQuitOnLastWindowClosed: false,
+		},
 	})
 
 	// Create a new window with the necessary options.
@@ -59,8 +63,18 @@ func main() {
 			Backdrop:                application.MacBackdropTranslucent,
 			TitleBar:                application.MacTitleBarHiddenInset,
 		},
+		Windows: application.WindowsWindow{
+			DisableFramelessWindowDecorations: true,
+			BackdropType:                      application.None,
+		},
 		BackgroundColour: application.NewRGB(27, 38, 54),
 		URL:              "/",
+	})
+
+	app.OnWindowCreation(func(window application.Window) {
+		if runtime.GOOS == "windows" {
+
+		}
 	})
 
 	//// 创建菜单
