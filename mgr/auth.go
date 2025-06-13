@@ -1,6 +1,7 @@
 package mgr
 
 import (
+	"changeme/model"
 	"changeme/util"
 	"crypto"
 	"crypto/rand"
@@ -41,16 +42,18 @@ type LicenseInfo struct {
 	Signature  string      `json:"signature"` // 使用私钥签名后的值
 }
 
-var licensePath = []string{
-	"/tmp/MDNote/.license",
-}
+var firstRunFile string
+var licensePath []string
 
 func init() {
-	for _, path := range licensePath {
-		if util.Exists(path) {
-
-		}
+	appConfigDir := util.CreatePlatformPath(model.AppConfigDir, "MDNote")
+	if !util.Exists(appConfigDir) {
+		_ = os.MkdirAll(appConfigDir, os.ModePerm)
 	}
+	licensePath = []string{
+		util.CreatePlatformPath(appConfigDir, ".license"),
+	}
+	firstRunFile = util.CreatePlatformPath(appConfigDir, ".first_run")
 }
 
 func getMac() string {
@@ -166,8 +169,6 @@ func ValidateLicence() string {
 	}
 	return ""
 }
-
-var firstRunFile = "/tmp/MDNote/.first_run"
 
 func TrailUse(create bool) string {
 	base := filepath.Dir(firstRunFile)

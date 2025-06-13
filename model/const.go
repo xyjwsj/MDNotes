@@ -7,11 +7,12 @@ import (
 )
 
 var (
-	CacheDir    string
-	CacheDirMd  string
-	CacheDirMg  string
-	CacheDel    string
-	UserHomeDir string
+	CacheDir     string
+	CacheDirMd   string
+	CacheDirMg   string
+	CacheDel     string
+	UserHomeDir  string
+	AppConfigDir string
 )
 
 func init() {
@@ -52,4 +53,11 @@ func init() {
 		fmt.Println(err)
 	}
 	UserHomeDir = home
+
+	configDir, err := os.UserConfigDir()
+	if err != nil {
+		fmt.Println(err)
+	}
+	AppConfigDir = configDir
+
 }
