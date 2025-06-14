@@ -57,7 +57,14 @@ const ptLocale = {
   japanese: "Japonês",
   traditional: "Chinês Tradicional",
   deleteFileList: 'Excluir lista de arquivos',
-  recoveryFailure: 'Falha ao restaurar o arquivo'
+  recoveryFailure: 'Falha ao restaurar o arquivo',
+  staffNotation: "Pauta musical",
+  formula: "Fórmula",
+  mindMap: "Mapa mental",
+  flowchart: "Fluxograma",
+  sequenceDiagram: "Diagrama de sequência",
+  ganttChart: "Diagrama de Gantt",
+  graphviz: 'graphviz'
 };
 
 export default ptLocale;

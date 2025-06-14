@@ -56,7 +56,14 @@ const zhLocale = {
   japanese: "日语",
   traditional: "繁体中文",
   deleteFileList: '删除文件列表',
-  recoveryFailure: '恢复文件失败'
+  recoveryFailure: '恢复文件失败',
+  staffNotation: "五線譜",
+  formula: "公式",
+  mindMap: "腦圖",
+  flowchart: "流程圖",
+  sequenceDiagram: "時序圖",
+  ganttChart: "甘特圖",
+  graphviz: 'graphviz'
 };
 
 export default zhLocale;

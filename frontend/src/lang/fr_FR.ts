@@ -59,7 +59,14 @@ const frLocale = {
   japanese: "Japonais",
   traditional: "Chinois traditionnel",
   deleteFileList: 'Supprimer la liste de fichiers',
-  recoveryFailure: 'Échec de la restauration du fichier'
+  recoveryFailure: 'Échec de la restauration du fichier',
+  staffNotation: "Portée musicale",
+  formula: "Formule",
+  mindMap: "Carte mentale",
+  flowchart: "Organigramme",
+  sequenceDiagram: "Diagramme de séquence",
+  ganttChart: "Diagramme de Gantt",
+  graphviz: 'graphviz'
 };
 
 export default frLocale;

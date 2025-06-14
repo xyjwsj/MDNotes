@@ -57,7 +57,14 @@ const enLocale = {
   japanese: "Japanese",
   traditional: "Traditional Chinese",
   deleteFileList: 'Delete File List',
-  recoveryFailure: 'Failed to restore file'
+  recoveryFailure: 'Failed to restore file',
+  staffNotation: "Staff Notation",
+  formula: "Formula",
+  mindMap: "Mind Map",
+  flowchart: "Flowchart",
+  sequenceDiagram: "Sequence Diagram",
+  ganttChart: "Gantt Chart",
+  graphviz: 'graphviz'
 };
 
 export default enLocale;

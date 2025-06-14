@@ -56,7 +56,14 @@ const jaLocale = {
   japanese: "日本語",
   traditional: "繁体中国語",
   deleteFileList: 'ファイルリストを削除',
-  recoveryFailure: 'ファイルの復元に失敗しました'
+  recoveryFailure: 'ファイルの復元に失敗しました',
+  staffNotation: "五線譜",
+  formula: "数式",
+  mindMap: "マインドマップ",
+  flowchart: "フローチャート",
+  sequenceDiagram: "シーケンス図",
+  ganttChart: "ガントチャート",
+  graphviz: 'graphviz'
 };
 
 export default jaLocale;

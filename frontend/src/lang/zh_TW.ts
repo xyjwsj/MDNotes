@@ -56,7 +56,14 @@ const zhTwLocale = {
   japanese: "日語",
   traditional: "繁體中文",
   deleteFileList: '刪除檔案列表',
-  recoveryFailure: '恢復檔案失敗'
+  recoveryFailure: '恢復檔案失敗',
+  staffNotation: "五線譜",
+  formula: "公式",
+  mindMap: "腦圖",
+  flowchart: "流程圖",
+  sequenceDiagram: "時序圖",
+  ganttChart: "甘特圖",
+  graphviz: 'graphviz'
 };
 
 export default zhTwLocale;

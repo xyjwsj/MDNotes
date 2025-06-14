@@ -242,42 +242,42 @@ export default defineComponent({
 
     const templateInfo = reactive([
       {
-        name: "五线谱",
+        name: t('staffNotation'),
         lightIcon: wxpLightIcon,
         darkIcon: wxpDarkIcon,
         key: "wxp",
         template: wxpContent,
       },
       {
-        name: "数学公式",
+        name: t('formula'),
         lightIcon: gsLightIcon,
         darkIcon: gsDarkIcon,
         key: "gs",
         template: gsContent,
       },
       {
-        name: "脑图",
+        name: t('mindMap'),
         lightIcon: ntLightIcon,
         darkIcon: ntDarkIcon,
         key: "nt",
         template: ntContent,
       },
       {
-        name: "流程图",
+        name: t('flowchart'),
         lightIcon: lctLightIcon,
         darkIcon: lctDarkIcon,
         key: "lct",
         template: lctContent,
       },
       {
-        name: "时序图",
+        name: t('sequenceDiagram'),
         lightIcon: sxtLightIcon,
         darkIcon: sxtDarkIcon,
         key: "sxt",
         template: sxtContent,
       },
       {
-        name: "甘特图",
+        name: t('ganttChart'),
         lightIcon: gttLightIcon,
         darkIcon: gttDarkIcon,
         key: "gtt",
