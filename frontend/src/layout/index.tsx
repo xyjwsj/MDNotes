@@ -8,10 +8,12 @@ import garbageDarkIcon from '@/assets/png/garbage-black.png'
 import {
     ChangeTag,
     CreateFile,
-    DeleteFile, DeleteList,
+    DeleteFile,
+    DeleteList,
     DocList,
     ExportFile,
-    ModifyName, Recovery,
+    ModifyName,
+    Recovery,
     Search,
 } from "@/bindings/changeme/handler/filehandler.ts";
 import {ConfigStore, PreferenceInfo, ScreenFullSwitch,} from "@/bindings/changeme/handler/systemhandler.ts";
@@ -31,14 +33,13 @@ import {
     MoreOutlined,
     PlusOutlined,
     SearchOutlined,
-    SolutionOutlined, TagOutlined,
+    TagOutlined,
     UndoOutlined,
 } from "@ant-design/icons-vue";
 import {Dropdown, Image, Input, Menu, MenuItem, Popover,} from "ant-design-vue";
 import Mousetrap from "mousetrap";
 import {
     defineComponent,
-    inject,
     KeepAlive,
     nextTick,
     onMounted,
@@ -572,7 +573,7 @@ export default defineComponent({
             }
         `;
 
-        const showLicense: any = inject("showLicense");
+        // const showLicense: any = inject("showLicense");
 
         const search = ref(false);
         const showList = ref(true);
@@ -647,7 +648,7 @@ export default defineComponent({
             });
 
             Mousetrap.bind("command+shift+l", () => {
-                showLicense();
+                // showLicense();
             });
             Mousetrap.bind("command+shift+e", () => {
                 exportFile();
@@ -763,10 +764,10 @@ export default defineComponent({
                         key: "⌘+L",
                         descKey: "language",
                     },
-                    {
-                        key: "⌘+Shift+L",
-                        descKey: "license",
-                    },
+                    // {
+                    //     key: "⌘+Shift+L",
+                    //     descKey: "license",
+                    // },
                     {
                         key: "⌘+Shift+E",
                         descKey: "export",
@@ -1375,9 +1376,9 @@ export default defineComponent({
                                         <MenuItemView title={t('configStore')} onClick={configStore}>
                                             <CloudUploadOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
-                                        <MenuItemView title={t('license')} onClick={showLicense}>
-                                            <SolutionOutlined style={{fontSize: '17px'}}/>
-                                        </MenuItemView>
+                                        {/*<MenuItemView title={t('license')} onClick={showLicense}>*/}
+                                        {/*    <SolutionOutlined style={{fontSize: '17px'}}/>*/}
+                                        {/*</MenuItemView>*/}
                                     </Menu>
                                 }
                             >

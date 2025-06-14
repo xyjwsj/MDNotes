@@ -4,17 +4,19 @@
         <key>CFBundlePackageType</key>
         <string>APPL</string>
         <key>CFBundleName</key>
-        <string>MD Notes</string>
+        <string>LiveMark</string>
+        <key>LSApplicationCategoryType</key>
+        <string>public.app-category.productivity</string>
         <key>CFBundleExecutable</key>
-        <string>mdnote</string>
+        <string>LiveMark</string>
         <key>CFBundleIdentifier</key>
-        <string>com.wails.mdnote</string>
+        <string>com.allen.mdnote</string>
         <key>CFBundleVersion</key>
-        <string>0.1.0</string>
+        <string>1.0.7</string>
         <key>CFBundleGetInfoString</key>
         <string>This is a comment</string>
         <key>CFBundleShortVersionString</key>
-        <string>0.1.0</string>
+        <string>1.0.7</string>
         <key>CFBundleIconFile</key>
         <string>icons</string>
         <key>LSMinimumSystemVersion</key>
@@ -22,6 +24,6 @@
         <key>NSHighResolutionCapable</key>
         <string>true</string>
         <key>NSHumanReadableCopyright</key>
-        <string>©wusj @Allen</string>
+        <string>Copyright © 2024 Allen Wu. All rights reserved.</string>
     </dict>
 </plist>

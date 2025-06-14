@@ -26,7 +26,11 @@ const messages = {
     ...frLocale,
   },
 };
-const lang = navigator.language || "en-US";
+let lang = navigator.language || "en-US";
+
+if (!messages.hasOwnProperty(lang)) {
+  lang = "en-US"
+}
 
 const i18n = createI18n({
   legacy: false,

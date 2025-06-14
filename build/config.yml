@@ -5,13 +5,18 @@ version: '3'
 
 # This information is used to generate the build assets.
 info:
-  companyName: "My Company" # The name of the company
+  companyName: "Allen" # The name of the company
   productName: "My Product" # The name of the application
-  productIdentifier: "com.mycompany.myproduct" # The unique product identifier
+  productIdentifier: "com.allen.mdnote" # The unique product identifier
   description: "A program that does X" # The application description
-  copyright: "(c) 2024, My Company" # Copyright text
+  copyright: "Copyright © 2025. All rights reserved" # Copyright text
   comments: "Some Product Comments" # Comments
-  version: "v0.0.1" # The application version
+  version: "1.0" # The application version
+mac:
+  bundleIdentifier: com.allen.mdnote
+  entitlements:
+    - com.apple.security.app-sandbox
+    - com.apple.security.files.user-selected.read-write
 
 # Dev mode configuration
 dev_mode:
