@@ -19,18 +19,18 @@ type Operator struct {
 	EditeFile *os.File
 	UniqueId  string
 	Change    bool
-	content   string
+	content   []byte
 }
 
-func (op *Operator) UpdateContent(content string) {
-	if op.content != content {
+func (op *Operator) UpdateContent(content []byte) {
+	if len(op.content) != len(content) {
 		op.content = content
 		op.Change = true
 	}
 }
 
 func (op *Operator) Content() string {
-	return op.content
+	return string(op.content)
 }
 
 var fileQueue chan *Operator
@@ -70,12 +70,12 @@ func AsyncFile(path, content string) {
 	defer syncM.Unlock()
 	if operate != nil {
 		if operate.UniqueId == path {
-			operate.UpdateContent(content)
+			operate.UpdateContent([]byte(content))
 			return
 		}
 	}
 	_, _ = StartEdit(path)
-	operate.UpdateContent(content)
+	operate.UpdateContent([]byte(content))
 }
 
 func StartEdit(path string) (string, error) {
@@ -105,7 +105,9 @@ func StartEdit(path string) (string, error) {
 		return "", err
 	}
 
-	operate.UpdateContent(string(file))
+	content := util.DecryptContent(file, UniqueId())
+
+	operate.UpdateContent(content)
 
 	return operate.Content(), nil
 }
@@ -147,14 +149,13 @@ func cleanWrite(op *Operator) {
 		log.Println("Truncate failed:", err)
 	}
 
-	// 将文件指针移到最前面
-	_, err = op.EditeFile.Seek(0, io.SeekStart)
+	content, err := util.EncryptContent(op.content, UniqueId())
 	if err != nil {
-		log.Println("Seek failed:", err)
+		log.Println("Encrypt failed:", err)
 	}
+	log.Println("Encrypt New Content ...")
 
-	// 写入新内容
-	_, err = io.WriteString(op.EditeFile, op.Content())
+	_, err = op.EditeFile.WriteAt(content, 0)
 	if err != nil {
 		log.Println("Write failed:", err)
 	}

@@ -17,7 +17,7 @@ var (
 
 func init() {
 	dir, _ := os.UserCacheDir()
-	CacheDir = util.CreatePlatformPath(dir, "MDNote", "data")
+	CacheDir = util.CreatePlatformPath(dir, "LiveMark", "data")
 	if !util.Exists(CacheDir) {
 		err := os.MkdirAll(CacheDir, os.ModePerm)
 		if err != nil {
@@ -59,5 +59,4 @@ func init() {
 		fmt.Println(err)
 	}
 	AppConfigDir = configDir
-
 }

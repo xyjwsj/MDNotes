@@ -95,7 +95,7 @@ export default defineComponent({
 
     return () => (
       <Container onClick={showLicense}>
-        <span class={"title"}>{"MDNote"}</span>
+        <span class={"title"}>{"LiveMark"}</span>
         <Image class={"img"} src={appIcon} preview={false} width={200}></Image>
         <span class={"footer"}>{t("footerTip")}</span>
       </Container>

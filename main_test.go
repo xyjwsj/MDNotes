@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
+	"os"
+	"strings"
 	"testing"
 )
 
@@ -71,4 +73,59 @@ func TestCache(t *testing.T) {
 
 func TestPdf(t *testing.T) {
 
+}
+
+func TestMoveData(t *testing.T) {
+	dir, _ := os.UserCacheDir()
+	CacheDir := util.CreatePlatformPath(dir, "MDNOte", "data")
+	newCache := util.CreatePlatformPath(dir, "LiveMark", "data")
+
+	//str := ""
+
+	if util.Exists(CacheDir) {
+		curPath := util.CreatePlatformPath(CacheDir)
+		curPath1 := util.CreatePlatformPath(newCache)
+		if !util.Exists(curPath1) {
+			_ = os.MkdirAll(newCache, os.ModePerm)
+		}
+
+		readDir, _ := os.ReadDir(curPath)
+		for _, item := range readDir {
+			if item.IsDir() {
+				continue
+			}
+			if strings.HasPrefix(item.Name(), ".") {
+				continue
+			}
+			info, _ := item.Info()
+			path := util.CreatePlatformPath(curPath, info.Name())
+			file, _ := os.ReadFile(path)
+			content := util.DecryptContent(file, mgr.UniqueId())
+			_ = os.WriteFile(util.CreatePlatformPath(curPath1, item.Name()), content, os.ModePerm)
+			log.Println(path + ":" + string(content))
+		}
+	}
+}
+
+func TestCatFile(t *testing.T) {
+	dir, _ := os.UserCacheDir()
+	newCache := util.CreatePlatformPath(dir, "LiveMark", "data")
+
+	str := ""
+
+	curPath := util.CreatePlatformPath(newCache, str)
+	if !util.Exists(curPath) {
+		_ = os.MkdirAll(newCache, os.ModePerm)
+	}
+	readDir, _ := os.ReadDir(curPath)
+	for _, item := range readDir {
+		if item.IsDir() {
+			continue
+		}
+		info, _ := item.Info()
+		path := util.CreatePlatformPath(curPath, info.Name())
+		file, _ := os.ReadFile(path)
+		content := util.DecryptContent(file, mgr.UniqueId())
+		log.Println(path + ":" + string(content))
+	}
 }

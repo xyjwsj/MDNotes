@@ -46,7 +46,7 @@ var firstRunFile string
 var licensePath []string
 
 func init() {
-	appConfigDir := util.CreatePlatformPath(model.AppConfigDir, "MDNote")
+	appConfigDir := util.CreatePlatformPath(model.AppConfigDir, "LiveMark")
 	if !util.Exists(appConfigDir) {
 		_ = os.MkdirAll(appConfigDir, os.ModePerm)
 	}

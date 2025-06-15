@@ -5,6 +5,7 @@ import (
 	"changeme/util"
 	"errors"
 	"log"
+	"os"
 	"time"
 
 	"github.com/go-git/go-git/v5"
@@ -22,12 +23,15 @@ func init() {
 	if !util.Exists(path) {
 		recordCache = make([]*model.RecordInfo, 0)
 	} else {
-		contents, err := util.ReadFileContents(path)
+		file, err := os.ReadFile(path)
 		if err != nil {
 			log.Println("ReadFileContents info.db Error", err.Error())
 			return
 		}
-		err = util.Json2Struct(contents, &recordCache)
+
+		contents := util.DecryptContent(file, UniqueId())
+
+		err = util.Json2Struct(string(contents), &recordCache)
 		if err != nil {
 			log.Println("Json2Struct info.db Error", err.Error())
 		}
@@ -41,13 +45,15 @@ func init() {
 			RemoteUrl: "",
 		}
 	} else {
-		contents, err := util.ReadFileContents(path)
+		file, err := os.ReadFile(path)
 		if err != nil {
-			log.Println("ReadFileContents preference.db Error", err.Error())
+			log.Println("ReadFileContents info.db Error", err.Error())
 			return
 		}
+
+		contents := util.DecryptContent(file, UniqueId())
 		var pre model.Preference
-		err = util.Json2Struct(contents, &pre)
+		err = util.Json2Struct(string(contents), &pre)
 		if err != nil {
 			log.Println("Json2Struct preference.db Error", err.Error())
 		}
@@ -72,7 +78,11 @@ func ConfigRepository(remoteUrl, username, token string) {
 	preference.Token = token
 	preference.RemoteUrl = remoteUrl
 	path := util.CreatePlatformPath(model.CacheDir, "preference.db")
-	util.WriteToFile(path, util.Struct2Json(preference))
+
+	json := util.Struct2Json(preference)
+	content, _ := util.EncryptContent([]byte(json), UniqueId())
+
+	_ = os.WriteFile(path, content, os.ModePerm)
 
 	go repository()
 }
@@ -194,7 +204,10 @@ func repository() {
 
 func SyncData() {
 	path := util.CreatePlatformPath(model.CacheDir, "info.db")
-	util.WriteToFile(path, util.Struct2Json(recordCache))
+	json := util.Struct2Json(recordCache)
+	content, _ := util.EncryptContent([]byte(json), UniqueId())
+
+	_ = os.WriteFile(path, content, os.ModePerm)
 }
 
 func ModifyInfo(key, filename, tag string, size int64) {
