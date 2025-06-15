@@ -18,13 +18,12 @@ import {settingInfoStore} from "@/store/modules/settings.ts";
 import {DestroyModal, ModalView, ShowModal} from "@/util/modalUtil.tsx";
 import {Image} from "ant-design-vue";
 import Vditor from "vditor";
-import {defineComponent, inject, onMounted, reactive, ref} from "vue";
+import {defineComponent, inject, onMounted, onUnmounted, reactive, ref} from "vue";
 import {useI18n} from "vue-i18n";
 import styled from "vue3-styled-components";
 import moment from "moment";
 import {SameDay} from "@/util/dateUtil.ts";
 import {ReloadOutlined} from "@ant-design/icons-vue";
-import {TipWarning} from "@/util/messageUtil.tsx";
 
 export default defineComponent({
   name: "Home",
@@ -310,16 +309,26 @@ export default defineComponent({
 
     onMounted(() => {
       console.log("vditorRerf", vditorRef);
-      initVditor("");
+      if (vditor.value === null) {
+        initVditor("");
+      }
     });
 
+    onUnmounted(() => {
+      if (vditor.value !== null) {
+        vditor.value.destroy()
+        vditor.value = null
+      }
+    })
+
     const syncContent = async (content: string) => {
-      const success = await SyncFile(editorInfo.fileKey, content);
-      if (success !== "") {
-        updateFileSize(editorInfo.fileKey, success);
+      if (editorInfo.fileKey !== "") {
+        const success = await SyncFile(editorInfo.fileKey, content);
+        if (success !== "") {
+          updateFileSize(editorInfo.fileKey, success);
+        }
       }
       wordCounter.value = content.length;
-      console.log("SyncFile", editorInfo.fileName, success);
     };
 
     const initVditor = (defaultVal: string) => {
@@ -343,7 +352,6 @@ export default defineComponent({
             settingInfoStore.DarkTheme() ? "dark" : "classic",
             settingInfoStore.DarkTheme() ? "dark" : "wechat"
           );
-          vditor.value?.disabled()
         },
         input: async (val: string) => {
           startSpin()
@@ -401,16 +409,16 @@ export default defineComponent({
       if (editorInfo.fileKey !== info.uuid) {
         const content = await FileContent(info.uuid);
         console.log("ref", vditorRef);
-        vditor.value!.setValue(content, true);
+        if (content != "") {
+          vditor.value!.setValue(content, true);
+        }
         wordCounter.value = content.length;
       }
       editorInfo.fileName = info.fileName;
       editorInfo.create = info.create;
       editorInfo.fileKey = info.uuid;
-      editorInfo.update = info.modify
-
-      if (editorInfo.fileKey !== "") {
-        vditor.value?.enable()
+      if (info.modify !== null) {
+        editorInfo.update = info.modify
       }
     };
     // expose({updateTheme})
@@ -508,11 +516,6 @@ export default defineComponent({
     return () => (
       <Container>
         <EditorView
-            onClick={() => {
-              if (editorInfo.fileKey === "") {
-                TipWarning(t('createOrSelect'))
-              }
-            }}
           id="vditor"
           ref={(el) => (vditorRef.value = el)}
           onKeydown={(event) => {

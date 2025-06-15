@@ -39,8 +39,7 @@ import {
 import {Dropdown, Image, Input, Menu, MenuItem, Popover,} from "ant-design-vue";
 import Mousetrap from "mousetrap";
 import {
-    defineComponent,
-    KeepAlive,
+    defineComponent, KeepAlive,
     nextTick,
     onMounted,
     onUnmounted,
