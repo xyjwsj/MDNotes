@@ -409,9 +409,7 @@ export default defineComponent({
       if (editorInfo.fileKey !== info.uuid) {
         const content = await FileContent(info.uuid);
         console.log("ref", vditorRef);
-        if (content != "") {
-          vditor.value!.setValue(content, true);
-        }
+        vditor.value!.setValue(content, true);
         wordCounter.value = content.length;
       }
       editorInfo.fileName = info.fileName;
