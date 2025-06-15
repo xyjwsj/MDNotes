@@ -24,6 +24,7 @@ import styled from "vue3-styled-components";
 import moment from "moment";
 import {SameDay} from "@/util/dateUtil.ts";
 import {ReloadOutlined} from "@ant-design/icons-vue";
+import {TipWarning} from "@/util/messageUtil.tsx";
 
 export default defineComponent({
   name: "Home",
@@ -342,6 +343,7 @@ export default defineComponent({
             settingInfoStore.DarkTheme() ? "dark" : "classic",
             settingInfoStore.DarkTheme() ? "dark" : "wechat"
           );
+          vditor.value?.disabled()
         },
         input: async (val: string) => {
           startSpin()
@@ -387,8 +389,6 @@ export default defineComponent({
       console.log("vditor init success...");
     };
 
-    onMounted(async () => {});
-
     const updateTheme = () => {
       vditor.value?.setTheme(
         settingInfoStore.DarkTheme() ? "dark" : "classic",
@@ -408,6 +408,10 @@ export default defineComponent({
       editorInfo.create = info.create;
       editorInfo.fileKey = info.uuid;
       editorInfo.update = info.modify
+
+      if (editorInfo.fileKey !== "") {
+        vditor.value?.enable()
+      }
     };
     // expose({updateTheme})
 
@@ -504,6 +508,11 @@ export default defineComponent({
     return () => (
       <Container>
         <EditorView
+            onClick={() => {
+              if (editorInfo.fileKey === "") {
+                TipWarning(t('createOrSelect'))
+              }
+            }}
           id="vditor"
           ref={(el) => (vditorRef.value = el)}
           onKeydown={(event) => {

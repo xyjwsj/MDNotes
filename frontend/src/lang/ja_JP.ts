@@ -63,7 +63,8 @@ const jaLocale = {
   flowchart: "フローチャート",
   sequenceDiagram: "シーケンス図",
   ganttChart: "ガントチャート",
-  graphviz: 'graphviz'
+  graphviz: 'graphviz',
+  createOrSelect: 'ファイルを選択するか、新規作成してください'
 };
 
 export default jaLocale;

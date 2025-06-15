@@ -64,7 +64,8 @@ const enLocale = {
   flowchart: "Flowchart",
   sequenceDiagram: "Sequence Diagram",
   ganttChart: "Gantt Chart",
-  graphviz: 'graphviz'
+  graphviz: 'graphviz',
+  createOrSelect: 'Please select a file or create a new one'
 };
 
 export default enLocale;

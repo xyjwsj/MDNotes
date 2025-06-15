@@ -63,7 +63,8 @@ const zhLocale = {
   flowchart: "流程圖",
   sequenceDiagram: "時序圖",
   ganttChart: "甘特圖",
-  graphviz: 'graphviz'
+  graphviz: 'graphviz',
+  createOrSelect: '请选择文件或新建文件',
 };
 
 export default zhLocale;

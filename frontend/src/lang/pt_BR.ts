@@ -64,7 +64,8 @@ const ptLocale = {
   flowchart: "Fluxograma",
   sequenceDiagram: "Diagrama de sequência",
   ganttChart: "Diagrama de Gantt",
-  graphviz: 'graphviz'
+  graphviz: 'graphviz',
+  createOrSelect: 'Por favor, selecione um arquivo ou crie um novo'
 };
 
 export default ptLocale;
