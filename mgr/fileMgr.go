@@ -43,7 +43,7 @@ func init() {
 }
 
 func ImagePath() string {
-	return util.CreatePlatformPath(model.CacheDir, "image")
+	return util.CreatePlatformPath(model.AppDataRoot, "image")
 }
 
 func SaveFile(multiFile multipart.File) (string, error) {

@@ -46,14 +46,10 @@ var firstRunFile string
 var licensePath []string
 
 func init() {
-	appConfigDir := util.CreatePlatformPath(model.AppConfigDir, "LiveMark")
-	if !util.Exists(appConfigDir) {
-		_ = os.MkdirAll(appConfigDir, os.ModePerm)
-	}
 	licensePath = []string{
-		util.CreatePlatformPath(appConfigDir, ".license"),
+		util.CreatePlatformPath(model.AppDataRoot, ".license"),
 	}
-	firstRunFile = util.CreatePlatformPath(appConfigDir, ".first_run")
+	firstRunFile = util.CreatePlatformPath(model.AppDataRoot, ".first_run")
 }
 
 func getMac() string {

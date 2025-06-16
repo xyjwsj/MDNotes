@@ -15,7 +15,7 @@ type FileHandler struct {
 }
 
 func (file *FileHandler) SyncFile(fileKey, content string) string {
-	path := util.CreatePlatformPath(model.CacheDir, "md", fileKey+".md")
+	path := util.CreatePlatformPath(model.AppDataRoot, "md", fileKey+".md")
 	mgr.AsyncFile(path, content)
 	bytes := []byte(content)
 	size := int64(len(bytes))
@@ -55,7 +55,7 @@ func (file *FileHandler) Search(name string) []*model.RecordInfo {
 }
 
 func (file *FileHandler) FileContent(fileKey string) string {
-	path := util.CreatePlatformPath(model.CacheDir, "md", fileKey+".md")
+	path := util.CreatePlatformPath(model.AppDataRoot, "md", fileKey+".md")
 	contents, err := mgr.StartEdit(path)
 	if err != nil {
 		log.Println("FileContent Error:" + err.Error())
@@ -82,8 +82,8 @@ func (file *FileHandler) CreateFile() model.RecordInfo {
 func (file *FileHandler) ExportFile(all bool, fileKey string) bool {
 	list := mgr.CacheList()
 	if all {
-		src := util.CreatePlatformPath(model.CacheDir, "md")
-		target := util.CreatePlatformPath(model.UserHomeDir, "Downloads", "LiveMark")
+		src := util.CreatePlatformPath(model.AppDataRoot, "md")
+		target := util.CreatePlatformPath(model.DownloadDir, "LiveMark")
 		if !util.Exists(target) {
 			os.MkdirAll(target, os.ModePerm)
 		}
@@ -102,8 +102,8 @@ func (file *FileHandler) ExportFile(all bool, fileKey string) bool {
 	} else {
 		for _, item := range list {
 			if item.Uuid == fileKey {
-				src := util.CreatePlatformPath(model.CacheDir, "md", fileKey+".md")
-				target := util.CreatePlatformPath(model.UserHomeDir, "Downloads", item.FileName+".md")
+				src := util.CreatePlatformPath(model.AppDataRoot, "md", fileKey+".md")
+				target := util.CreatePlatformPath(model.DownloadDir, item.FileName+".md")
 				err := mgr.ExportFile(src, target)
 				if err != nil {
 					log.Println(err)

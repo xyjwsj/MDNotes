@@ -5,10 +5,6 @@
     <key>com.apple.security.app-sandbox</key>
     <true/>
 
-    <!-- 如果你需要访问用户目录下的特定路径（如 ~/Documents） -->
-    <key>com.apple.security.files.user-selected.read-write</key>
-    <true/>
-
     <!-- 如果需要网络访问 -->
     <key>com.apple.security.network.client</key>
     <true/>

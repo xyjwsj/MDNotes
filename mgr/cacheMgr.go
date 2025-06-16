@@ -19,7 +19,7 @@ var preference *model.Preference
 var startAsync bool
 
 func init() {
-	path := util.CreatePlatformPath(model.CacheDir, "info.db")
+	path := util.CreatePlatformPath(model.AppDataRoot, "info.db")
 	if !util.Exists(path) {
 		recordCache = make([]*model.RecordInfo, 0)
 	} else {
@@ -37,7 +37,7 @@ func init() {
 		}
 	}
 
-	path = util.CreatePlatformPath(model.CacheDir, "preference.db")
+	path = util.CreatePlatformPath(model.AppDataRoot, "preference.db")
 	if !util.Exists(path) {
 		preference = &model.Preference{
 			Username:  "",
@@ -77,7 +77,7 @@ func ConfigRepository(remoteUrl, username, token string) {
 	preference.Username = username
 	preference.Token = token
 	preference.RemoteUrl = remoteUrl
-	path := util.CreatePlatformPath(model.CacheDir, "preference.db")
+	path := util.CreatePlatformPath(model.AppDataRoot, "preference.db")
 
 	json := util.Struct2Json(preference)
 	content, _ := util.EncryptContent([]byte(json), UniqueId())
@@ -96,7 +96,7 @@ func repository() {
 		return
 	}
 
-	repo, err := git.PlainInitWithOptions(model.CacheDir, &git.PlainInitOptions{
+	repo, err := git.PlainInitWithOptions(model.AppDataRoot, &git.PlainInitOptions{
 		InitOptions: git.InitOptions{
 			DefaultBranch: "refs/heads/main",
 		},
@@ -106,7 +106,7 @@ func repository() {
 
 	if err != nil {
 		if errors.Is(err, git.ErrRepositoryAlreadyExists) {
-			repo, err = git.PlainOpen(model.CacheDir)
+			repo, err = git.PlainOpen(model.AppDataRoot)
 		} else {
 			log.Println(err.Error())
 			return
@@ -203,7 +203,7 @@ func repository() {
 }
 
 func SyncData() {
-	path := util.CreatePlatformPath(model.CacheDir, "info.db")
+	path := util.CreatePlatformPath(model.AppDataRoot, "info.db")
 	json := util.Struct2Json(recordCache)
 	content, _ := util.EncryptContent([]byte(json), UniqueId())
 
@@ -294,7 +294,7 @@ func DeleteFile(fileKey string) bool {
 			item.Del = &datetime
 			item.Status = 0
 			//recordCache = append(recordCache[:idx], recordCache[idx+1:]...)
-			src := util.CreatePlatformPath(model.CacheDirMd, fileKey+".md")
+			src := util.CreatePlatformPath(model.AppDataRoot, "md", fileKey+".md")
 			target := util.CreatePlatformPath(model.CacheDel, fileKey+".md")
 			util.Move(src, target)
 			SyncData()

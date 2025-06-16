@@ -17,8 +17,8 @@ func TestGit(t *testing.T) {
 
 func TestCopy(t *testing.T) {
 	fileKey := "ce9c888d-9e09-4077-a6f1-449c5b7d4610"
-	src := util.CreatePlatformPath(model.CacheDir, "md", fileKey+".md")
-	target := util.CreatePlatformPath(model.UserHomeDir, "Downloads", fileKey+".md")
+	src := util.CreatePlatformPath(model.AppDataRoot, "md", fileKey+".md")
+	target := util.CreatePlatformPath(model.DownloadDir, fileKey+".md")
 	util.Copy(src, target)
 }
 
@@ -63,7 +63,7 @@ func TestAssets(t *testing.T) {
 }
 
 func TestCache(t *testing.T) {
-	path := util.CreatePlatformPath(model.CacheDir, "md", "903b573e-a70c-4cc3-b37a-b4539bebf0d2.md")
+	path := util.CreatePlatformPath(model.AppDataRoot, "md", "903b573e-a70c-4cc3-b37a-b4539bebf0d2.md")
 	contents, err := mgr.StartEdit(path)
 	if err != nil {
 		log.Println("FileContent Error:" + err.Error())
