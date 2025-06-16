@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const bundleId = "com.allen.mdnote"
@@ -26,8 +27,10 @@ func init() {
 
 	dir, _ := os.UserConfigDir()
 	if util.System() == util.Macos {
-		getenv := os.Getenv("HOME")
-		supportData := getenv + "/Library/Containers/" + appName + "/Data"
+		supportData := os.Getenv("HOME")
+		if !strings.Contains(supportData, "/Library/Containers") {
+			supportData += "/Library/Containers/" + bundleId + "/Data"
+		}
 		AppDataRoot = util.CreatePlatformPath(supportData, "Library", "Application Support", appName)
 		TmpDataDir = util.CreatePlatformPath(supportData, "Library", "Caches", appName)
 		if !util.Exists(TmpDataDir) {
