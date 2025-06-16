@@ -1,4 +1,6 @@
 const ptLocale = {
+  sure: "Confirmar",
+  cancel: "Cancelar",
   file: "Arquivo",
   create: "Criar",
   update: "Atualização",
@@ -50,7 +52,6 @@ const ptLocale = {
   selectUp: "Selecionar anterior",
   selectDown: "Selecionar próximo",
   edit: "Editar",
-  sure: "Confirmar ação",
   changeTheme: "Alterar tema",
   french: "Francês",
   portuguese: "Português",

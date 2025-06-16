@@ -1,4 +1,6 @@
 const frLocale = {
+  sure: "Confirmer",
+  cancel: "Annuler",
   file: "Fichier",
   create: "Créer",
   update: "Mise à jour",
@@ -52,7 +54,6 @@ const frLocale = {
   selectUp: "Sélectionner le précédent",
   selectDown: "Sélectionner le suivant",
   edit: "Modifier",
-  sure: "Confirmer l'action",
   changeTheme: "Changer le thème",
   french: "Français",
   portuguese: "Portugais",

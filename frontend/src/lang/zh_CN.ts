@@ -1,4 +1,6 @@
 const zhLocale = {
+  sure: "确认",
+  cancel: "取消",
   file: "文件",
   create: "创建",
   update: "更新",
@@ -49,7 +51,6 @@ const zhLocale = {
   selectUp: "选择上一个",
   selectDown: "选择下一个",
   edit: "编辑",
-  sure: "确认行为",
   changeTheme: "切换主题",
   french: "法语",
   portuguese: "葡萄牙语",

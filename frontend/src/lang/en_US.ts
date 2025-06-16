@@ -1,4 +1,6 @@
 const enLocale = {
+  sure: "Confirm",
+  cancel: "Cancel",
   file: "File",
   create: "Create",
   update: "Update",
@@ -50,7 +52,6 @@ const enLocale = {
   selectUp: "Select Previous",
   selectDown: "Select Next",
   edit: "Edit",
-  sure: "Sure Action",
   changeTheme: "Change Theme",
   french: "French",
   portuguese: "Portuguese",

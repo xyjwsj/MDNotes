@@ -908,6 +908,9 @@ export default defineComponent({
                 return;
             }
             const modalView = new ModalView();
+            modalView.okText = t('sure')
+            modalView.cancelText = t('cancel')
+            modalView.title = t('delete')
             const files = fileList.value.filter(
                 (item) => item.uuid === selectFileKey.value
             );
@@ -1017,6 +1020,8 @@ export default defineComponent({
             const modalView = new ModalView();
             modalView.width = 400;
             modalView.title = t("configStore");
+            modalView.okText = t('sure')
+            modalView.cancelText = t('cancel')
             modalView.content = (
                 <div>
                     <InputView

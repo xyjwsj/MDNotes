@@ -10,8 +10,8 @@ const SETTING_INFO = "_SETTING_INFO"
 export class SettingInfoStore extends Store<SettingInfo> {
     protected data(): SettingInfo {
         return {
-            theme: 'dark',
-            lang: 'zh'
+            theme: 'light',
+            lang: 'en-US'
         }
     }
     protected key(): string {
