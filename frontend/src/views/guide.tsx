@@ -75,7 +75,7 @@ export default defineComponent({
     const HomePage = () => {
       setTimeout(() => {
         router.replace({ name: "Home" });
-      }, 3000);
+      }, 1500);
     };
 
     onMounted(async () => {

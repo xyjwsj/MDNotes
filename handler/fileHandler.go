@@ -6,6 +6,7 @@ import (
 	"changeme/util"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"time"
 )
@@ -82,11 +83,19 @@ func (file *FileHandler) ExportFile(all bool, fileKey string) bool {
 	list := mgr.CacheList()
 	if all {
 		src := util.CreatePlatformPath(model.CacheDir, "md")
-		target := util.CreatePlatformPath(model.UserHomeDir, "Downloads", "Notes")
+		target := util.CreatePlatformPath(model.UserHomeDir, "Downloads", "LiveMark")
+		if !util.Exists(target) {
+			os.MkdirAll(target, os.ModePerm)
+		}
 		for _, item := range list {
 			s := util.CreatePlatformPath(src, item.Uuid+".md")
 			t := util.CreatePlatformPath(target, fmt.Sprintf("%s-%d.md", item.FileName, time.Now().Unix()))
-			util.Copy(s, t)
+
+			err := mgr.ExportFile(s, t)
+			if err != nil {
+				log.Println(err)
+				return false
+			}
 		}
 		util.SelectLocation(target)
 		return true
@@ -95,7 +104,11 @@ func (file *FileHandler) ExportFile(all bool, fileKey string) bool {
 			if item.Uuid == fileKey {
 				src := util.CreatePlatformPath(model.CacheDir, "md", fileKey+".md")
 				target := util.CreatePlatformPath(model.UserHomeDir, "Downloads", item.FileName+".md")
-				util.Copy(src, target)
+				err := mgr.ExportFile(src, target)
+				if err != nil {
+					log.Println(err)
+					return false
+				}
 				util.SelectLocation(target)
 			}
 		}

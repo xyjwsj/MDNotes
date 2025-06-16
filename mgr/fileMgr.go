@@ -161,3 +161,19 @@ func cleanWrite(op *Operator) {
 	}
 	log.Println("Write New Content ...")
 }
+
+func ExportFile(source, target string) error {
+	editFile, err := util.OpenFileByPath(source)
+	if err != nil {
+		return err
+	}
+
+	file, err := io.ReadAll(editFile)
+	if err != nil {
+		return err
+	}
+
+	content := util.DecryptContent(file, UniqueId())
+
+	return os.WriteFile(target, content, os.ModePerm)
+}
