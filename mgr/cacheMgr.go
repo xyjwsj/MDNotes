@@ -20,6 +20,7 @@ var startAsync bool
 
 func init() {
 	path := util.CreatePlatformPath(model.AppDataRoot, "info.db")
+	log.Println("Read File List：" + path)
 	if !util.Exists(path) {
 		recordCache = make([]*model.RecordInfo, 0)
 	} else {

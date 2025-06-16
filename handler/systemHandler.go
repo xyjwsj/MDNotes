@@ -31,26 +31,20 @@ func (system *SystemHandler) CreateLicense(license string) bool {
 }
 
 func (system *SystemHandler) Trial(create bool) License {
+	licence := mgr.ValidateLicence()
+	if licence != "" {
+		return License{
+			DeviceId: mgr.UniqueId(),
+			Content:  licence,
+			Type:     "production",
+		}
+	}
+	use := mgr.TrailUse(create)
 	return License{
 		DeviceId: mgr.UniqueId(),
-		Content:  "FSDFDSFDFSD",
-		Type:     "production",
+		Content:  use,
+		Type:     "trial",
 	}
-
-	//licence := mgr.ValidateLicence()
-	//if licence != "" {
-	//	return License{
-	//		DeviceId: mgr.UniqueId(),
-	//		Content:  licence,
-	//		Type:     "production",
-	//	}
-	//}
-	//use := mgr.TrailUse(create)
-	//return License{
-	//	DeviceId: mgr.UniqueId(),
-	//	Content:  use,
-	//	Type:     "trial",
-	//}
 }
 
 func (system *SystemHandler) Start() bool {

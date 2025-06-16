@@ -33,13 +33,16 @@ import {
     MoreOutlined,
     PlusOutlined,
     SearchOutlined,
+    SolutionOutlined,
     TagOutlined,
     UndoOutlined,
 } from "@ant-design/icons-vue";
 import {Dropdown, Image, Input, Menu, MenuItem, Popover,} from "ant-design-vue";
 import Mousetrap from "mousetrap";
 import {
-    defineComponent, KeepAlive,
+    defineComponent,
+    inject,
+    KeepAlive,
     nextTick,
     onMounted,
     onUnmounted,
@@ -572,7 +575,7 @@ export default defineComponent({
             }
         `;
 
-        // const showLicense: any = inject("showLicense");
+        const showLicense: any = inject("showLicense");
 
         const search = ref(false);
         const showList = ref(true);
@@ -647,7 +650,7 @@ export default defineComponent({
             });
 
             Mousetrap.bind("command+shift+l", () => {
-                // showLicense();
+                showLicense();
             });
             Mousetrap.bind("command+shift+e", () => {
                 exportFile();
@@ -1375,9 +1378,9 @@ export default defineComponent({
                                         <MenuItemView title={t('configStore')} onClick={configStore}>
                                             <CloudUploadOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
-                                        {/*<MenuItemView title={t('license')} onClick={showLicense}>*/}
-                                        {/*    <SolutionOutlined style={{fontSize: '17px'}}/>*/}
-                                        {/*</MenuItemView>*/}
+                                        <MenuItemView title={t('license')} onClick={showLicense}>
+                                            <SolutionOutlined style={{fontSize: '17px'}}/>
+                                        </MenuItemView>
                                     </Menu>
                                 }
                             >

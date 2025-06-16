@@ -3,9 +3,8 @@ package model
 import (
 	"changeme/util"
 	"fmt"
-	"log"
 	"os"
-	"path/filepath"
+	"strings"
 )
 
 const bundleId = "com.allen.mdnote"
@@ -26,8 +25,10 @@ func init() {
 
 	dir, _ := os.UserConfigDir()
 	if util.System() == util.Macos {
-		getenv := os.Getenv("HOME")
-		supportData := getenv + "/Library/Containers/" + appName + "/Data"
+		supportData := os.Getenv("HOME")
+		if !strings.Contains(supportData, "/Library/Containers") {
+			supportData += "/Library/Containers/" + bundleId + "/Data"
+		}
 		AppDataRoot = util.CreatePlatformPath(supportData, "Library", "Application Support", appName)
 		TmpDataDir = util.CreatePlatformPath(supportData, "Library", "Caches", appName)
 		if !util.Exists(TmpDataDir) {
@@ -77,11 +78,11 @@ func init() {
 }
 
 func initLogger() {
-	logFilePath := filepath.Join(LogDir, "app.log")
-	logFile, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
-	if err != nil {
-		fmt.Println("无法打开日志文件:", err)
-		return
-	}
-	log.SetOutput(logFile)
+	//logFilePath := filepath.Join(LogDir, "app.log")
+	//logFile, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	//if err != nil {
+	//	fmt.Println("无法打开日志文件:", err)
+	//	return
+	//}
+	//log.SetOutput(logFile)
 }
