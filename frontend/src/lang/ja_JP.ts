@@ -65,7 +65,8 @@ const jaLocale = {
   sequenceDiagram: "シーケンス図",
   ganttChart: "ガントチャート",
   graphviz: 'graphviz',
-  createOrSelect: 'ファイルを選択するか、新規作成してください'
+  createOrSelect: 'ファイルを選択するか、新規作成してください',
+  help: 'ヘルプ'
 };
 
 export default jaLocale;

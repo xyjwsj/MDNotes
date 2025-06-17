@@ -23,6 +23,11 @@ export function CreateLicense(license: string): Promise<boolean> & { cancel(): v
     return $resultPromise;
 }
 
+export function HelpInfo(lang: string): Promise<string> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(838638970, lang) as any;
+    return $resultPromise;
+}
+
 export function PreferenceInfo(): Promise<model$0.Preference> & { cancel(): void } {
     let $resultPromise = $Call.ByID(1342871400) as any;
     let $typingPromise = $resultPromise.then(($result: any) => {

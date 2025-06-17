@@ -68,7 +68,8 @@ const frLocale = {
   sequenceDiagram: "Diagramme de séquence",
   ganttChart: "Diagramme de Gantt",
   graphviz: 'graphviz',
-  createOrSelect: 'Veuillez sélectionner un fichier ou en créer un nouveau'
+  createOrSelect: 'Veuillez sélectionner un fichier ou en créer un nouveau',
+  help: 'Aide'
 };
 
 export default frLocale;

@@ -3,6 +3,7 @@ package handler
 import (
 	"changeme/mgr"
 	"changeme/model"
+	"changeme/util"
 )
 
 type License struct {
@@ -59,11 +60,14 @@ func (system *SystemHandler) Start() bool {
 }
 
 func (system *SystemHandler) ScreenFullSwitch() {
-	max := model.FetchAppInfo().App.CurrentWindow().IsMaximised()
-	if !max {
+	maximised := model.FetchAppInfo().App.CurrentWindow().IsMaximised()
+	if !maximised {
 		model.FetchAppInfo().App.CurrentWindow().Maximise()
 	} else {
 		model.FetchAppInfo().App.CurrentWindow().UnMaximise()
 	}
+}
 
+func (system *SystemHandler) HelpInfo(lang string) string {
+	return util.HelpContent(lang)
 }

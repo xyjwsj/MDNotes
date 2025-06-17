@@ -1,6 +1,10 @@
 package util
 
-import "runtime"
+import (
+	"embed"
+	"runtime"
+	"strings"
+)
 
 type SystemType string
 
@@ -31,4 +35,16 @@ func CreatePlatformPath(path ...string) string {
 		strBuf += str + split
 	}
 	return strBuf[:len(strBuf)-1]
+}
+
+//go:embed all:help.txt help_en.txt
+var helpAssets embed.FS
+
+func HelpContent(language string) string {
+	fileName := "help_en.txt"
+	if strings.HasPrefix(language, "zh") {
+		fileName = "help.txt"
+	}
+	content, _ := helpAssets.ReadFile(fileName)
+	return string(content)
 }

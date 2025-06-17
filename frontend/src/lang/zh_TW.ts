@@ -65,7 +65,8 @@ const zhTwLocale = {
   sequenceDiagram: "時序圖",
   ganttChart: "甘特圖",
   graphviz: 'graphviz',
-  createOrSelect: '請選擇檔案或建立新檔'
+  createOrSelect: '請選擇檔案或建立新檔',
+  help: '幫助'
 };
 
 export default zhTwLocale;
