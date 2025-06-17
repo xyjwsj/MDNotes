@@ -9,17 +9,22 @@ import (
 	"mime/multipart"
 	"os"
 	"path"
-	"sync"
 	"time"
 )
 
-var operate *Operator
+var operates map[string]*Operator
+
+type ModifyItem struct {
+	UniqueId string // 修改item
+	Content  string // 修改内容
+}
 
 type Operator struct {
-	EditeFile *os.File
-	UniqueId  string
-	Change    bool
-	content   []byte
+	EditeFile       *os.File // 编辑的文件
+	UniqueId        string   // 文件路径/唯一id
+	Change          bool     // 内容是否变动
+	ModifyTimestamp int64    // 修改时间戳
+	content         []byte   // 当前文件内容
 }
 
 func (op *Operator) UpdateContent(content []byte) {
@@ -33,12 +38,16 @@ func (op *Operator) Content() string {
 	return string(op.content)
 }
 
-var fileQueue chan *Operator
-var syncM sync.Mutex
+var modifyQueue chan ModifyItem
+var stopQueue chan int
 
 func init() {
-	fileQueue = make(chan *Operator, 100)
-	syncM = sync.Mutex{}
+	modifyQueue = make(chan ModifyItem, 100)
+	operates = make(map[string]*Operator, 30)
+	stopQueue = make(chan int, 1)
+	Register(func() {
+		stopQueue <- 1
+	})
 	go startFlushDisk()
 }
 
@@ -66,56 +75,48 @@ func SaveFile(multiFile multipart.File) (string, error) {
 }
 
 func AsyncFile(path, content string) {
-	syncM.Lock()
-	defer syncM.Unlock()
-	if operate != nil {
-		if operate.UniqueId == path {
-			operate.UpdateContent([]byte(content))
-			return
+	if modifyQueue != nil {
+		select {
+		case modifyQueue <- ModifyItem{
+			UniqueId: path,
+			Content:  content,
+		}:
+		default:
+			// 队列已满，可以选择丢弃或记录日志
+			log.Println("modifyQueue is full, task dropped")
 		}
 	}
-	_, _ = StartEdit(path)
-	operate.UpdateContent([]byte(content))
 }
 
 func StartEdit(path string) (string, error) {
-	if operate != nil {
-		if path == operate.UniqueId {
-			return operate.Content(), nil
+	if op, ok := operates[path]; ok {
+		if op.UniqueId == path {
+			return op.Content(), nil
 		}
-		addDiskCloseTask(operate)
 	}
 
-	syncM.Lock()
-	defer syncM.Unlock()
 	editFile, err := util.OpenFileByPath(path)
 	if err != nil {
 		return "", err
 	}
 
-	operate = &Operator{
-		EditeFile: editFile,
-		UniqueId:  path,
-		Change:    false,
-	}
-
 	file, err := io.ReadAll(editFile)
 	if err != nil {
-		addDiskCloseTask(operate)
+		editFile.Close()
 		return "", err
 	}
 
 	content := util.DecryptContent(file, UniqueId())
 
-	operate.UpdateContent(content)
-
-	return operate.Content(), nil
-}
-
-func addDiskCloseTask(op *Operator) {
-	if fileQueue != nil {
-		fileQueue <- op
+	operates[path] = &Operator{
+		EditeFile:       editFile,
+		UniqueId:        path,
+		Change:          false,
+		content:         content,
+		ModifyTimestamp: time.Now().Unix(),
 	}
+
+	return operates[path].Content(), nil
 }
 
 func startFlushDisk() {
@@ -123,26 +124,42 @@ func startFlushDisk() {
 	for {
 		select {
 		case <-ticker.C:
-			if operate != nil {
-				if !operate.Change {
-					continue
+			for _, item := range operates {
+				if item.Change {
+					truncateWrite(item)
+				} else if time.Now().Unix()-30 > item.ModifyTimestamp {
+					log.Println("Over 30 second， close file " + item.UniqueId)
+					item.EditeFile.Close()
+					delete(operates, item.UniqueId)
+					item.EditeFile = nil
+					item = nil
 				}
-				cleanWrite(operate)
-				operate.Change = false
 			}
-		case op := <-fileQueue:
-			if op.Change {
-				cleanWrite(op)
-				operate.Change = false
+		case item := <-modifyQueue:
+			if _, ok := operates[item.UniqueId]; !ok {
+				StartEdit(item.UniqueId)
 			}
-			op.EditeFile.Close()
-			op.EditeFile = nil
-			op = nil
+			op := operates[item.UniqueId]
+			op.content = []byte(item.Content)
+			op.Change = true
+			op.ModifyTimestamp = time.Now().Unix()
+		case <-stopQueue:
+			log.Println("Start Clean System...")
+			for _, item := range operates {
+				if item.Change {
+					truncateWrite(item)
+				}
+				item.EditeFile.Close()
+				log.Println("Close Application， close file " + item.UniqueId)
+				delete(operates, item.UniqueId)
+				item.EditeFile = nil
+				item = nil
+			}
 		}
 	}
 }
 
-func cleanWrite(op *Operator) {
+func truncateWrite(op *Operator) {
 	// 清空文件
 	err := op.EditeFile.Truncate(0)
 	if err != nil {
