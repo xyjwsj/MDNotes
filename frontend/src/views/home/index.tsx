@@ -12,7 +12,7 @@ import sxtDarkIcon from "@/assets/png/sxt-black.png";
 import sxtLightIcon from "@/assets/png/sxt-white.png";
 import wxpDarkIcon from "@/assets/png/wxp-black.png";
 import wxpLightIcon from "@/assets/png/wxp-white.png";
-import {FileContent, SyncFile,} from "@/bindings/changeme/handler/filehandler.js";
+import {FileContent, SyncFile, TypeExport,} from "@/bindings/changeme/handler/filehandler.js";
 import {RecordInfo} from "@/bindings/changeme/model";
 import {settingInfoStore} from "@/store/modules/settings.ts";
 import {DestroyModal, ModalView, ShowModal} from "@/util/modalUtil.tsx";
@@ -472,7 +472,12 @@ export default defineComponent({
       vditor.value?.focus();
     };
 
-    expose({ updateContent, updateTheme, startEdit });
+    const exportHtml = (typ: string) => {
+      TypeExport(typ, vditor.value?.getHTML()!)
+    }
+
+    expose({ updateContent, updateTheme, startEdit, exportHtml });
+
 
     const formatDate = (str: string) => {
       const dateStr = str.split(" ");

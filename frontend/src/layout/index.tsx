@@ -31,7 +31,8 @@ import {
     ExportOutlined,
     LayoutOutlined,
     MoreOutlined,
-    PlusOutlined, QuestionOutlined,
+    PlusOutlined,
+    QuestionOutlined,
     SearchOutlined,
     TagOutlined,
     UndoOutlined,
@@ -39,7 +40,8 @@ import {
 import {Dropdown, Image, Input, Menu, MenuItem, Popover,} from "ant-design-vue";
 import Mousetrap from "mousetrap";
 import {
-    defineComponent, KeepAlive,
+    defineComponent,
+    KeepAlive,
     nextTick,
     onMounted,
     onUnmounted,
@@ -670,6 +672,9 @@ export default defineComponent({
             Mousetrap.bind("command+shift+h", () => {
                 showHelp()
             });
+            Mousetrap.bind("command+shift+p", () => {
+                fileExport()
+            });
         };
 
         let timer: any | null = null;
@@ -1112,6 +1117,88 @@ export default defineComponent({
             if (currentCom.value) {
                 (currentCom.value as any).updateTheme();
             }
+        };
+
+
+        const ExportView = styled.div`
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 20px;
+            gap: 10px;
+            height: 30%;
+            overflow-y: auto;
+            padding: 10px;
+
+            ::-webkit-scrollbar {
+                display: none;
+            }
+
+            .langItem {
+                line-height: 40px;
+                width: 95%;
+                border-radius: 5px;
+                text-align: center;
+                color: ${() =>
+            settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
+                background-color: ${() =>
+            settingInfoStore.DarkTheme()
+                ? "rgba(255, 255, 255, 0.2)"
+                : "rgba(255, 255, 255, 0.7)"};
+
+                &:hover {
+                    box-shadow: 0 0 5px 1px ${() =>
+            settingInfoStore.DarkTheme()
+                ? "rgba(255, 255, 255, 0.8)"
+                : "gray"};
+                    color: ${() =>
+            settingInfoStore.DarkTheme()
+                ? "rgba(255, 255, 255, 0.8)"
+                : "rgba(0, 0, 0, 0.8)"};
+                }
+            }
+        `;
+
+        const exportTypeInfo = reactive([
+            "HTML",
+            "PDF"
+        ]);
+
+
+        const fileExport = () => {
+            const modalView = new ModalView();
+            modalView.cancelText = "";
+            modalView.okText = "";
+            modalView.title = t("export");
+            modalView.okText = "";
+            modalView.closed = true;
+            modalView.width = "350px";
+            modalView.icon = (
+                <ExportOutlined
+                    style={{color: settingInfoStore.DarkTheme() ? "white" : "black"}}
+                />
+            );
+            modalView.content = (
+                <ExportView>
+                    {exportTypeInfo.map((item) => {
+                        return (
+                            <span
+                                class={"langItem"}
+                                onDblclick={() => {
+                                    if (currentCom.value) {
+                                        currentCom.value.exportHtml(item);
+                                    }
+                                    DestroyModal();
+                                }}
+                            >
+                {t(item)}
+              </span>
+                        );
+                    })}
+                </ExportView>
+            );
+            // modalView.show();
+            ShowModal(modalView);
         };
 
         const changeLang = () => {

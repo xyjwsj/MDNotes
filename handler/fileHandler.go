@@ -115,3 +115,10 @@ func (file *FileHandler) ExportFile(all bool, fileKey string) bool {
 		return true
 	}
 }
+
+func (file *FileHandler) TypeExport(typ, content string) bool {
+	if typ == "pdf" {
+		log.Println(content)
+	}
+	return true
+}

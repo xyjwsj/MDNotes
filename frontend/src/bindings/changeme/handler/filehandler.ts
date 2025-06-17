@@ -80,6 +80,11 @@ export function SyncFile(fileKey: string, content: string): Promise<string> & { 
     return $resultPromise;
 }
 
+export function TypeExport(typ: string, content: string): Promise<boolean> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3471192188, typ, content) as any;
+    return $resultPromise;
+}
+
 // Private type creation functions
 const $$createType0 = model$0.RecordInfo.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);
