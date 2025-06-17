@@ -1,4 +1,6 @@
 const jaLocale = {
+  sure: "かくにん",
+  cancel: "キャンセル",
   file: "ファイル",
   create: "作成",
   update: "更新",
@@ -49,7 +51,6 @@ const jaLocale = {
   selectUp: "前の項目を選択",
   selectDown: "次の項目を選択",
   edit: "編集",
-  sure: "アクションを確認",
   changeTheme: "テーマを切り替える",
   french: "フランス語",
   portuguese: "ポルトガル語",
@@ -64,7 +65,8 @@ const jaLocale = {
   sequenceDiagram: "シーケンス図",
   ganttChart: "ガントチャート",
   graphviz: 'graphviz',
-  createOrSelect: 'ファイルを選択するか、新規作成してください'
+  createOrSelect: 'ファイルを選択するか、新規作成してください',
+  help: 'ヘルプ'
 };
 
 export default jaLocale;

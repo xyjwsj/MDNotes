@@ -1,4 +1,6 @@
 const frLocale = {
+  sure: "Confirmer",
+  cancel: "Annuler",
   file: "Fichier",
   create: "Créer",
   update: "Mise à jour",
@@ -52,7 +54,6 @@ const frLocale = {
   selectUp: "Sélectionner le précédent",
   selectDown: "Sélectionner le suivant",
   edit: "Modifier",
-  sure: "Confirmer l'action",
   changeTheme: "Changer le thème",
   french: "Français",
   portuguese: "Portugais",
@@ -67,7 +68,8 @@ const frLocale = {
   sequenceDiagram: "Diagramme de séquence",
   ganttChart: "Diagramme de Gantt",
   graphviz: 'graphviz',
-  createOrSelect: 'Veuillez sélectionner un fichier ou en créer un nouveau'
+  createOrSelect: 'Veuillez sélectionner un fichier ou en créer un nouveau',
+  help: 'Aide'
 };
 
 export default frLocale;

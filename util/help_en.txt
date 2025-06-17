@@ -1,0 +1,38 @@
+Welcome to LiveMark - Instant Notes
+🐵 Interface Description:
+    🐒 Menu Bar:
+        🐤 Leftmost [+] button: Create a new document
+        🐤 Second from left [🔍 Magnifier]: Search document list, supports real-time search
+        🐤 First from right [🏷️ Tag]: Set the label color for the currently selected file
+        🐤 Second from right [📚 Sidebar]: Show/hide the left file list sidebar
+        🐤 Third from right [❓ Help]: View application introduction and usage instructions
+        🐤 Fourth from right [⠇ More Menu]: Additional menu items:
+            🐔 Delete File: Deletes the current file. A confirmation dialog will appear.
+            🐔 Export File: Opens an export dialog where you can choose to export the current document or all documents.
+            🐔 Language Selection: Currently supports Simplified Chinese, English, French, Portuguese, Japanese, and Traditional Chinese.
+            🐔 Theme Switching: Supports Light and Dark themes.
+            🐔 Cloud Storage: Currently supports GitHub/Gitee cloud storage. All data is stored using your own resources to ensure privacy and security.
+    🐒 Top File Info Bar:
+        🐤 Center label: Displays the current file name.
+    🐒 Sidebar:
+        🐤 Main window: Displays the file list
+        🐤 Bottom-left corner: View list of deleted files
+        🐤 Bottom label: Displays the total number of files
+    🐒 Editing Area:
+        🐤 Top-right corner: Displays the word count of the current document
+        🐤 Bottom-right corner (from right to left):
+            🐔 First: Shows whether the document is syncing
+            🐔 Second: Shows the last update time of the document
+            🐔 Third: Shows the creation time of the document
+
+🐵 Operation Instructions:
+    🐒 Menu Bar:
+        All icons in the menu bar are clickable and trigger corresponding actions.
+    🐒 File Info Bar:
+        When a file is selected, it displays the name of the currently edited file.
+    🐒 Sidebar:
+        🐤 Single-click a file in the list to select it
+        🐤 Double-click a file to rename it
+    🐒 Other shortcuts can be found in the shortcut popup:
+
+To open the shortcut popup: Command + Ctrl + K

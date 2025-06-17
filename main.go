@@ -2,6 +2,7 @@ package main
 
 import (
 	"changeme/handler"
+	"changeme/mgr"
 	"changeme/model"
 	"embed"
 	_ "embed"
@@ -75,6 +76,11 @@ func main() {
 		if runtime.GOOS == "windows" {
 
 		}
+	})
+
+	app.OnShutdown(func() {
+		log.Println("System Shutdown...")
+		mgr.NotifyEvent()
 	})
 
 	//// 创建菜单

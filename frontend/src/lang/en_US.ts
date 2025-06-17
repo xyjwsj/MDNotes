@@ -1,4 +1,6 @@
 const enLocale = {
+  sure: "Confirm",
+  cancel: "Cancel",
   file: "File",
   create: "Create",
   update: "Update",
@@ -50,7 +52,6 @@ const enLocale = {
   selectUp: "Select Previous",
   selectDown: "Select Next",
   edit: "Edit",
-  sure: "Sure Action",
   changeTheme: "Change Theme",
   french: "French",
   portuguese: "Portuguese",
@@ -65,7 +66,8 @@ const enLocale = {
   sequenceDiagram: "Sequence Diagram",
   ganttChart: "Gantt Chart",
   graphviz: 'graphviz',
-  createOrSelect: 'Please select a file or create a new one'
+  createOrSelect: 'Please select a file or create a new one',
+  help: 'Help'
 };
 
 export default enLocale;

@@ -1,4 +1,6 @@
 const zhTwLocale = {
+  sure: "確認",
+  cancel: "取消",
   file: "文件",
   create: "創建",
   update: "更新",
@@ -49,7 +51,6 @@ const zhTwLocale = {
   selectUp: "選擇上一個",
   selectDown: "選擇下一個",
   edit: "編輯",
-  sure: "確認行為",
   changeTheme: "切換主題",
   french: "法語",
   portuguese: "葡萄牙語",
@@ -64,7 +65,8 @@ const zhTwLocale = {
   sequenceDiagram: "時序圖",
   ganttChart: "甘特圖",
   graphviz: 'graphviz',
-  createOrSelect: '請選擇檔案或建立新檔'
+  createOrSelect: '請選擇檔案或建立新檔',
+  help: '幫助'
 };
 
 export default zhTwLocale;

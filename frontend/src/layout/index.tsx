@@ -16,7 +16,7 @@ import {
     Recovery,
     Search,
 } from "@/bindings/changeme/handler/filehandler.ts";
-import {ConfigStore, PreferenceInfo, ScreenFullSwitch,} from "@/bindings/changeme/handler/systemhandler.ts";
+import {ConfigStore, HelpInfo, PreferenceInfo, ScreenFullSwitch,} from "@/bindings/changeme/handler/systemhandler.ts";
 import {RecordInfo} from "@/bindings/changeme/model";
 import {settingInfoStore} from "@/store/modules/settings.ts";
 import {TipError, TipSuccess, TipWarning} from "@/util/messageUtil.tsx";
@@ -31,7 +31,7 @@ import {
     ExportOutlined,
     LayoutOutlined,
     MoreOutlined,
-    PlusOutlined,
+    PlusOutlined, QuestionOutlined,
     SearchOutlined,
     SolutionOutlined,
     TagOutlined,
@@ -670,6 +670,9 @@ export default defineComponent({
             Mousetrap.bind("command+shift+d", () => {
                 showDelFile()
             });
+            Mousetrap.bind("command+shift+h", () => {
+                showHelp()
+            });
         };
 
         let timer: any | null = null;
@@ -789,6 +792,10 @@ export default defineComponent({
                     {
                         key: "⌘+Shift+Right",
                         descKey: "showSidebar",
+                    },
+                    {
+                        key: "⌘+Shift+H",
+                        descKey: "help",
                     },
                 ],
             },
@@ -911,6 +918,9 @@ export default defineComponent({
                 return;
             }
             const modalView = new ModalView();
+            modalView.okText = t('sure')
+            modalView.cancelText = t('cancel')
+            modalView.title = t('delete')
             const files = fileList.value.filter(
                 (item) => item.uuid === selectFileKey.value
             );
@@ -1020,6 +1030,8 @@ export default defineComponent({
             const modalView = new ModalView();
             modalView.width = 400;
             modalView.title = t("configStore");
+            modalView.okText = t('sure')
+            modalView.cancelText = t('cancel')
             modalView.content = (
                 <div>
                     <InputView
@@ -1273,6 +1285,45 @@ export default defineComponent({
             ShowModal(modalView);
         }
 
+        const HelpView = styled.pre`
+            padding: 10px;
+            margin-right: 15px;
+            max-height: 350px;
+            overflow-y: auto;
+            text-wrap: wrap;
+            border-radius: 8px;
+            background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.4)'};
+            box-shadow: 0 0 10px 5px ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.3)' : 'rgba(255, 255, 255, 0.5)'};
+            color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.2)'};
+            
+            ::-webkit-scrollbar {
+                display: none;
+            }
+        `
+
+        const showHelp = async () => {
+            const modalView = new ModalView();
+            modalView.cancelText = "";
+            modalView.okText = "";
+            modalView.title = t("help");
+            modalView.okText = "";
+            modalView.closed = true;
+            modalView.width = "650px";
+            modalView.icon = (
+                <QuestionOutlined
+                    style={{color: settingInfoStore.DarkTheme() ? "white" : "black"}}
+                />
+            );
+            const info = await HelpInfo(settingInfoStore.getState().lang);
+            modalView.content = (
+                <HelpView>
+                    {info}
+                </HelpView>
+            );
+            // modalView.show();
+            ShowModal(modalView);
+        }
+
         return () => (
             <Container>
                 <ToolView>
@@ -1348,6 +1399,13 @@ export default defineComponent({
                                 }}
                             >
                                 <LayoutOutlined/>
+                            </div>
+                            <div
+                                class={"action"}
+                                onClick={showHelp}
+                                title={t('help')}
+                            >
+                                <QuestionOutlined/>
                             </div>
                             <Dropdown
                                 class={"action"}
