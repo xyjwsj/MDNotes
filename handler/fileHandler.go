@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"log"
-	"os"
 	"strings"
 	"time"
 )
@@ -86,19 +85,15 @@ func (file *FileHandler) ExportFile(all bool, fileKey string) bool {
 		dialog := application.OpenFileDialogWithOptions(&application.OpenFileDialogOptions{
 			CanChooseDirectories:    true,
 			CanChooseFiles:          false,
-			CanCreateDirectories:    false,
+			CanCreateDirectories:    true,
 			ShowHiddenFiles:         false,
 			AllowsMultipleSelection: false,
 		})
 		if path, err := dialog.PromptForSingleSelection(); err == nil {
 			src := util.CreatePlatformPath(model.AppDataRoot, "md")
-			target := util.CreatePlatformPath(path, "LiveMark")
-			if !util.Exists(target) {
-				os.MkdirAll(target, os.ModePerm)
-			}
 			for _, item := range list {
 				s := util.CreatePlatformPath(src, item.Uuid+".md")
-				t := util.CreatePlatformPath(target, fmt.Sprintf("%s-%d.md", item.FileName, time.Now().Unix()))
+				t := util.CreatePlatformPath(path, fmt.Sprintf("%s-%d.md", item.FileName, time.Now().Unix()))
 
 				err := mgr.ExportFile(s, t)
 				if err != nil {
@@ -116,15 +111,18 @@ func (file *FileHandler) ExportFile(all bool, fileKey string) bool {
 				src := util.CreatePlatformPath(model.AppDataRoot, "md", fileKey+".md")
 				//target := util.CreatePlatformPath(model.DownloadDir, item.FileName+".md")
 
+				fileName := item.FileName + ".md"
 				dialog := application.SaveFileDialog()
+
 				dialog.SetFilename(item.FileName)
 				dialog.AddFilter(item.FileName, "")
 				dialog.SetOptions(&application.SaveFileDialogOptions{
+					Filename:             fileName,
 					CanCreateDirectories: true,
 				})
 
 				if path, err := dialog.PromptForSingleSelection(); err == nil {
-					err := mgr.ExportFile(src, path+".md")
+					err := mgr.ExportFile(src, path)
 					if err != nil {
 						log.Println(err)
 						return false
