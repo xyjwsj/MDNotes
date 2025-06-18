@@ -143,7 +143,6 @@ func (file *FileHandler) TypeExport(typ, content string) bool {
 		if err != nil {
 			return false
 		}
-		util.SelectLocation(target)
 		return true
 	}
 	return true

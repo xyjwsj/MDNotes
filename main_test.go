@@ -129,3 +129,11 @@ func TestCatFile(t *testing.T) {
 		log.Println(path + ":" + string(content))
 	}
 }
+
+func TestExport(t *testing.T) {
+	target := util.CreatePlatformPath(model.DownloadDir, "Export.pdf")
+	err := util.HtmlToPdf("<h1><strong>MDNote: Offline-First Markdown Editor with WYSIWYG Writing &amp; Mind Mapping</strong></h1>", target)
+	if err != nil {
+		log.Println(err)
+	}
+}
