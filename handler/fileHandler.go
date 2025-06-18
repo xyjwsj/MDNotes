@@ -117,8 +117,14 @@ func (file *FileHandler) ExportFile(all bool, fileKey string) bool {
 }
 
 func (file *FileHandler) TypeExport(typ, content string) bool {
-	if typ == "pdf" {
-		log.Println(content)
+	if typ == "PDF" {
+		target := util.CreatePlatformPath(model.DownloadDir, "Export.pdf")
+		err := util.HtmlToPdf(content, target)
+		if err != nil {
+			return false
+		}
+		util.SelectLocation(target)
+		return true
 	}
 	return true
 }
