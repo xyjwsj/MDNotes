@@ -5,12 +5,13 @@
     <key>com.apple.security.app-sandbox</key>
     <true/>
 
-    <!-- 如果需要网络访问 -->
-    <key>com.apple.security.network.client</key>
+    <key>com.apple.security.files.user-selected.read-write</key>
     <true/>
 
-    <!-- 如果你使用了本地绑定服务或监听端口 -->
-    <key>com.apple.security.network.server</key>
+    <key>com.apple.security.files.downloads.read-write</key>
+    <true/>
+
+    <key>com.apple.security.network.client</key>
     <true/>
 </dict>
 </plist>

@@ -5,8 +5,8 @@ import (
 	"changeme/model"
 	"changeme/util"
 	"fmt"
+	"github.com/wailsapp/wails/v3/pkg/application"
 	"log"
-	"os"
 	"strings"
 	"time"
 )
@@ -82,34 +82,54 @@ func (file *FileHandler) CreateFile() model.RecordInfo {
 func (file *FileHandler) ExportFile(all bool, fileKey string) bool {
 	list := mgr.CacheList()
 	if all {
-		src := util.CreatePlatformPath(model.AppDataRoot, "md")
-		target := util.CreatePlatformPath(model.DownloadDir, "LiveMark")
-		if !util.Exists(target) {
-			os.MkdirAll(target, os.ModePerm)
-		}
-		for _, item := range list {
-			s := util.CreatePlatformPath(src, item.Uuid+".md")
-			t := util.CreatePlatformPath(target, fmt.Sprintf("%s-%d.md", item.FileName, time.Now().Unix()))
+		dialog := application.OpenFileDialogWithOptions(&application.OpenFileDialogOptions{
+			CanChooseDirectories:    true,
+			CanChooseFiles:          false,
+			CanCreateDirectories:    true,
+			ShowHiddenFiles:         false,
+			AllowsMultipleSelection: false,
+		})
+		if path, err := dialog.PromptForSingleSelection(); err == nil {
+			src := util.CreatePlatformPath(model.AppDataRoot, "md")
+			for _, item := range list {
+				s := util.CreatePlatformPath(src, item.Uuid+".md")
+				t := util.CreatePlatformPath(path, fmt.Sprintf("%s-%d.md", item.FileName, time.Now().Unix()))
 
-			err := mgr.ExportFile(s, t)
-			if err != nil {
-				log.Println(err)
-				return false
-			}
-		}
-		util.SelectLocation(target)
-		return true
-	} else {
-		for _, item := range list {
-			if item.Uuid == fileKey {
-				src := util.CreatePlatformPath(model.AppDataRoot, "md", fileKey+".md")
-				target := util.CreatePlatformPath(model.DownloadDir, item.FileName+".md")
-				err := mgr.ExportFile(src, target)
+				err := mgr.ExportFile(s, t)
 				if err != nil {
 					log.Println(err)
 					return false
 				}
-				util.SelectLocation(target)
+			}
+			return true
+		}
+		return false
+
+	} else {
+		for _, item := range list {
+			if item.Uuid == fileKey {
+				src := util.CreatePlatformPath(model.AppDataRoot, "md", fileKey+".md")
+				//target := util.CreatePlatformPath(model.DownloadDir, item.FileName+".md")
+
+				fileName := item.FileName + ".md"
+				dialog := application.SaveFileDialog()
+
+				dialog.SetFilename(item.FileName)
+				dialog.AddFilter(item.FileName, "")
+				dialog.SetOptions(&application.SaveFileDialogOptions{
+					Filename:             fileName,
+					CanCreateDirectories: true,
+				})
+
+				if path, err := dialog.PromptForSingleSelection(); err == nil {
+					err := mgr.ExportFile(src, path)
+					if err != nil {
+						log.Println(err)
+						return false
+					}
+					return true
+				}
+				return false
 			}
 		}
 		return true
