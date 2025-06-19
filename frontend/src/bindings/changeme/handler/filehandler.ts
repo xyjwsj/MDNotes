@@ -80,8 +80,8 @@ export function SyncFile(fileKey: string, content: string): Promise<string> & { 
     return $resultPromise;
 }
 
-export function TypeExport(typ: string, content: string): Promise<boolean> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(3471192188, typ, content) as any;
+export function TypeExport(typ: string, fileKey: string, content: string): Promise<boolean> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3471192188, typ, fileKey, content) as any;
     return $resultPromise;
 }
 

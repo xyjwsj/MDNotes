@@ -473,7 +473,7 @@ export default defineComponent({
     };
 
     const exportHtml = (typ: string) => {
-      TypeExport(typ, vditor.value?.getHTML()!)
+      TypeExport(typ, editorInfo.fileKey, vditor.value?.getHTML()!)
     }
 
     expose({ updateContent, updateTheme, startEdit, exportHtml });

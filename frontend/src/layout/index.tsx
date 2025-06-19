@@ -1160,8 +1160,18 @@ export default defineComponent({
         `;
 
         const exportTypeInfo = reactive([
-            "HTML",
-            "PDF"
+            {
+                key: 'html',
+                val: 'HTML',
+            },
+            {
+                key: 'pdf',
+                val: 'PDF',
+            },
+            {
+                key: 'md',
+                val: 'MarkDown'
+            }
         ]);
 
 
@@ -1186,12 +1196,12 @@ export default defineComponent({
                                 class={"langItem"}
                                 onDblclick={() => {
                                     if (currentCom.value) {
-                                        currentCom.value.exportHtml(item);
+                                        currentCom.value.exportHtml(item.key);
                                     }
                                     DestroyModal();
                                 }}
                             >
-                {t(item)}
+                {t(item.val)}
               </span>
                         );
                     })}

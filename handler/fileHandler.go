@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"log"
+	"os"
 	"strings"
 	"time"
 )
@@ -136,14 +137,51 @@ func (file *FileHandler) ExportFile(all bool, fileKey string) bool {
 	}
 }
 
-func (file *FileHandler) TypeExport(typ, content string) bool {
-	if typ == "PDF" {
-		target := util.CreatePlatformPath(model.DownloadDir, "Export.pdf")
-		err := util.HtmlToPdf(content, target)
-		if err != nil {
+func (file *FileHandler) TypeExport(typ, fileKey, content string) bool {
+	list := mgr.CacheList()
+	for _, item := range list {
+		if item.Uuid == fileKey {
+			fileName := item.FileName + ".md"
+			if typ == "pdf" {
+				fileName = item.FileName + ".pdf"
+			}
+			if typ == "html" {
+				fileName = item.FileName + ".html"
+			}
+			dialog := application.SaveFileDialog()
+
+			dialog.SetFilename(item.FileName)
+			dialog.AddFilter(item.FileName, "")
+			dialog.SetOptions(&application.SaveFileDialogOptions{
+				Filename:             fileName,
+				CanCreateDirectories: true,
+			})
+
+			if path, err := dialog.PromptForSingleSelection(); err == nil {
+				if typ == "pdf" {
+					err1 := util.HtmlToPdf(content, path)
+					if err1 != nil {
+						return false
+					}
+					return true
+				}
+				if typ == "html" {
+					err1 := os.WriteFile(path, []byte(content), os.ModePerm)
+					if err1 != nil {
+						return false
+					}
+					return true
+				}
+				if typ == "md" {
+					err1 := os.WriteFile(path, []byte(content), os.ModePerm)
+					if err1 != nil {
+						return false
+					}
+					return true
+				}
+			}
 			return false
 		}
-		return true
 	}
 	return true
 }
