@@ -11,7 +11,6 @@ import {
     DeleteFile,
     DeleteList,
     DocList,
-    ExportFile,
     ModifyName,
     Recovery,
     Search,
@@ -652,7 +651,8 @@ export default defineComponent({
                 // showLicense();
             });
             Mousetrap.bind("command+shift+e", () => {
-                exportFile();
+                // exportFile();
+                fileExport()
             });
             Mousetrap.bind("command+shift+c", () => {
                 configStore();
@@ -673,7 +673,7 @@ export default defineComponent({
                 showHelp()
             });
             Mousetrap.bind("command+shift+p", () => {
-                fileExport()
+                // fileExport()
             });
         };
 
@@ -969,45 +969,45 @@ export default defineComponent({
             ShowModal(modalView);
         };
 
-        const exportFile = () => {
-            const modalView = new ModalView();
-            modalView.cancelText = t("exportAll");
-            modalView.okText = t("exportCurrent");
-            modalView.title = t("export");
-            modalView.closed = true;
-            modalView.icon = (
-                <ExportOutlined
-                    style={{color: settingInfoStore.DarkTheme() ? "white" : "black"}}
-                />
-            );
-            modalView.content = (
-                <span
-                    style={{color: settingInfoStore.DarkTheme() ? "white" : "black"}}
-                >
-          {t("selectExport")}
-        </span>
-            );
-            modalView.ok = async () => {
-                if (selectFileKey.value === "") {
-                    TipWarning(t("selectFile"));
-                    return;
-                }
-                if (await ExportFile(false, selectFileKey.value)) {
-                    TipSuccess(`${t("exportCurrent")}${t("success")}`);
-                } else {
-                    TipSuccess(`${t("exportCurrent")}${t("failure")}`);
-                }
-            };
-            modalView.cancel = async () => {
-                if (await ExportFile(true, selectFileKey.value)) {
-                    TipSuccess(`${t("exportAll")}${t("success")}`);
-                } else {
-                    TipSuccess(`${t("exportAll")}${t("failure")}`);
-                }
-            };
-            // modalView.show();
-            ShowModal(modalView);
-        };
+        // const exportFile = () => {
+        //     const modalView = new ModalView();
+        //     modalView.cancelText = t("exportAll");
+        //     modalView.okText = t("exportCurrent");
+        //     modalView.title = t("export");
+        //     modalView.closed = true;
+        //     modalView.icon = (
+        //         <ExportOutlined
+        //             style={{color: settingInfoStore.DarkTheme() ? "white" : "black"}}
+        //         />
+        //     );
+        //     modalView.content = (
+        //         <span
+        //             style={{color: settingInfoStore.DarkTheme() ? "white" : "black"}}
+        //         >
+        //   {t("selectExport")}
+        // </span>
+        //     );
+        //     modalView.ok = async () => {
+        //         if (selectFileKey.value === "") {
+        //             TipWarning(t("selectFile"));
+        //             return;
+        //         }
+        //         if (await ExportFile(false, selectFileKey.value)) {
+        //             TipSuccess(`${t("exportCurrent")}${t("success")}`);
+        //         } else {
+        //             TipSuccess(`${t("exportCurrent")}${t("failure")}`);
+        //         }
+        //     };
+        //     modalView.cancel = async () => {
+        //         if (await ExportFile(true, selectFileKey.value)) {
+        //             TipSuccess(`${t("exportAll")}${t("success")}`);
+        //         } else {
+        //             TipSuccess(`${t("exportAll")}${t("failure")}`);
+        //         }
+        //     };
+        //     // modalView.show();
+        //     ShowModal(modalView);
+        // };
 
         const updateFileSize = (key: string, sizeStr: string) => {
             fileList.value.forEach((item) => {
@@ -1515,7 +1515,7 @@ export default defineComponent({
                                             justifyContent: 'flex-start'
                                         }}
                                     >
-                                        <MenuItemView title={t('export')} onClick={exportFile}>
+                                        <MenuItemView title={t('export')} onClick={fileExport}>
                                             <ExportOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
                                         <MenuItemView title={t('delete')} onClick={deleteFile}>

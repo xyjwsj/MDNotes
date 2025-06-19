@@ -7,7 +7,9 @@ toolchain go1.24.2
 require (
 	github.com/go-git/go-git/v5 v5.16.0
 	github.com/google/uuid v1.4.0
+	github.com/phpdave11/gofpdf v1.4.3
 	github.com/wailsapp/wails/v3 v3.0.0-alpha.9
+	github.com/yuin/goldmark v1.7.12
 )
 
 require (
@@ -42,12 +44,6 @@ require (
 	github.com/wailsapp/go-webview2 v1.0.19 // indirect
 	github.com/wailsapp/mimetype v1.4.1 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
-	github.com/xyjwsj/grod v1.0.2 // indirect
-	github.com/ysmood/fetchup v0.5.2 // indirect
-	github.com/ysmood/goob v0.4.0 // indirect
-	github.com/ysmood/got v0.41.0 // indirect
-	github.com/ysmood/gson v0.7.3 // indirect
-	github.com/ysmood/leakless v0.9.0 // indirect
 	golang.org/x/crypto v0.37.0 // indirect
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/net v0.39.0 // indirect

@@ -194,3 +194,17 @@ func ExportFile(source, target string) error {
 
 	return os.WriteFile(target, content, os.ModePerm)
 }
+
+func OriginContent(source string) string {
+	editFile, err := util.OpenFileByPath(source)
+	if err != nil {
+		return ""
+	}
+
+	file, err := io.ReadAll(editFile)
+	if err != nil {
+		return ""
+	}
+
+	return string(util.DecryptContent(file, UniqueId()))
+}

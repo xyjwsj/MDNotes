@@ -24,6 +24,7 @@ import styled from "vue3-styled-components";
 import moment from "moment";
 import {SameDay} from "@/util/dateUtil.ts";
 import {ReloadOutlined} from "@ant-design/icons-vue";
+import {TipSuccess} from "@/util/messageUtil.tsx";
 
 export default defineComponent({
   name: "Home",
@@ -472,8 +473,12 @@ export default defineComponent({
       vditor.value?.focus();
     };
 
-    const exportHtml = (typ: string) => {
-      TypeExport(typ, editorInfo.fileKey, vditor.value?.getHTML()!)
+    const exportHtml = async (typ: string) => {
+      if (await TypeExport(typ, editorInfo.fileKey, vditor.value?.getHTML()!)) {
+        TipSuccess(`${t("exportCurrent")}${t("success")}`);
+      } else {
+        TipSuccess(`${t("exportCurrent")}${t("failure")}`);
+      }
     }
 
     expose({ updateContent, updateTheme, startEdit, exportHtml });

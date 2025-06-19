@@ -159,7 +159,11 @@ func (file *FileHandler) TypeExport(typ, fileKey, content string) bool {
 
 			if path, err := dialog.PromptForSingleSelection(); err == nil {
 				if typ == "pdf" {
-					err1 := util.HtmlToPdf(content, path)
+					src := util.CreatePlatformPath(model.AppDataRoot, "md", fileKey+".md")
+
+					originContent := mgr.OriginContent(src)
+
+					err1 := util.MdToPdf(originContent, path)
 					if err1 != nil {
 						return false
 					}
