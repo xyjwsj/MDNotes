@@ -127,6 +127,7 @@ func startFlushDisk() {
 			for _, item := range operates {
 				if item.Change {
 					truncateWrite(item)
+					item.Change = false
 				} else if time.Now().Unix()-30 > item.ModifyTimestamp {
 					log.Println("Over 30 second， close file " + item.UniqueId)
 					item.EditeFile.Close()
@@ -160,23 +161,33 @@ func startFlushDisk() {
 }
 
 func truncateWrite(op *Operator) {
-	// 清空文件
-	err := op.EditeFile.Truncate(0)
-	if err != nil {
-		log.Println("Truncate failed:", err)
+	// 清空文件（0 表示清空到第 0 字节）
+	if err := op.EditeFile.Truncate(0); err != nil {
+		log.Printf("Truncate failed: %v", err)
+		return // 或根据上下文处理错误
 	}
 
-	content, err := util.EncryptContent(op.content, UniqueId())
+	// 生成加密内容
+	encryptionKey := UniqueId() // 提前生成密钥便于调试
+	content, err := util.EncryptContent(op.content, encryptionKey)
 	if err != nil {
-		log.Println("Encrypt failed:", err)
+		log.Printf("Encrypt failed (key=%s): %v", encryptionKey, err)
+		return
 	}
-	log.Println("Encrypt New Content ...")
+	log.Printf("Encrypted new content with key: %s", encryptionKey)
 
-	_, err = op.EditeFile.WriteAt(content, 0)
-	if err != nil {
-		log.Println("Write failed:", err)
+	// 写入加密内容（需重置文件偏移量）
+	if _, err := op.EditeFile.Seek(0, 0); err != nil { // 确保从文件头写入
+		log.Printf("Seek reset failed: %v", err)
+		return
 	}
-	log.Println("Write New Content ...")
+
+	if _, err := op.EditeFile.Write(content); err != nil { // 直接使用 Write 更简洁
+		log.Printf("Write failed: %v", err)
+		return
+	}
+	log.Println("New content written successfully")
+
 }
 
 func ExportFile(source, target string) error {

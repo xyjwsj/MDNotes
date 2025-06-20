@@ -1164,10 +1164,10 @@ export default defineComponent({
                 key: 'html',
                 val: 'HTML',
             },
-            {
-                key: 'pdf',
-                val: 'PDF',
-            },
+            // {
+            //     key: 'pdf',
+            //     val: 'PDF',
+            // },
             {
                 key: 'md',
                 val: 'MarkDown'

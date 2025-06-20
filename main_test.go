@@ -136,6 +136,7 @@ func TestExport(t *testing.T) {
 	src := util.CreatePlatformPath(model.AppDataRoot, "md", "903b573e-a70c-4cc3-b37a-b4539bebf0d2.md")
 
 	originContent := mgr.OriginContent(src)
+
 	err := util.MdToPdf(originContent, target)
 	if err != nil {
 		log.Println(err)

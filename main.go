@@ -79,8 +79,25 @@ func main() {
 	})
 
 	app.OnShutdown(func() {
-		log.Println("System Shutdown...")
-		mgr.NotifyEvent()
+		// 创建一个超时通道，防止无限等待
+		done := make(chan bool, 1)
+		go func() {
+			defer close(done)
+
+			// 执行你的清理逻辑
+			mgr.NotifyEvent()
+
+			// 如果有其他资源需要释放，也可以在这里调用
+			// e.g: db.Close(), fileMgr.FlushAll(), etc
+		}()
+
+		// 设置最大等待时间（例如 5 秒）
+		select {
+		case <-done:
+			log.Println("Cleanup completed.")
+		case <-time.After(5 * time.Second):
+			log.Println("Cleanup timeout exceeded. Force shutdown.")
+		}
 	})
 
 	//// 创建菜单

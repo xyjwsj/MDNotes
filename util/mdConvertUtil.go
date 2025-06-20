@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"github.com/phpdave11/gofpdf"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
@@ -10,90 +11,107 @@ import (
 )
 
 var mdParser = goldmark.New(
-	goldmark.WithExtensions(
-	// 可添加扩展，如 table、footnote 等
-	),
 	goldmark.WithRendererOptions(
-		html.WithUnsafe(), // 允许渲染原始 HTML
+		html.WithUnsafe(), // 允许原始 HTML 渲染（可选）
 	),
 )
 
-func MdToPdf(mdContent, outputPath string) error {
-	pdf := gofpdf.New("P", "mm", "A4", "")
-	pdf.SetMargins(15, 15, 15)
-	pdf.SetFont("Arial", "", 12)
-	pdf.AddPage()
-
-	// 设置字体映射函数（可自定义）
-	setCustomStyle := func(pdf *gofpdf.Fpdf, node ast.Node) {
-		switch node.Kind() {
-		case ast.KindHeading:
-			heading := node.(*ast.Heading)
-			if heading.Level == 1 {
-				pdf.SetFont("Arial", "B", 18)
-				pdf.Ln(6)
-			} else if heading.Level == 2 {
-				pdf.SetFont("Arial", "B", 16)
-				pdf.Ln(5)
-			} else {
-				pdf.SetFont("Arial", "B", 14)
-				pdf.Ln(4)
+// 提取纯文本内容
+func extractText(node ast.Node, source []byte) string {
+	var buf strings.Builder
+	ast.Walk(node, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+		if entering {
+			if t, ok := n.(*ast.Text); ok {
+				buf.WriteString(string(t.Segment.Value(source)))
 			}
-		case ast.KindEmphasis:
-			pdf.SetFont("Arial", "I", 12)
-		default:
-			pdf.SetFont("Arial", "", 12)
 		}
+		return ast.WalkContinue, nil
+	})
+	return strings.TrimSpace(buf.String())
+}
+
+// 设置字体样式
+func applyStyle(pdf *gofpdf.Fpdf, node ast.Node) {
+	switch node.Kind() {
+	case ast.KindHeading:
+		level := node.(*ast.Heading).Level
+		if level == 1 {
+			pdf.SetFont("Arial", "B", 18)
+		} else if level == 2 {
+			pdf.SetFont("Arial", "B", 16)
+		} else {
+			pdf.SetFont("Arial", "B", 14)
+		}
+	case ast.KindEmphasis:
+		em := node.(*ast.Emphasis)
+		if em.Level == 1 {
+			pdf.SetFont("Arial", "I", 12) // 斜体
+		} else {
+			pdf.SetFont("Arial", "B", 12) // 加粗
+		}
+	default:
+		pdf.SetFont("Arial", "", 12)
 	}
+}
+
+// MdToPdf 将 Markdown 内容转换为 PDF 并保存到指定路径
+func MdToPdf(mdContent, outputPath string) error {
+	// 初始化 PDF
+	pdf := gofpdf.New("P", "mm", "A4", "")
+	//pdf.AddFont("noto", "", "util/fonts/notosanssc-regular.ttf")
+	//pdf.SetFont("noto", "", 12)
+	pdf.SetMargins(15, 15, 15)
+	pdf.AddPage()
 
 	// 解析 Markdown
 	reader := text.NewReader([]byte(mdContent))
 	doc := mdParser.Parser().Parse(reader)
 
-	var walk func(node ast.Node)
+	// 遍历 AST 节点
+	var walk func(ast.Node)
 	walk = func(node ast.Node) {
-		switch n := node.(type) {
-		case *ast.Text:
-			text := string(n.Segment.Value([]byte(mdContent)))
-			text = strings.ReplaceAll(text, "\n", " ")
-			if text != "" {
-				setCustomStyle(pdf, node.Parent())
-				pdf.MultiCell(0, 6, text, "", "L", false)
-				pdf.Ln(1)
-			}
-		case *ast.Paragraph:
-			pdf.Ln(4)
+		switch node.(type) {
 		case *ast.Heading:
-			setCustomStyle(pdf, node)
+			applyStyle(pdf, node)
+			text := extractText(node, []byte(mdContent))
+			if text != "" {
+				pdf.MultiCell(0, 6, text, "", "L", false)
+			}
+			pdf.Ln(4)
+
+		case *ast.Paragraph:
 			pdf.Ln(2)
+
 		case *ast.List:
 			pdf.Ln(2)
+
 		case *ast.ListItem:
-			// 获取 Item 内部文本
-			var itemText strings.Builder
-			for c := node.FirstChild(); c != nil; c = c.NextSibling() {
-				if t, ok := c.(*ast.Text); ok {
-					itemText.WriteString(string(t.Segment.Value([]byte(mdContent))))
-				}
+			text := extractText(node, []byte(mdContent))
+			if text != "" {
+				applyStyle(pdf, node)
+				pdf.MultiCell(0, 6, "• "+text, "", "L", false)
 			}
-			if itemText.Len() > 0 {
-				setCustomStyle(pdf, node.Parent())
-				pdf.MultiCell(0, 6, "• "+itemText.String(), "", "L", false)
-				pdf.Ln(2)
-			}
-		case *ast.Emphasis:
-			// 处理斜体
-			var emText strings.Builder
-			for c := node.FirstChild(); c != nil; c = c.NextSibling() {
-				if t, ok := c.(*ast.Text); ok {
-					emText.WriteString(string(t.Segment.Value([]byte(mdContent))))
-				}
-			}
-			if emText.Len() > 0 {
-				setCustomStyle(pdf, node)
-				pdf.MultiCell(0, 6, "*"+emText.String()+"*", "", "L", false)
-				pdf.Ln(1)
-			}
+			pdf.Ln(2)
+
+			//case *ast.Emphasis:
+			//	em := node.(*ast.Emphasis)
+			//	text := extractText(em, []byte(mdContent))
+			//	if text != "" {
+			//		applyStyle(pdf, em)
+			//		if em.Level == 1 {
+			//			pdf.MultiCell(0, 6, "*"+text+"*", "", "L", false)
+			//		} else if em.Level >= 2 {
+			//			pdf.MultiCell(0, 6, "**"+text+"**", "", "L", false)
+			//		}
+			//		pdf.Ln(1)
+			//	}
+			//
+			//case *ast.Text:
+			//	text := extractText(node, []byte(mdContent))
+			//	if text != "" {
+			//		applyStyle(pdf, node)
+			//		pdf.MultiCell(0, 6, text, "", "L", false)
+			//	}
 		}
 
 		if node.FirstChild() != nil {
@@ -104,9 +122,13 @@ func MdToPdf(mdContent, outputPath string) error {
 		}
 	}
 
-	if doc.FirstChild() != nil {
-		walk(doc.FirstChild())
-	}
+	// 开始遍历
+	walk(doc.FirstChild())
 
-	return pdf.OutputFileAndClose(outputPath)
+	// 输出 PDF
+	err := pdf.OutputFileAndClose(outputPath)
+	if err != nil {
+		return fmt.Errorf("failed to write PDF: %v", err)
+	}
+	return nil
 }
