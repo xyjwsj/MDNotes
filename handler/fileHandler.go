@@ -168,7 +168,7 @@ func (file *FileHandler) TypeExport(typ, fileKey, content string) bool {
 					return true
 				}
 				if typ == "html" {
-					err1 := os.WriteFile(path, []byte(content), os.ModePerm)
+					err1 := os.WriteFile(path, []byte(content), os.FileMode(0644))
 					if err1 != nil {
 						return false
 					}
@@ -176,7 +176,7 @@ func (file *FileHandler) TypeExport(typ, fileKey, content string) bool {
 				}
 				if typ == "md" {
 					fileContent := file.FileContent(fileKey)
-					err := os.WriteFile(path, []byte(fileContent), os.ModePerm)
+					err := os.WriteFile(path, []byte(fileContent), os.FileMode(0644))
 					if err != nil {
 						log.Println(err)
 						return false

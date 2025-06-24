@@ -1,6 +1,6 @@
 package util
 
-func HtmlToPdf(htmlContent, outputPath string) error {
+func HtmlToPdf1(htmlContent, outputPath string) error {
 	//// 启动浏览器（如果未安装，会自动下载）
 	//l := launcher.New()
 	//u := l.MustLaunch()
@@ -43,5 +43,9 @@ func HtmlToPdf(htmlContent, outputPath string) error {
 	//
 	//// 写入文件
 	//os.WriteFile(outputPath, all, 0644)
+	return nil
+}
+
+func HtmlToPdf(htmlContent, outputPath string) error {
 	return nil
 }

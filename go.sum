@@ -114,8 +114,10 @@ github.com/wailsapp/wails/v3 v3.0.0-alpha.9 h1:b8CfRrhPno8Fra0xFp4Ifyj+ogmXBc35r
 github.com/wailsapp/wails/v3 v3.0.0-alpha.9/go.mod h1:dSv6s722nSWaUyUiapAM1DHc5HKggNGY1a79shO85/g=
 github.com/xanzy/ssh-agent v0.3.3 h1:+/15pJfg/RsTxqYcX6fHqOXZwwMP+2VyYWJeWM2qQFM=
 github.com/xanzy/ssh-agent v0.3.3/go.mod h1:6dzNDKs0J9rVPHPhaGCukekBHKqfl+L3KghI1Bc68Uw=
-github.com/yuin/goldmark v1.7.12 h1:YwGP/rrea2/CnCtUHgjuolG/PnMxdQtPMO5PvaE2/nY=
-github.com/yuin/goldmark v1.7.12/go.mod h1:ip/1k0VRfGynBgxOz0yCqHrbZXhcjxyuS66Brc7iBKg=
+github.com/xyjwsj/md-parser v0.0.4 h1:STUz5+xtvbP1Msl85vc9Oa/TfJeDfbI5vGuKEvHNpBA=
+github.com/xyjwsj/md-parser v0.0.4/go.mod h1:+89m+wga9n/7GRTQg900Nq8ATrMb3Kq3kZe1Ag+k9To=
+github.com/xyjwsj/mdConvert v0.0.3 h1:shHvhFriqum92WUrLetw+d6Q69ZNI+9z0XBaoTzAwfI=
+github.com/xyjwsj/mdConvert v0.0.3/go.mod h1:LGYPbyDaTLqClp2GG4XsF9O24FgmJLz/+NxDVvw1ipg=
 golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
 golang.org/x/crypto v0.37.0 h1:kJNSjF/Xp7kU0iB2Z+9viTPMW4EqqsrywMXLJOOsXSE=
 golang.org/x/crypto v0.37.0/go.mod h1:vg+k43peMZ0pUMhYmVAWysMK35e6ioLh3wB8ZCAfbVc=

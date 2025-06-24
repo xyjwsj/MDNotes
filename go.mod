@@ -1,15 +1,13 @@
 module changeme
 
-go 1.24
-
-toolchain go1.24.2
+go 1.24.2
 
 require (
 	github.com/go-git/go-git/v5 v5.16.0
 	github.com/google/uuid v1.4.0
-	github.com/phpdave11/gofpdf v1.4.3
 	github.com/wailsapp/wails/v3 v3.0.0-alpha.9
-	github.com/yuin/goldmark v1.7.12
+	github.com/xyjwsj/md-parser v0.0.4
+	github.com/xyjwsj/mdConvert v0.0.3
 )
 
 require (
@@ -35,6 +33,7 @@ require (
 	github.com/lmittmann/tint v1.0.4 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/phpdave11/gofpdf v1.4.3 // indirect
 	github.com/pjbgf/sha1cd v0.3.2 // indirect
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect

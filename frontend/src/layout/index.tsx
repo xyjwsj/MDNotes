@@ -670,7 +670,7 @@ export default defineComponent({
                 showDelFile()
             });
             Mousetrap.bind("command+shift+h", () => {
-                showHelp()
+                // showHelp()
             });
             Mousetrap.bind("command+shift+p", () => {
                 // fileExport()
@@ -1164,10 +1164,10 @@ export default defineComponent({
                 key: 'html',
                 val: 'HTML',
             },
-            // {
-            //     key: 'pdf',
-            //     val: 'PDF',
-            // },
+            {
+                key: 'pdf',
+                val: 'PDF',
+            },
             {
                 key: 'md',
                 val: 'MarkDown'
