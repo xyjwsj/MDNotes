@@ -26,6 +26,12 @@ var assets embed.FS
 // logs any error that might occur.
 func main() {
 
+	defer func() {
+		if err := recover(); err != nil {
+			log.Printf("Panic recovered: %v", err)
+		}
+	}()
+
 	// Create a new Wails application by providing the necessary options.
 	// Variables 'Name' and 'Description' are for application metadata.
 	// 'Assets' configures the asset server with the 'FS' variable pointing to the frontend files.

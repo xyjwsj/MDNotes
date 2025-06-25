@@ -51,16 +51,12 @@ func init() {
 	go startFlushDisk()
 }
 
-func ImagePath() string {
-	return util.CreatePlatformPath(model.AppDataRoot, "image")
-}
-
 func SaveFile(multiFile multipart.File) (string, error) {
 	year := time.Now().Year()
 	month := time.Now().Format("01") //time.Now().Month().String()
 	day := time.Now().Day()
 
-	dir := fmt.Sprintf("%s/%d/%s/%d/", ImagePath(), year, month, day)
+	dir := fmt.Sprintf("%s/%d/%s/%d/", model.CacheDirMg, year, month, day)
 
 	_ = os.MkdirAll(path.Dir(dir), 0744)
 

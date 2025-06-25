@@ -2,6 +2,7 @@ package main
 
 import (
 	"changeme/mgr"
+	"changeme/model"
 	"changeme/util"
 	"embed"
 	"log"
@@ -76,7 +77,7 @@ func ImageApi(next http.Handler) http.Handler {
 
 		if strings.HasPrefix(path, "/api/resource") {
 			path = strings.ReplaceAll(path, "/api/resource/", "")
-			platformPath := util.CreatePlatformPath(mgr.ImagePath(), path)
+			platformPath := util.CreatePlatformPath(model.CacheDirMg, path)
 			fileType := util.GetFileType(platformPath)
 			log.Println("xxxxxx1111" + platformPath + "---" + fileType)
 
