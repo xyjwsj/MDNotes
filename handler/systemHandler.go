@@ -4,6 +4,7 @@ import (
 	"changeme/mgr"
 	"changeme/model"
 	"changeme/util"
+	"log"
 )
 
 type License struct {
@@ -70,4 +71,8 @@ func (system *SystemHandler) ScreenFullSwitch() {
 
 func (system *SystemHandler) HelpInfo(lang string) string {
 	return util.HelpContent(lang)
+}
+
+func (system *SystemHandler) Log(logStr string) {
+	log.Println(logStr)
 }

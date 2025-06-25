@@ -17,7 +17,7 @@ import {RecordInfo} from "@/bindings/changeme/model";
 import {settingInfoStore} from "@/store/modules/settings.ts";
 import {DestroyModal, ModalView, ShowModal} from "@/util/modalUtil.tsx";
 import {Image} from "ant-design-vue";
-import Vditor from "vditor";
+import Vditor from "vditor-fix";
 import {defineComponent, inject, onMounted, onUnmounted, reactive, ref} from "vue";
 import {useI18n} from "vue-i18n";
 import styled from "vue3-styled-components";
@@ -25,6 +25,8 @@ import moment from "moment";
 import {SameDay} from "@/util/dateUtil.ts";
 import {ReloadOutlined} from "@ant-design/icons-vue";
 import {TipSuccess} from "@/util/messageUtil.tsx";
+import {Log} from "@/bindings/changeme/handler/systemhandler.ts";
+import {UploadImage} from "@/bindings/changeme/handler/resourcehandler.ts";
 
 export default defineComponent({
   name: "Home",
@@ -332,6 +334,29 @@ export default defineComponent({
       wordCounter.value = content.length;
     };
 
+    const readImageAsDataURL = (file: File) => {
+      return new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // const base64ToFile = (base64: string, filename: string, mimeType: string) => {
+    //   const byteString = atob(base64.split(',')[1]); // 去除 data URL 前缀
+    //   const mimeString = base64.split(',')[0].split(':')[1].split(';')[0]; // 提取 MIME 类型
+    //   const ab = new ArrayBuffer(byteString.length);
+    //   const ia = new Uint8Array(ab);
+    //
+    //   for (let i = 0; i < byteString.length; i++) {
+    //     ia[i] = byteString.charCodeAt(i);
+    //   }
+    //
+    //   const blob = new Blob([ab], { type: mimeType || mimeString });
+    //   return new File([blob], filename, { type: mimeType || mimeString });
+    // }
+
     const initVditor = (defaultVal: string) => {
       vditor.value = new Vditor("vditor", {
         theme: settingInfoStore.DarkTheme() ? "dark" : "classic",
@@ -343,6 +368,7 @@ export default defineComponent({
         toolbarConfig: {
           hide: false,
         },
+        debugger: true,
         placeholder: t("editorPlaceholder"),
         cache: {
           enable: false,
@@ -360,8 +386,13 @@ export default defineComponent({
         },
         upload: {
           accept: "image/*",
-          url: "/api/upload",
+          // url: "/api/upload",
+          url: "",
           linkToImgUrl: "/api/upload",
+          withCredentials: true,
+          extraData: {
+            "aaa": "bbb",
+          },
           format: (files: File[], responseText: string) => {
             const data = {
               msg: "",
@@ -383,6 +414,49 @@ export default defineComponent({
             console.log("########", responseText);
             return "";
           },
+          file: (files: File[]) => {
+            console.log("########KKKKK", files);
+            Log("files Count:" + files.length)
+            files.forEach(itm => {
+              Log("file content:" +JSON.stringify(itm))
+            })
+            return files
+          },
+          fileData: async (event: ClipboardEvent, _: any) => {
+            const res: File[] = []
+            // Log('xxxxx===>' + JSON.stringify(files))
+            // Object.keys(files).filter(itm => files[itm])
+            // const fs = files.filter((file: any) => file.name && file.name != "")
+            if ("clipboardData" in event) {
+              const clipboardData = event.clipboardData
+              if (clipboardData != null) {
+                // 检查是否是图片
+                for (let i = 0; i < clipboardData.items.length; i++) {
+                  const item = clipboardData.items[i];
+                  if (item.kind === 'file' && item.type.startsWith('image/')) {
+                    const file = item.getAsFile();
+                    if (file) {
+                      try {
+                        const base64Data = await readImageAsDataURL(file);
+                        console.log('同步式获取图片 Base64:', base64Data);
+                        Log(file.name +"文件数据：" + base64Data);
+                        const path = await UploadImage(file.name, base64Data)
+                        if (path !== "") {
+                          vditor.value?.insertValue(`![${file.name}](${path})`)
+                        }
+                        // const convertedFile = base64ToFile(base64Data, file.name, file.type);
+                        // console.log('转换后的 File:', convertedFile);
+                        // res.push(convertedFile)
+                      } catch (err) {
+                        console.error('读取失败:', err);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            return res
+          }
         },
         value: defaultVal,
         // 代码高亮

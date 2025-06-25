@@ -28,6 +28,11 @@ export function HelpInfo(lang: string): Promise<string> & { cancel(): void } {
     return $resultPromise;
 }
 
+export function Log(logStr: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2710947465, logStr) as any;
+    return $resultPromise;
+}
+
 export function PreferenceInfo(): Promise<model$0.Preference> & { cancel(): void } {
     let $resultPromise = $Call.ByID(1342871400) as any;
     let $typingPromise = $resultPromise.then(($result: any) => {

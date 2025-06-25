@@ -1,5 +1,5 @@
 import i18n from "@/lang";
-import "vditor/dist/index.css";
+import "vditor-fix/dist/index.css";
 import { createApp } from "vue";
 import App from "./App";
 import router from "./router";
