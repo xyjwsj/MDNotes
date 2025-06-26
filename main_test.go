@@ -133,11 +133,11 @@ func TestCatFile(t *testing.T) {
 func TestExport(t *testing.T) {
 	target := util.CreatePlatformPath(model.DownloadDir, "Export.pdf")
 	//903b573e-a70c-4cc3-b37a-b4539bebf0d2
-	src := util.CreatePlatformPath(model.AppDataRoot, "md", "903b573e-a70c-4cc3-b37a-b4539bebf0d2.md")
+	src := util.CreatePlatformPath(model.AppDataRoot, "md", "1e35abac-8f33-4d9e-9255-2a63fed70e25.md")
 
 	originContent := mgr.OriginContent(src)
 
-	err := util.MdToPdf(originContent, target)
+	err := util.MdToPdf(originContent, target, model.CacheDirMg)
 	if err != nil {
 		log.Println(err)
 	}

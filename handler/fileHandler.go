@@ -161,7 +161,7 @@ func (file *FileHandler) TypeExport(typ, fileKey, content string) bool {
 				if typ == "pdf" {
 					fileContent := file.FileContent(fileKey)
 
-					err1 := util.MdToPdf(fileContent, path)
+					err1 := util.MdToPdf(fileContent, path, model.CacheDirMg)
 					if err1 != nil {
 						return false
 					}

@@ -1,17 +1,19 @@
 package util
 
 import (
-	parser2 "github.com/xyjwsj/md-parser"
+	parser "github.com/xyjwsj/md-parser"
 	"github.com/xyjwsj/mdConvert"
 )
 
 // MdToPdf 将 Markdown 内容转换为 PDF 并保存到指定路径
-func MdToPdf(mdContent, outputPath string) error {
-	lexer := parser2.NewLexer(mdContent)
-	parser := parser2.NewParser(lexer)
-	ast := parser.Parse()
-
+func MdToPdf(mdContent, outputPath, imgDir string) error {
+	lexer := parser.NewLexer(mdContent)
+	parserHandler := parser.NewParser(lexer)
+	ast := parserHandler.Parse()
 	render := mdConvert.CreatePdfRender()
+
+	render.SetImageDir(imgDir)
+	render.SetContentPath("/api/resource/")
 	mdConvert.NewRender(render).Render(ast)
 	render.OutFile(outputPath)
 	return nil
