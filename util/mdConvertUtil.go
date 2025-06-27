@@ -18,3 +18,16 @@ func MdToPdf(mdContent, outputPath, imgDir string) error {
 	render.OutFile(outputPath)
 	return nil
 }
+
+func MdToWord(mdContent, outputPath, imgDir string) error {
+	lexer := parser.NewLexer(mdContent)
+	parserHandler := parser.NewParser(lexer)
+	ast := parserHandler.Parse()
+	render := mdConvert.CreateWordRender()
+
+	render.SetImageDir(imgDir)
+	render.SetContentPath("/api/resource/")
+	mdConvert.NewRender(render).Render(ast)
+	render.OutFile(outputPath)
+	return nil
+}

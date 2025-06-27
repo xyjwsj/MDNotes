@@ -1169,6 +1169,10 @@ export default defineComponent({
                 val: 'PDF',
             },
             {
+                key: 'word',
+                val: 'Word',
+            },
+            {
                 key: 'md',
                 val: 'MarkDown'
             }

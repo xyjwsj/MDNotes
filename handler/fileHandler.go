@@ -145,6 +145,9 @@ func (file *FileHandler) TypeExport(typ, fileKey, content string) bool {
 			if typ == "pdf" {
 				fileName = item.FileName + ".pdf"
 			}
+			if typ == "word" {
+				fileName = item.FileName + ".docx"
+			}
 			if typ == "html" {
 				fileName = item.FileName + ".html"
 			}
@@ -162,6 +165,15 @@ func (file *FileHandler) TypeExport(typ, fileKey, content string) bool {
 					fileContent := file.FileContent(fileKey)
 
 					err1 := util.MdToPdf(fileContent, path, model.CacheDirMg)
+					if err1 != nil {
+						return false
+					}
+					return true
+				}
+				if typ == "word" {
+					fileContent := file.FileContent(fileKey)
+
+					err1 := util.MdToWord(fileContent, path, model.CacheDirMg)
 					if err1 != nil {
 						return false
 					}
