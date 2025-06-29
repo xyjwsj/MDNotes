@@ -373,6 +373,10 @@ export default defineComponent({
         cache: {
           enable: false,
         },
+        outline: {
+          enable: false,
+          position: "left"
+        },
         cdn: "/mdNotes/vditor",
         after: () => {
           vditor.value?.setTheme(
