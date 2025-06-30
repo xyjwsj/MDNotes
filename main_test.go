@@ -5,6 +5,7 @@ import (
 	"changeme/model"
 	"changeme/util"
 	"fmt"
+	"github.com/88250/lute"
 	"io/fs"
 	"log"
 	"os"
@@ -141,4 +142,10 @@ func TestExport(t *testing.T) {
 	if err != nil {
 		log.Println(err)
 	}
+}
+
+func TestLute(t *testing.T) {
+	luteEngine := lute.New() // 默认已经启用 GFM 支持以及中文语境优化
+	html := luteEngine.MarkdownStr("demo", "**Lute** - A structured markdown engine.")
+	fmt.Println(html)
 }

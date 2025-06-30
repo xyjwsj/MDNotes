@@ -16,9 +16,13 @@ export const routes = [
     component: () => import("@/layout"),
     children: [
       {
+        name: "Home1",
+        path: "home1",
+        component: () => import("@/views/home"),
+      },{
         name: "Home",
         path: "home",
-        component: () => import("@/views/home"),
+        component: () => import("@/views/lute"),
       }
     ],
   },
