@@ -1597,7 +1597,7 @@ export default defineComponent({
                                             {editFileKey.value !== item.uuid && (
                                                 <div class={"left"}>
                                                     <Image src={mdIcon} width={20} preview={false}/>
-                                                    <span>{item.fileName}</span>
+                                                    <span style={{width: "90px", overflow: "hidden"}} title={item.fileName}>{item.fileName}</span>
                                                 </div>
                                             )}
                                             {editFileKey.value !== item.uuid && (
