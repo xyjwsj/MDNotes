@@ -80,6 +80,19 @@ func (file *FileHandler) CreateFile() model.RecordInfo {
 	return mgr.NewRecord()
 }
 
+func (file *FileHandler) ModifyCategory(fileKey, categoryKey string) bool {
+	mgr.ModifyCategory(fileKey, categoryKey)
+	return true
+}
+
+func (file *FileHandler) AllCategory() []*model.CategoryItem {
+	return mgr.AllCategory()
+}
+
+func (file *FileHandler) SelectCategory(key string) {
+	mgr.SelectCategory(key)
+}
+
 func (file *FileHandler) ExportFile(all bool, fileKey string) bool {
 	list := mgr.CacheList()
 	if all {

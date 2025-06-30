@@ -9,6 +9,31 @@ import {Create as $Create} from "@wailsio/runtime";
 // @ts-ignore: Unused imports
 import * as util$0 from "../util/models.js";
 
+export class CategoryItem {
+    "key": string;
+    "tag": string;
+
+    /** Creates a new CategoryItem instance. */
+    constructor($$source: Partial<CategoryItem> = {}) {
+        if (!("key" in $$source)) {
+            this["key"] = "";
+        }
+        if (!("tag" in $$source)) {
+            this["tag"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new CategoryItem instance from a string or object.
+     */
+    static createFrom($$source: any = {}): CategoryItem {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new CategoryItem($$parsedSource as Partial<CategoryItem>);
+    }
+}
+
 export class Preference {
     "username": string;
     "token": string;
@@ -45,6 +70,7 @@ export class RecordInfo {
     "size": number;
     "tag": string;
     "sizeStr": string;
+    "category": string;
     "create": util$0.Datetime | null;
     "modify": util$0.Datetime | null;
     "del": util$0.Datetime | null;
@@ -68,6 +94,9 @@ export class RecordInfo {
         }
         if (!("sizeStr" in $$source)) {
             this["sizeStr"] = "";
+        }
+        if (!("category" in $$source)) {
+            this["category"] = "";
         }
         if (!("create" in $$source)) {
             this["create"] = null;

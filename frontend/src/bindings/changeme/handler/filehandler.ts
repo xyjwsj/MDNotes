@@ -9,6 +9,15 @@ import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 // @ts-ignore: Unused imports
 import * as model$0 from "../model/models.js";
 
+export function AllCategory(): Promise<(model$0.CategoryItem | null)[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(4207881457) as any;
+    let $typingPromise = $resultPromise.then(($result: any) => {
+        return $$createType2($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
+}
+
 export function ChangeTag(fileKey: string, tag: string): Promise<boolean> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2145614858, fileKey, tag) as any;
     return $resultPromise;
@@ -17,7 +26,7 @@ export function ChangeTag(fileKey: string, tag: string): Promise<boolean> & { ca
 export function CreateFile(): Promise<model$0.RecordInfo> & { cancel(): void } {
     let $resultPromise = $Call.ByID(1643363620) as any;
     let $typingPromise = $resultPromise.then(($result: any) => {
-        return $$createType0($result);
+        return $$createType3($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -31,7 +40,7 @@ export function DeleteFile(fileKey: string): Promise<boolean> & { cancel(): void
 export function DeleteList(): Promise<(model$0.RecordInfo | null)[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(434763757) as any;
     let $typingPromise = $resultPromise.then(($result: any) => {
-        return $$createType2($result);
+        return $$createType5($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -40,7 +49,7 @@ export function DeleteList(): Promise<(model$0.RecordInfo | null)[]> & { cancel(
 export function DocList(): Promise<(model$0.RecordInfo | null)[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3028887424) as any;
     let $typingPromise = $resultPromise.then(($result: any) => {
-        return $$createType2($result);
+        return $$createType5($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -53,6 +62,11 @@ export function ExportFile(all: boolean, fileKey: string): Promise<boolean> & { 
 
 export function FileContent(fileKey: string): Promise<string> & { cancel(): void } {
     let $resultPromise = $Call.ByID(1761704901, fileKey) as any;
+    return $resultPromise;
+}
+
+export function ModifyCategory(fileKey: string, categoryKey: string): Promise<boolean> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3372008164, fileKey, categoryKey) as any;
     return $resultPromise;
 }
 
@@ -69,10 +83,15 @@ export function Recovery(fileKey: string): Promise<boolean> & { cancel(): void }
 export function Search(name: string): Promise<(model$0.RecordInfo | null)[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(821196262, name) as any;
     let $typingPromise = $resultPromise.then(($result: any) => {
-        return $$createType2($result);
+        return $$createType5($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
+}
+
+export function SelectCategory(key: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(756784374, key) as any;
+    return $resultPromise;
 }
 
 export function SyncFile(fileKey: string, content: string): Promise<string> & { cancel(): void } {
@@ -86,6 +105,9 @@ export function TypeExport(typ: string, fileKey: string, content: string): Promi
 }
 
 // Private type creation functions
-const $$createType0 = model$0.RecordInfo.createFrom;
+const $$createType0 = model$0.CategoryItem.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);
 const $$createType2 = $Create.Array($$createType1);
+const $$createType3 = model$0.RecordInfo.createFrom;
+const $$createType4 = $Create.Nullable($$createType3);
+const $$createType5 = $Create.Array($$createType4);

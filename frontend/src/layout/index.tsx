@@ -6,6 +6,7 @@ import mdIcon from "@/assets/png/markdown.png";
 import garbageLightIcon from '@/assets/png/garbage-light.png'
 import garbageDarkIcon from '@/assets/png/garbage-black.png'
 import {
+    AllCategory,
     ChangeTag,
     CreateFile,
     DeleteFile,
@@ -13,7 +14,7 @@ import {
     DocList,
     ModifyName,
     Recovery,
-    Search,
+    Search, SelectCategory,
 } from "@/bindings/changeme/handler/filehandler.ts";
 import {ConfigStore, HelpInfo, PreferenceInfo, ScreenFullSwitch,} from "@/bindings/changeme/handler/systemhandler.ts";
 import {RecordInfo} from "@/bindings/changeme/model";
@@ -527,6 +528,45 @@ export default defineComponent({
             }
         `;
 
+        const CategoryView = styled.div`
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 34px;
+            gap: 10px;
+            height: 30%;
+            overflow-y: auto;
+            padding: 10px;
+
+            ::-webkit-scrollbar {
+                display: none;
+            }
+
+            .categoryItem {
+                line-height: 40px;
+                width: 95%;
+                border-radius: 5px;
+                text-align: center;
+                color: ${() =>
+                        settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
+                background-color: ${() =>
+                        settingInfoStore.DarkTheme()
+                                ? "rgba(255, 255, 255, 0.2)"
+                                : "rgba(255, 255, 255, 0.7)"};
+
+                &:hover {
+                    box-shadow: 0 0 5px 1px ${() =>
+                            settingInfoStore.DarkTheme()
+                                    ? "rgba(255, 255, 255, 0.8)"
+                                    : "gray"};
+                    color: ${() =>
+                            settingInfoStore.DarkTheme()
+                                    ? "rgba(255, 255, 255, 0.8)"
+                                    : "rgba(0, 0, 0, 0.8)"};
+                }
+            }
+        `;
+
         const MenuItemView = styled(MenuItem)`
             color: ${() =>
                     settingInfoStore.DarkTheme()
@@ -674,6 +714,9 @@ export default defineComponent({
             });
             Mousetrap.bind("command+shift+p", () => {
                 // fileExport()
+            });
+            Mousetrap.bind("command+shift+c", () => {
+                changeCategory()
             });
         };
 
@@ -1210,6 +1253,45 @@ export default defineComponent({
                         );
                     })}
                 </ExportView>
+            );
+            // modalView.show();
+            ShowModal(modalView);
+        };
+
+        const changeCategory = async () => {
+            const modalView = new ModalView();
+            modalView.cancelText = "";
+            modalView.okText = t("exportCurrent");
+            modalView.title = t("language");
+            modalView.okText = "";
+            modalView.closed = true;
+            modalView.width = "350px";
+            modalView.icon = (
+                <Image
+                    preview={false}
+                    width={25}
+                    src={settingInfoStore.DarkTheme() ? langLight : langDark}
+                />
+            );
+
+            const category = await AllCategory()
+
+            modalView.content = (
+                <CategoryView>
+                    {category.map((item) => {
+                        return (
+                            <span
+                                class={"categoryItem"}
+                                onDblclick={async () => {
+                                    await SelectCategory(item?.key!)
+                                    DestroyModal();
+                                }}
+                            >
+                {t(item?.tag!)}Ï
+              </span>
+                        );
+                    })}
+                </CategoryView>
             );
             // modalView.show();
             ShowModal(modalView);

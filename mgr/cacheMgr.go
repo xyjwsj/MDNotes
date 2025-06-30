@@ -15,6 +15,7 @@ import (
 )
 
 var recordCache []*model.RecordInfo
+var category *model.Category
 var preference *model.Preference
 var startAsync bool
 
@@ -47,7 +48,7 @@ func init() {
 	} else {
 		file, err := os.ReadFile(path)
 		if err != nil {
-			log.Println("ReadFileContents info.db Error", err.Error())
+			log.Println("ReadFileContents preference.db Error", err.Error())
 			return
 		}
 
@@ -58,6 +59,28 @@ func init() {
 			log.Println("Json2Struct preference.db Error", err.Error())
 		}
 		preference = &pre
+	}
+
+	path = util.CreatePlatformPath(model.AppDataRoot, "category.db")
+	if !util.Exists(path) {
+		category = &model.Category{
+			Select: "",
+			Items:  make([]*model.CategoryItem, 0),
+		}
+	} else {
+		file, err := os.ReadFile(path)
+		if err != nil {
+			log.Println("ReadFileContents classification.db Error", err.Error())
+			return
+		}
+
+		contents := util.DecryptContent(file, UniqueId())
+		var categoryObj model.Category
+		err = util.Json2Struct(string(contents), &categoryObj)
+		if err != nil {
+			log.Println("Json2Struct info.db Error", err.Error())
+		}
+		category = &categoryObj
 	}
 
 	startAsync = false
@@ -233,6 +256,18 @@ func ModifyInfo(key, filename, tag string, size int64) {
 	return
 }
 
+func ModifyCategory(fileKey, categoryKey string) {
+	record := findRecord(fileKey)
+	now := util.Datetime(time.Now())
+	if record != nil {
+		record.Modify = &now
+		record.Category = categoryKey
+		SyncData()
+		return
+	}
+	return
+}
+
 func NewRecord() model.RecordInfo {
 	datetime := util.Datetime(time.Now())
 	info := model.RecordInfo{
@@ -253,6 +288,9 @@ func NewRecord() model.RecordInfo {
 func CacheList() []*model.RecordInfo {
 	infos := make([]*model.RecordInfo, 0)
 	for _, item := range recordCache {
+		if category.Select != "" && item.Category != category.Select {
+			continue
+		}
 		if item.Status > 0 {
 			infos = append(infos, item)
 		}
@@ -311,4 +349,30 @@ func findRecord(key string) *model.RecordInfo {
 		}
 	}
 	return nil
+}
+
+func AllCategory() []*model.CategoryItem {
+	return category.Items
+}
+
+func AddCategory(tag string) {
+	category.Items = append(category.Items, &model.CategoryItem{
+		Key: util.UUID(),
+		Tag: tag,
+	})
+	SyncCategory()
+}
+
+func SelectCategory(key string) {
+	category.Select = key
+	SyncCategory()
+}
+
+func SyncCategory() {
+	path := util.CreatePlatformPath(model.AppDataRoot, "category.db")
+
+	json := util.Struct2Json(category)
+	content, _ := util.EncryptContent([]byte(json), UniqueId())
+
+	_ = os.WriteFile(path, content, os.ModePerm)
 }
