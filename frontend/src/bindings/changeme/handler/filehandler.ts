@@ -85,6 +85,11 @@ export function Recovery(fileKey: string): Promise<boolean> & { cancel(): void }
     return $resultPromise;
 }
 
+export function RemoveCategory(key: string): Promise<boolean> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(4252424762, key) as any;
+    return $resultPromise;
+}
+
 export function Search(name: string): Promise<(model$0.RecordInfo | null)[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(821196262, name) as any;
     let $typingPromise = $resultPromise.then(($result: any) => {

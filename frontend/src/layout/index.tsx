@@ -17,7 +17,7 @@ import {
     DeleteList,
     DocList, ModifyCategory,
     ModifyName,
-    Recovery,
+    Recovery, RemoveCategory,
     Search,
     SelectCategory,
 } from "@/bindings/changeme/handler/filehandler.ts";
@@ -96,12 +96,14 @@ export default defineComponent({
                 .file {
                     font-size: 15px;
                     font-weight: bold;
+                    line-height: 30px;
                     color: ${() => (settingInfoStore.DarkTheme() ? "lightgray" : "gray")};
                 }
                 
                 .category {
                     font-size: 13px;
                     font-weight: bold;
+                    line-height: 30px;
                     color: ${() => (settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)")};
                 }
 
@@ -562,6 +564,7 @@ export default defineComponent({
                 .categoryItem {
                     line-height: 40px;
                     width: 95%;
+                    position: relative;
                     border-radius: 5px;
                     text-align: center;
                     color: ${() =>
@@ -580,6 +583,13 @@ export default defineComponent({
                                 settingInfoStore.DarkTheme()
                                         ? "rgba(255, 255, 255, 0.8)"
                                         : "rgba(0, 0, 0, 0.8)"};
+                    }
+                    
+                    .close {
+                        position: absolute;
+                        right: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
                     }
                 }
 
@@ -632,12 +642,12 @@ export default defineComponent({
 
             :global(.ant-popover-arrow) {
                 &:before {
-                    background: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.3)' : 'lightgray'} !important;
+                    background: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.7)' : 'lightgray'} !important;
                 }
             }
 
             :global(.ant-popover-inner) {
-                background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.3)' : 'lightgray'} !important;
+                background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.7)' : 'lightgray'} !important;
             }
         `;
 
@@ -1368,8 +1378,19 @@ export default defineComponent({
 
         const addRef = reactive({
             flag: false,
-            content: ''
+            content: '',
+            overId: '',
         })
+
+        const delCategory = async (key: string) => {
+            const res = await RemoveCategory(key)
+            if (res) {
+                const index = categoryList.value.findIndex(itm => key === itm.key);
+                if (index !== -1) {
+                    categoryList.value.splice(index, 1);
+                }
+            }
+        }
 
         const changeCategory = async () => {
             addRef.flag = false
@@ -1392,8 +1413,10 @@ export default defineComponent({
                     <div class={"content"}>
                     {categoryList.value.map((item) => {
                         return (
-                            <span
+                            <div
                                 class={"categoryItem"}
+                                onMouseover={() => addRef.overId = item.key}
+                                onMouseleave={() => addRef.overId = ""}
                                 onClick={async () => {
                                     await SelectCategory(item?.key!)
                                     DestroyModal();
@@ -1401,7 +1424,11 @@ export default defineComponent({
                                 }}
                             >
                 {t(item?.tag!)}
-              </span>
+                                {addRef.overId !== "" && addRef.overId === item.key && <CloseOutlined class={'close'} onClick={(e) => {
+                                    delCategory(item.key)
+                                    e.stopPropagation()
+                                }}/>}
+              </div>
                         );
                     })}
                     </div>
@@ -1650,16 +1677,16 @@ export default defineComponent({
             flex-direction: column;
             align-items: center;
             gap: 5px;
+            
             .spanItem {
                 width: 90%;
                 text-align: center;
                 line-height: 30px;
-                //background-color: gray;
                 color: ${() => settingInfoStore.DarkTheme() ? 'lightgray' : 'rgba(0, 0, 0, 0.7)'};
                 border-radius: 5px;
                 background-color: ${() =>
                         settingInfoStore.DarkTheme()
-                                ? "rgba(255, 255, 255, 0.4)"
+                                ? "rgba(255, 255, 255, 0.3)"
                                 : "rgba(255, 255, 255, 0.6)"};
                 &:hover {
                     box-shadow: 0 0 5px 1px ${() =>
@@ -1677,7 +1704,6 @@ export default defineComponent({
                         <span class={"file"}>{fileName()}</span>
 
                         <PopoverView
-                            // open={showTag.value}
                             content={
                                 <PopCategoryView>
                                     {categoryList.value.filter(itm => itm.key !== "").map((itm) => (
@@ -1694,7 +1720,7 @@ export default defineComponent({
                                 </PopCategoryView>
                             }
                         >
-                            <span class={"category"}>—— {fileCategory("")}</span>
+                            <span class={"category"}>— {fileCategory("")}</span>
                         </PopoverView>
                     </div>
                     <div class={"title"}>

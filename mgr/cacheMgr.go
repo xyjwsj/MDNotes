@@ -365,6 +365,20 @@ func AddCategory(tag string) string {
 	return item.Key
 }
 
+func DeleteCategory(key string) {
+	indexRemove := -1
+	for idx, itm := range category.Items {
+		if itm.Key == key {
+			indexRemove = idx
+			break
+		}
+	}
+	if indexRemove != -1 {
+		category.Items = append(category.Items[:indexRemove], category.Items[indexRemove+1:]...)
+	}
+	SyncCategory()
+}
+
 func SelectCategory(key string) {
 	category.Select = key
 	SyncCategory()

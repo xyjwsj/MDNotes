@@ -97,6 +97,11 @@ func (file *FileHandler) AddCategory(tag string) string {
 	return mgr.AddCategory(tag)
 }
 
+func (file *FileHandler) RemoveCategory(key string) bool {
+	mgr.DeleteCategory(key)
+	return true
+}
+
 func (file *FileHandler) ExportFile(all bool, fileKey string) bool {
 	list := mgr.CacheList()
 	if all {
