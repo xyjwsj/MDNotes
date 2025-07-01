@@ -310,8 +310,7 @@ export default defineComponent({
           accept: "image/*",
           // url: "/api/upload",
           url: "",
-          linkToImgUrl: "",
-          // linkToImgUrl: "/api/upload",
+          linkToImgUrl: "/api/upload",
           withCredentials: true,
           extraData: {
             "aaa": "bbb",
@@ -335,7 +334,20 @@ export default defineComponent({
           },
           linkToImgFormat: (responseText: string) => {
             console.log("########", responseText);
-            return "";
+            const data = {
+              msg: "",
+              code: 0,
+              data: {
+                originalURL: "",
+                url: "",
+              },
+            };
+            const parse = JSON.parse(responseText);
+            data.data.url = parse.url;
+            data.data.originalURL = parse.originUrl;
+
+            console.log("%%%%%%%%", responseText, data);
+            return JSON.stringify(data);
           },
           file: (files: File[]) => {
             console.log("########KKKKK", files);

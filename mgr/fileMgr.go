@@ -7,8 +7,10 @@ import (
 	"io"
 	"log"
 	"mime/multipart"
+	"net/http"
 	"os"
 	"path"
+	"path/filepath"
 	"time"
 )
 
@@ -49,6 +51,60 @@ func init() {
 		stopQueue <- 1
 	})
 	go startFlushDisk()
+}
+
+func SaveInternetImag(url string) (string, error) {
+	// 发起 GET 请求
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Printf("请求图片失败: %v", err)
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	// 检查响应状态码是否为 200 OK
+	if resp.StatusCode != http.StatusOK {
+		err := fmt.Errorf("图片下载失败，HTTP 状态码: %d", resp.StatusCode)
+		log.Printf("%v", err)
+		return "", err
+	}
+
+	// 获取文件后缀名（如 .png, .jpg）
+	ext := filepath.Ext(url)
+	if ext == "" {
+		ext = ".jpg" // 默认使用 jpg 格式
+	}
+
+	// 构造保存路径
+	year := time.Now().Year()
+	month := time.Now().Format("01")
+	day := time.Now().Day()
+
+	dir := fmt.Sprintf("%s/%d/%s/%d/", model.CacheDirMg, year, month, day)
+	_ = os.MkdirAll(dir, 0744)
+
+	// 生成随机文件名
+	fileName := util.UUID()
+	filePath := util.CreatePlatformPath(dir, fileName)
+
+	// 创建本地文件
+	outFile, err := os.Create(filePath)
+	if err != nil {
+		log.Printf("创建文件失败: %v", err)
+		return "", err
+	}
+	defer outFile.Close()
+
+	// 将图片内容复制到本地文件
+	_, err = io.Copy(outFile, resp.Body)
+	if err != nil {
+		log.Printf("写入文件失败: %v", err)
+		return "", err
+	}
+
+	// 返回访问路径
+	sprintf := fmt.Sprintf("/api/resource/%d/%s/%d/%s", year, month, day, fileName)
+	return sprintf, nil
 }
 
 func SaveFile(multiFile multipart.File) (string, error) {
