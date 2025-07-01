@@ -69,7 +69,9 @@ const frLocale = {
   ganttChart: "Diagramme de Gantt",
   graphviz: 'graphviz',
   createOrSelect: 'Veuillez sélectionner un fichier ou en créer un nouveau',
-  help: 'Aide'
+  help: 'Aide',
+  category: 'Catégorie',
+  all: 'Tout',
 };
 
 export default frLocale;

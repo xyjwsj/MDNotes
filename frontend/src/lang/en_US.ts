@@ -67,7 +67,9 @@ const enLocale = {
   ganttChart: "Gantt Chart",
   graphviz: 'graphviz',
   createOrSelect: 'Please select a file or create a new one',
-  help: 'Help'
+  help: 'Help',
+  category: 'Category',
+  all: 'ALL',
 };
 
 export default enLocale;

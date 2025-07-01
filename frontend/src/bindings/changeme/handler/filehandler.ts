@@ -9,6 +9,11 @@ import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 // @ts-ignore: Unused imports
 import * as model$0 from "../model/models.js";
 
+export function AddCategory(tag: string): Promise<string> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2008550497, tag) as any;
+    return $resultPromise;
+}
+
 export function AllCategory(): Promise<(model$0.CategoryItem | null)[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(4207881457) as any;
     let $typingPromise = $resultPromise.then(($result: any) => {

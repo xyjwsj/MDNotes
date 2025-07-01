@@ -66,7 +66,9 @@ const jaLocale = {
   ganttChart: "ガントチャート",
   graphviz: 'graphviz',
   createOrSelect: 'ファイルを選択するか、新規作成してください',
-  help: 'ヘルプ'
+  help: 'ヘルプ',
+  category: 'カテゴリ',
+  all: 'すべて',
 };
 
 export default jaLocale;

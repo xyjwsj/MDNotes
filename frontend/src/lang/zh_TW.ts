@@ -66,7 +66,9 @@ const zhTwLocale = {
   ganttChart: "甘特圖",
   graphviz: 'graphviz',
   createOrSelect: '請選擇檔案或建立新檔',
-  help: '幫助'
+  help: '幫助',
+  category: '分類',
+  all: '所有',
 };
 
 export default zhTwLocale;

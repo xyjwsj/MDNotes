@@ -355,12 +355,14 @@ func AllCategory() []*model.CategoryItem {
 	return category.Items
 }
 
-func AddCategory(tag string) {
-	category.Items = append(category.Items, &model.CategoryItem{
+func AddCategory(tag string) string {
+	item := model.CategoryItem{
 		Key: util.UUID(),
 		Tag: tag,
-	})
+	}
+	category.Items = append(category.Items, &item)
 	SyncCategory()
+	return item.Key
 }
 
 func SelectCategory(key string) {

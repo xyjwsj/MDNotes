@@ -5,19 +5,24 @@ import langLight from "@/assets/png/language-light.png";
 import mdIcon from "@/assets/png/markdown.png";
 import garbageLightIcon from '@/assets/png/garbage-light.png'
 import garbageDarkIcon from '@/assets/png/garbage-black.png'
+import categoryDarkIcon from '@/assets/png/category-black.png'
+import categoryLightIcon from '@/assets/png/category-light.png'
+
 import {
+    AddCategory,
     AllCategory,
     ChangeTag,
     CreateFile,
     DeleteFile,
     DeleteList,
-    DocList,
+    DocList, ModifyCategory,
     ModifyName,
     Recovery,
-    Search, SelectCategory,
+    Search,
+    SelectCategory,
 } from "@/bindings/changeme/handler/filehandler.ts";
 import {ConfigStore, HelpInfo, PreferenceInfo, ScreenFullSwitch,} from "@/bindings/changeme/handler/systemhandler.ts";
-import {RecordInfo} from "@/bindings/changeme/model";
+import {CategoryItem, RecordInfo} from "@/bindings/changeme/model";
 import {settingInfoStore} from "@/store/modules/settings.ts";
 import {TipError, TipSuccess, TipWarning} from "@/util/messageUtil.tsx";
 import {DestroyModal, ModalView, OkModal, ShowModal,} from "@/util/modalUtil.tsx";
@@ -37,7 +42,7 @@ import {
     TagOutlined,
     UndoOutlined,
 } from "@ant-design/icons-vue";
-import {Dropdown, Image, Input, Menu, MenuItem, Popover,} from "ant-design-vue";
+import {Button, Dropdown, Image, Input, Menu, MenuItem, Popover,} from "ant-design-vue";
 import Mousetrap from "mousetrap";
 import {
     defineComponent,
@@ -89,8 +94,15 @@ export default defineComponent({
                 gap: 8px;
 
                 .file {
-                    font-size: 13px;
+                    font-size: 15px;
+                    font-weight: bold;
                     color: ${() => (settingInfoStore.DarkTheme() ? "lightgray" : "gray")};
+                }
+                
+                .category {
+                    font-size: 13px;
+                    font-weight: bold;
+                    color: ${() => (settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)")};
                 }
 
                 .tag {
@@ -535,24 +547,59 @@ export default defineComponent({
             margin-left: 34px;
             gap: 10px;
             height: 30%;
-            overflow-y: auto;
-            padding: 10px;
+            max-height: 350px;
+            
+            .content {
+                padding: 10px;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                overflow-y: auto;
+                gap: 10px;
+                max-height: 350px;
+                
+                .categoryItem {
+                    line-height: 40px;
+                    width: 95%;
+                    border-radius: 5px;
+                    text-align: center;
+                    color: ${() =>
+                            settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
+                    background-color: ${() =>
+                            settingInfoStore.DarkTheme()
+                                    ? "rgba(255, 255, 255, 0.2)"
+                                    : "rgba(255, 255, 255, 0.7)"};
 
-            ::-webkit-scrollbar {
-                display: none;
+                    &:hover {
+                        box-shadow: 0 0 5px 1px ${() =>
+                                settingInfoStore.DarkTheme()
+                                        ? "rgba(255, 255, 255, 0.8)"
+                                        : "gray"};
+                        color: ${() =>
+                                settingInfoStore.DarkTheme()
+                                        ? "rgba(255, 255, 255, 0.8)"
+                                        : "rgba(0, 0, 0, 0.8)"};
+                    }
+                }
+
+                ::-webkit-scrollbar {
+                    display: none;
+                }
             }
 
-            .categoryItem {
-                line-height: 40px;
+            
+
+            .inputEdit {
+                height: 40px;
                 width: 95%;
-                border-radius: 5px;
-                text-align: center;
-                color: ${() =>
-                        settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
                 background-color: ${() =>
                         settingInfoStore.DarkTheme()
-                                ? "rgba(255, 255, 255, 0.2)"
+                                ? "rgba(255, 255, 255, 0.3)"
                                 : "rgba(255, 255, 255, 0.7)"};
+                color: ${() =>
+                        settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
+                text-align: center;
 
                 &:hover {
                     box-shadow: 0 0 5px 1px ${() =>
@@ -618,6 +665,7 @@ export default defineComponent({
         const search = ref(false);
         const showList = ref(true);
         const fileList = ref<RecordInfo[]>([]);
+        const categoryList = ref<CategoryItem[]>([])
 
         const selectFileKey = ref("");
         const editFileKey = ref("");
@@ -635,6 +683,32 @@ export default defineComponent({
                 return "";
             }
             return res[0].fileName;
+        };
+
+        const fileCategory = (key: string) => {
+            if (key !== "") {
+                fileList.value.forEach(item => {
+                    if (item.uuid === selectFileKey.value) {
+                        item.category = key
+                    }
+                })
+                return
+            }
+            const res = fileList.value.filter(
+                (item) => item.uuid === selectFileKey.value
+            );
+            if (res.length == 0) {
+                return "Untitled";
+            }
+            const category = res[0].category;
+            if (category === "") {
+                return "Untitled"
+            }
+            const filter = categoryList.value.filter(itm => itm.key === category);
+            if (filter.length == 0) {
+                return "Untitled"
+            }
+            return filter[0].tag
         };
 
         const updateFileName = () => {
@@ -891,6 +965,30 @@ export default defineComponent({
 
         onMounted(async () => {
             keyEvent();
+            await loadCategoryList()
+            await loadFileList()
+        });
+
+        onUnmounted(() => {
+        });
+
+        const loadCategoryList = async () => {
+            const category = await AllCategory()
+            categoryList.value.splice(0, categoryList.value.length);
+            category.forEach((item) => {
+                if (item !== null) {
+                    categoryList.value.push(item);
+                }
+            });
+
+            const allCategory = {
+                key: '',
+                tag: t('all')
+            }
+            categoryList.value.splice(0, 0, allCategory);
+        }
+
+        const loadFileList = async () => {
             const docs = await DocList();
             fileList.value.splice(0, fileList.value.length);
             docs.forEach((item) => {
@@ -904,10 +1002,7 @@ export default defineComponent({
                     updateFileName();
                 }, 300);
             }
-        });
-
-        onUnmounted(() => {
-        });
+        }
 
         const renameCom = ref<any>(null);
 
@@ -1183,21 +1278,21 @@ export default defineComponent({
                 border-radius: 5px;
                 text-align: center;
                 color: ${() =>
-            settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
+                        settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
                 background-color: ${() =>
-            settingInfoStore.DarkTheme()
-                ? "rgba(255, 255, 255, 0.2)"
-                : "rgba(255, 255, 255, 0.7)"};
+                        settingInfoStore.DarkTheme()
+                                ? "rgba(255, 255, 255, 0.2)"
+                                : "rgba(255, 255, 255, 0.7)"};
 
                 &:hover {
                     box-shadow: 0 0 5px 1px ${() =>
-            settingInfoStore.DarkTheme()
-                ? "rgba(255, 255, 255, 0.8)"
-                : "gray"};
+                            settingInfoStore.DarkTheme()
+                                    ? "rgba(255, 255, 255, 0.8)"
+                                    : "gray"};
                     color: ${() =>
-            settingInfoStore.DarkTheme()
-                ? "rgba(255, 255, 255, 0.8)"
-                : "rgba(0, 0, 0, 0.8)"};
+                            settingInfoStore.DarkTheme()
+                                    ? "rgba(255, 255, 255, 0.8)"
+                                    : "rgba(0, 0, 0, 0.8)"};
                 }
             }
         `;
@@ -1258,11 +1353,29 @@ export default defineComponent({
             ShowModal(modalView);
         };
 
+        const AddBtn = styled(Button)`
+            border: none;
+            width: 70%;
+            height: 40px;
+            background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.6)'};
+            color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.2)'};
+
+            &:hover {
+                background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.5)' : 'rgba(255, 255, 255, 0.8)'};
+                color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.5)'};
+            }
+        `
+
+        const addRef = reactive({
+            flag: false,
+            content: ''
+        })
+
         const changeCategory = async () => {
+            addRef.flag = false
             const modalView = new ModalView();
             modalView.cancelText = "";
-            modalView.okText = t("exportCurrent");
-            modalView.title = t("language");
+            modalView.title = t("category");
             modalView.okText = "";
             modalView.closed = true;
             modalView.width = "350px";
@@ -1270,27 +1383,54 @@ export default defineComponent({
                 <Image
                     preview={false}
                     width={25}
-                    src={settingInfoStore.DarkTheme() ? langLight : langDark}
+                    src={settingInfoStore.DarkTheme() ? categoryDarkIcon : categoryLightIcon}
                 />
             );
 
-            const category = await AllCategory()
-
             modalView.content = (
                 <CategoryView>
-                    {category.map((item) => {
+                    <div class={"content"}>
+                    {categoryList.value.map((item) => {
                         return (
                             <span
                                 class={"categoryItem"}
-                                onDblclick={async () => {
+                                onClick={async () => {
                                     await SelectCategory(item?.key!)
                                     DestroyModal();
+                                    await loadFileList()
                                 }}
                             >
-                {t(item?.tag!)}Ï
+                {t(item?.tag!)}
               </span>
                         );
                     })}
+                    </div>
+                    {addRef.flag ?
+                        <Input class={'inputEdit'}
+                               bordered={false}
+                               onChange={e => addRef.content = e.target.value!}
+                               onPressEnter={async () => {
+                                   const cId = await AddCategory(addRef.content)
+                                   if (cId !== "") {
+                                       categoryList.value.push({
+                                           key: cId,
+                                           tag: addRef.content
+                                       })
+                                   }
+                                   addRef.flag = false
+                                   addRef.content = ""
+                               }}></Input>
+                        :
+                        <AddBtn
+                            // type="text"
+                            style={{
+                                width: '95%',
+                            }}
+                            icon={<PlusOutlined style={{
+                                color: settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.4)',
+                            }}/>}
+                            onClick={() => addRef.flag = true}
+                        ></AddBtn>}
                 </CategoryView>
             );
             // modalView.show();
@@ -1318,7 +1458,7 @@ export default defineComponent({
                         return (
                             <span
                                 class={"langItem"}
-                                onDblclick={() => {
+                                onClick={() => {
                                     locale.value = item.lang;
                                     settingInfoStore.UpdateLang(locale.value);
                                     DestroyModal();
@@ -1475,7 +1615,7 @@ export default defineComponent({
             background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.4)'};
             box-shadow: 0 0 10px 5px ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.3)' : 'rgba(255, 255, 255, 0.5)'};
             color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.2)'};
-            
+
             ::-webkit-scrollbar {
                 display: none;
             }
@@ -1504,11 +1644,58 @@ export default defineComponent({
             ShowModal(modalView);
         }
 
+        const PopCategoryView = styled.div`
+            width: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            .spanItem {
+                width: 90%;
+                text-align: center;
+                line-height: 30px;
+                //background-color: gray;
+                color: ${() => settingInfoStore.DarkTheme() ? 'lightgray' : 'rgba(0, 0, 0, 0.7)'};
+                border-radius: 5px;
+                background-color: ${() =>
+                        settingInfoStore.DarkTheme()
+                                ? "rgba(255, 255, 255, 0.4)"
+                                : "rgba(255, 255, 255, 0.6)"};
+                &:hover {
+                    box-shadow: 0 0 5px 1px ${() =>
+                            settingInfoStore.DarkTheme()
+                                    ? "rgba(255, 255, 255, 0.8)"
+                                    : "rgba(255, 255, 255, 0.4)"};
+                    color: ${() => settingInfoStore.DarkTheme() ? "white": "black"};
+            }
+        `
+
         return () => (
             <Container>
                 <ToolView>
                     <div class={"fileTitle"}>
                         <span class={"file"}>{fileName()}</span>
+
+                        <PopoverView
+                            // open={showTag.value}
+                            content={
+                                <PopCategoryView>
+                                    {categoryList.value.filter(itm => itm.key !== "").map((itm) => (
+                                        <span
+                                            class={'spanItem'}
+                                            onClick={async () => {
+                                                const result = await ModifyCategory(selectFileKey.value, itm.key)
+                                                if (result) {
+                                                    fileCategory(itm.key)
+                                                }
+                                            }}
+                                        >{itm.tag}</span>
+                                    ))}
+                                </PopCategoryView>
+                            }
+                        >
+                            <span class={"category"}>—— {fileCategory("")}</span>
+                        </PopoverView>
                     </div>
                     <div class={"title"}>
                         {!search.value && (
@@ -1551,7 +1738,7 @@ export default defineComponent({
                         <div class={"actions"}>
                             <div
                                 class={"action"}
-                                >
+                            >
                                 <PopoverView
                                     // open={showTag.value}
                                     content={
@@ -1679,7 +1866,8 @@ export default defineComponent({
                                             {editFileKey.value !== item.uuid && (
                                                 <div class={"left"}>
                                                     <Image src={mdIcon} width={20} preview={false}/>
-                                                    <span style={{width: "90px", overflow: "hidden"}} title={item.fileName}>{item.fileName}</span>
+                                                    <span style={{width: "90px", overflow: "hidden"}}
+                                                          title={item.fileName}>{item.fileName}</span>
                                                 </div>
                                             )}
                                             {editFileKey.value !== item.uuid && (

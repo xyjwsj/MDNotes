@@ -93,6 +93,10 @@ func (file *FileHandler) SelectCategory(key string) {
 	mgr.SelectCategory(key)
 }
 
+func (file *FileHandler) AddCategory(tag string) string {
+	return mgr.AddCategory(tag)
+}
+
 func (file *FileHandler) ExportFile(all bool, fileKey string) bool {
 	list := mgr.CacheList()
 	if all {
