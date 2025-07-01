@@ -1,30 +1,20 @@
-import keyboardDark from "@/assets/png/keyboard-black.png";
-import keyboardLight from "@/assets/png/keyboard-white.png";
-import langDark from "@/assets/png/language-dark.png";
-import langLight from "@/assets/png/language-light.png";
 import mdIcon from "@/assets/png/markdown.png";
 import garbageLightIcon from '@/assets/png/garbage-light.png'
 import garbageDarkIcon from '@/assets/png/garbage-black.png'
-import categoryDarkIcon from '@/assets/png/category-black.png'
-import categoryLightIcon from '@/assets/png/category-light.png'
 
 import {
-    AddCategory,
-    AllCategory,
     ChangeTag,
     CreateFile,
     DeleteFile,
-    DeleteList,
-    DocList, ModifyCategory,
+    DocList,
+    ModifyCategory,
     ModifyName,
-    Recovery, RemoveCategory,
     Search,
-    SelectCategory,
 } from "@/bindings/changeme/handler/filehandler.ts";
-import {ConfigStore, HelpInfo, PreferenceInfo, ScreenFullSwitch,} from "@/bindings/changeme/handler/systemhandler.ts";
-import {CategoryItem, RecordInfo} from "@/bindings/changeme/model";
+import {ScreenFullSwitch,} from "@/bindings/changeme/handler/systemhandler.ts";
+import {RecordInfo} from "@/bindings/changeme/model";
 import {settingInfoStore} from "@/store/modules/settings.ts";
-import {TipError, TipSuccess, TipWarning} from "@/util/messageUtil.tsx";
+import {TipWarning} from "@/util/messageUtil.tsx";
 import {DestroyModal, ModalView, OkModal, ShowModal,} from "@/util/modalUtil.tsx";
 import {
     BulbOutlined,
@@ -40,9 +30,8 @@ import {
     QuestionOutlined,
     SearchOutlined,
     TagOutlined,
-    UndoOutlined,
 } from "@ant-design/icons-vue";
-import {Button, Dropdown, Image, Input, Menu, MenuItem, Popover,} from "ant-design-vue";
+import {Dropdown, Image, Input, Menu, MenuItem, Popover,} from "ant-design-vue";
 import Mousetrap from "mousetrap";
 import {
     defineComponent,
@@ -59,6 +48,13 @@ import {
 import {useI18n} from "vue-i18n";
 import {RouterView} from "vue-router";
 import styled from "vue3-styled-components";
+import {categoryList, ChangeCategory, FileCategoryDesc, LoadCategoryList} from "@/components/category.tsx";
+import {ChangeLang} from "@/components/language.tsx";
+import {ConfigStoreHandle} from "@/components/cloudStore.tsx";
+import {ShowHelp} from "@/components/help.tsx";
+import {HotKey} from "@/components/hotKey.tsx";
+import {ShowDelFile} from "@/components/deleteCol.tsx";
+import {FileExport} from "@/components/fileExport.tsx";
 
 export default defineComponent({
     name: "Layout",
@@ -433,196 +429,11 @@ export default defineComponent({
             }
         `;
 
-        const {t, locale} = useI18n();
+        const {t} = useI18n();
 
-        const InputView = styled(Input)`
-            background-color: ${() =>
-                    settingInfoStore.DarkTheme()
-                            ? "rgba(255, 255, 255, 0.2)"
-                            : "rgba(255, 255, 255, 0.6)"};
-            margin: 5px 0;
-            color: ${() =>
-                    settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.8)" : "gray"};
 
-            .ant-input {
-                &::placeholder {
-                    color: ${() =>
-                            settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.4)" : "gray"};
-                }
-            }
 
-            &:hover {
-                background-color: ${() =>
-                        settingInfoStore.DarkTheme()
-                                ? "rgba(255, 255, 255, 0.4)"
-                                : "#fafafa"};
-            }
 
-            &:focus {
-                background-color: ${() =>
-                        settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.4)" : "white"};
-            }
-        `;
-
-        const HotKeyView = styled.div`
-            display: flex;
-            flex-wrap: wrap;
-            padding-left: 40px;
-            justify-content: flex-start;
-            align-items: center;
-
-            .title {
-                width: 100%;
-                margin-top: 20px;
-                color: ${() =>
-                        settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.8)" : "gray"};
-            }
-
-            .item {
-                width: 50%;
-                line-height: 35px;
-                color: ${() =>
-                        settingInfoStore.DarkTheme()
-                                ? "rgba(255, 255, 255, 0.8)"
-                                : "rgba(0, 0, 0, 0.8)"};
-                display: flex;
-                align-items: center;
-                gap: 3px;
-
-                .key {
-                    background-color: ${() =>
-                            settingInfoStore.DarkTheme() ? "rgba(0, 0, 0, 0.7)" : "lightgray"};
-                    line-height: 20px;
-                    padding: 0 5px;
-                    border-radius: 3px;
-                    color: ${() =>
-                            settingInfoStore.DarkTheme()
-                                    ? "rgba(255, 255, 255, 0.7)"
-                                    : "rgba(0, 0, 0, 0.8)"};
-                }
-            }
-        `;
-
-        const LanguageView = styled.div`
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-left: 34px;
-            gap: 10px;
-            height: 30%;
-            overflow-y: auto;
-            padding: 10px;
-
-            ::-webkit-scrollbar {
-                display: none;
-            }
-
-            .langItem {
-                line-height: 40px;
-                width: 95%;
-                border-radius: 5px;
-                text-align: center;
-                color: ${() =>
-                        settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
-                background-color: ${() =>
-                        settingInfoStore.DarkTheme()
-                                ? "rgba(255, 255, 255, 0.2)"
-                                : "rgba(255, 255, 255, 0.7)"};
-
-                &:hover {
-                    box-shadow: 0 0 5px 1px ${() =>
-                            settingInfoStore.DarkTheme()
-                                    ? "rgba(255, 255, 255, 0.8)"
-                                    : "gray"};
-                    color: ${() =>
-                            settingInfoStore.DarkTheme()
-                                    ? "rgba(255, 255, 255, 0.8)"
-                                    : "rgba(0, 0, 0, 0.8)"};
-                }
-            }
-        `;
-
-        const CategoryView = styled.div`
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-left: 34px;
-            gap: 10px;
-            height: 30%;
-            max-height: 350px;
-            
-            .content {
-                padding: 10px;
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                overflow-y: auto;
-                gap: 10px;
-                max-height: 350px;
-                
-                .categoryItem {
-                    line-height: 40px;
-                    width: 95%;
-                    position: relative;
-                    border-radius: 5px;
-                    text-align: center;
-                    color: ${() =>
-                            settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
-                    background-color: ${() =>
-                            settingInfoStore.DarkTheme()
-                                    ? "rgba(255, 255, 255, 0.2)"
-                                    : "rgba(255, 255, 255, 0.7)"};
-
-                    &:hover {
-                        box-shadow: 0 0 5px 1px ${() =>
-                                settingInfoStore.DarkTheme()
-                                        ? "rgba(255, 255, 255, 0.8)"
-                                        : "gray"};
-                        color: ${() =>
-                                settingInfoStore.DarkTheme()
-                                        ? "rgba(255, 255, 255, 0.8)"
-                                        : "rgba(0, 0, 0, 0.8)"};
-                    }
-                    
-                    .close {
-                        position: absolute;
-                        right: 10px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                    }
-                }
-
-                ::-webkit-scrollbar {
-                    display: none;
-                }
-            }
-
-            
-
-            .inputEdit {
-                height: 40px;
-                width: 95%;
-                background-color: ${() =>
-                        settingInfoStore.DarkTheme()
-                                ? "rgba(255, 255, 255, 0.3)"
-                                : "rgba(255, 255, 255, 0.7)"};
-                color: ${() =>
-                        settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
-                text-align: center;
-
-                &:hover {
-                    box-shadow: 0 0 5px 1px ${() =>
-                            settingInfoStore.DarkTheme()
-                                    ? "rgba(255, 255, 255, 0.8)"
-                                    : "gray"};
-                    color: ${() =>
-                            settingInfoStore.DarkTheme()
-                                    ? "rgba(255, 255, 255, 0.8)"
-                                    : "rgba(0, 0, 0, 0.8)"};
-                }
-            }
-        `;
 
         const MenuItemView = styled(MenuItem)`
             color: ${() =>
@@ -675,7 +486,6 @@ export default defineComponent({
         const search = ref(false);
         const showList = ref(true);
         const fileList = ref<RecordInfo[]>([]);
-        const categoryList = ref<CategoryItem[]>([])
 
         const selectFileKey = ref("");
         const editFileKey = ref("");
@@ -693,32 +503,6 @@ export default defineComponent({
                 return "";
             }
             return res[0].fileName;
-        };
-
-        const fileCategory = (key: string) => {
-            if (key !== "") {
-                fileList.value.forEach(item => {
-                    if (item.uuid === selectFileKey.value) {
-                        item.category = key
-                    }
-                })
-                return
-            }
-            const res = fileList.value.filter(
-                (item) => item.uuid === selectFileKey.value
-            );
-            if (res.length == 0) {
-                return "Untitled";
-            }
-            const category = res[0].category;
-            if (category === "") {
-                return "Untitled"
-            }
-            const filter = categoryList.value.filter(itm => itm.key === category);
-            if (filter.length == 0) {
-                return "Untitled"
-            }
-            return filter[0].tag
         };
 
         const updateFileName = () => {
@@ -743,7 +527,7 @@ export default defineComponent({
             });
             Mousetrap.bind("command+shift+k", () => {
                 // TipWarning('快捷键')
-                hotKey();
+                HotKey()
             });
             Mousetrap.bind("command+n", () => {
                 createFile();
@@ -756,7 +540,7 @@ export default defineComponent({
             });
 
             Mousetrap.bind("command+l", () => {
-                changeLang();
+                ChangeLang()
             });
 
             Mousetrap.bind("command+e", () => {
@@ -775,11 +559,14 @@ export default defineComponent({
                 // showLicense();
             });
             Mousetrap.bind("command+shift+e", () => {
-                // exportFile();
-                fileExport()
+                FileExport(key => {
+                    if (currentCom.value) {
+                        currentCom.value.exportHtml(key);
+                    }
+                })
             });
-            Mousetrap.bind("command+shift+c", () => {
-                configStore();
+            Mousetrap.bind("command+shift+s", () => {
+                ConfigStoreHandle();
             });
             Mousetrap.bind("command+shift+t", () => {
                 SwitchTheme();
@@ -791,16 +578,18 @@ export default defineComponent({
                 showList.value = true;
             });
             Mousetrap.bind("command+shift+d", () => {
-                showDelFile()
+                ShowDelFile(item => {
+                    fileList.value.push(item)
+                })
             });
             Mousetrap.bind("command+shift+h", () => {
-                // showHelp()
+                ShowHelp()
             });
             Mousetrap.bind("command+shift+p", () => {
                 // fileExport()
             });
             Mousetrap.bind("command+shift+c", () => {
-                changeCategory()
+                ChangeCategory()
             });
         };
 
@@ -840,163 +629,16 @@ export default defineComponent({
             startUpdateTask();
         };
 
-        const hotKeyInfo = reactive([
-            {
-                desc: "",
-                data: [
-                    {
-                        key: "⌘+N",
-                        descKey: "createFile",
-                    },
-                    {
-                        key: "⌘+D",
-                        descKey: "deleteFile",
-                    },
-                    {
-                        key: "⌘+R",
-                        descKey: "rename",
-                    },
-                    {
-                        key: "⌘+Shift+D",
-                        descKey: "deleteFileList",
-                    },
-                    {
-                        key: "⌘+↑",
-                        descKey: "selectUp",
-                    },
-                    {
-                        key: "⌘+↓",
-                        descKey: "selectDown",
-                    },
-                ],
-            },
-            {
-                desc: "editArea",
-                data: [
-                    {
-                        key: "⌘+I",
-                        descKey: "insertTemplate",
-                    },
-                    {
-                        key: "⌘+E",
-                        descKey: "edit",
-                    },
-                ],
-            },
-            {
-                desc: "system",
-                data: [
-                    {
-                        key: "Enter",
-                        descKey: "sure",
-                    },
-                    {
-                        key: "⌘+Shift+K",
-                        descKey: "showHotKey",
-                    },
-                    {
-                        key: "⌘+L",
-                        descKey: "language",
-                    },
-                    // {
-                    //     key: "⌘+Shift+L",
-                    //     descKey: "license",
-                    // },
-                    {
-                        key: "⌘+Shift+E",
-                        descKey: "export",
-                    },
-                    {
-                        key: "⌘+Shift+C",
-                        descKey: "configStore",
-                    },
-                    {
-                        key: "⌘+Shift+T",
-                        descKey: "changeTheme",
-                    },
-                    {
-                        key: "⌘+Shift+Left",
-                        descKey: "hiddenSidebar",
-                    },
-                    {
-                        key: "⌘+Shift+Right",
-                        descKey: "showSidebar",
-                    },
-                    {
-                        key: "⌘+Shift+H",
-                        descKey: "help",
-                    },
-                ],
-            },
-        ]);
 
-        const hotKey = () => {
-            const modalView = new ModalView();
-            modalView.cancelText = "";
-            modalView.okText = t("exportCurrent");
-            modalView.title = t("hotKey");
-            modalView.okText = "";
-            modalView.closed = true;
-            modalView.width = "700px";
-            modalView.icon = (
-                <Image
-                    preview={false}
-                    width={25}
-                    src={settingInfoStore.DarkTheme() ? keyboardLight : keyboardDark}
-                />
-            );
-            modalView.content = (
-                <HotKeyView>
-                    {hotKeyInfo.map((item) => {
-                        return (
-                            <>
-                                {item.desc !== "" && (
-                                    <span class={"title"}>{t(item.desc)}</span>
-                                )}
-                                {item.data.map((itm) => {
-                                    const split = itm.key.split("+");
-                                    return (
-                                        <div class={"item"}>
-                                            {split.map((it) => {
-                                                return <span class={"key"}>{it}</span>;
-                                            })}
-                                            <span>{t(itm.descKey)}</span>
-                                        </div>
-                                    );
-                                })}
-                            </>
-                        );
-                    })}
-                </HotKeyView>
-            );
-            // modalView.show();
-            ShowModal(modalView);
-        };
 
         onMounted(async () => {
             keyEvent();
-            await loadCategoryList()
+            await LoadCategoryList()
             await loadFileList()
         });
 
         onUnmounted(() => {
         });
-
-        const loadCategoryList = async () => {
-            const category = await AllCategory()
-            categoryList.value.splice(0, categoryList.value.length);
-            category.forEach((item) => {
-                if (item !== null) {
-                    categoryList.value.push(item);
-                }
-            });
-
-            const allCategory = {
-                key: '',
-                tag: t('all')
-            }
-            categoryList.value.splice(0, 0, allCategory);
-        }
 
         const loadFileList = async () => {
             const docs = await DocList();
@@ -1035,32 +677,7 @@ export default defineComponent({
             }
         };
 
-        const languageInfo = reactive([
-            {
-                lang: "zh-CN",
-                descKey: "chinese",
-            },
-            {
-                lang: "en-US",
-                descKey: "english",
-            },
-            {
-                lang: "fr_FR",
-                descKey: "french",
-            },
-            {
-                lang: "pt_BR",
-                descKey: "portuguese",
-            },
-            {
-                lang: "ja_JP",
-                descKey: "japanese",
-            },
-            {
-                lang: "zh_TW",
-                descKey: "traditional",
-            },
-        ]);
+
 
         const deleteFile = () => {
             if (selectFileKey.value === "") {
@@ -1165,76 +782,7 @@ export default defineComponent({
             });
         };
 
-        const settingInfo = reactive({
-            url: "",
-            username: "",
-            token: "",
-        });
 
-        const configStore = async () => {
-            const info = await PreferenceInfo();
-            settingInfo.username = info.username;
-            settingInfo.url = info.remoteUrl;
-            settingInfo.token = info.token;
-
-            const modalView = new ModalView();
-            modalView.width = 400;
-            modalView.title = t("configStore");
-            modalView.okText = t('sure')
-            modalView.cancelText = t('cancel')
-            modalView.content = (
-                <div>
-                    <InputView
-                        class={"inputC"}
-                        bordered={false}
-                        placeholder={`${t("input")}${t("remoteAddr")}(gitee)`}
-                        defaultValue={settingInfo.url}
-                        onChange={(e) => (settingInfo.url = e.target.value!)}
-                    ></InputView>
-                    <InputView
-                        class={"inputC"}
-                        bordered={false}
-                        placeholder={`${t("input")}${t("username")}`}
-                        defaultValue={settingInfo.username}
-                        onChange={(e) => (settingInfo.username = e.target.value!)}
-                    ></InputView>
-                    <InputView
-                        class={"inputC"}
-                        bordered={false}
-                        placeholder={`${t("input")}TOKEN`}
-                        defaultValue={settingInfo.token}
-                        onChange={(e) => (settingInfo.token = e.target.value!)}
-                    ></InputView>
-                </div>
-            );
-            modalView.ok = async () => {
-                if (settingInfo.url === "") {
-                    TipWarning(`${t("remoteAddr")}${t("notConfig")}`);
-                    return;
-                }
-                if (settingInfo.username === "") {
-                    TipWarning(`${t("username")}${t("notConfig")}`);
-                    return;
-                }
-                if (settingInfo.token === "") {
-                    TipWarning(`TOKEN${t("notConfig")}`);
-                    return;
-                }
-                const res = await ConfigStore(
-                    settingInfo.url,
-                    settingInfo.username,
-                    settingInfo.token
-                );
-                if (res) {
-                    TipSuccess(`${t("config")}${t("success")}`);
-                } else {
-                    TipSuccess(`${t("config")}${t("failure")}`);
-                }
-            };
-
-            // modalView.show();
-            ShowModal(modalView);
-        };
 
         provide("updateFileSize", updateFileSize);
 
@@ -1268,238 +816,6 @@ export default defineComponent({
         };
 
 
-        const ExportView = styled.div`
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-right: 20px;
-            gap: 10px;
-            height: 30%;
-            overflow-y: auto;
-            padding: 10px;
-
-            ::-webkit-scrollbar {
-                display: none;
-            }
-
-            .langItem {
-                line-height: 40px;
-                width: 95%;
-                border-radius: 5px;
-                text-align: center;
-                color: ${() =>
-                        settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
-                background-color: ${() =>
-                        settingInfoStore.DarkTheme()
-                                ? "rgba(255, 255, 255, 0.2)"
-                                : "rgba(255, 255, 255, 0.7)"};
-
-                &:hover {
-                    box-shadow: 0 0 5px 1px ${() =>
-                            settingInfoStore.DarkTheme()
-                                    ? "rgba(255, 255, 255, 0.8)"
-                                    : "gray"};
-                    color: ${() =>
-                            settingInfoStore.DarkTheme()
-                                    ? "rgba(255, 255, 255, 0.8)"
-                                    : "rgba(0, 0, 0, 0.8)"};
-                }
-            }
-        `;
-
-        const exportTypeInfo = reactive([
-            {
-                key: 'html',
-                val: 'HTML',
-            },
-            {
-                key: 'pdf',
-                val: 'PDF',
-            },
-            {
-                key: 'word',
-                val: 'Word',
-            },
-            {
-                key: 'md',
-                val: 'MarkDown'
-            }
-        ]);
-
-
-        const fileExport = () => {
-            const modalView = new ModalView();
-            modalView.cancelText = "";
-            modalView.okText = "";
-            modalView.title = t("export");
-            modalView.okText = "";
-            modalView.closed = true;
-            modalView.width = "350px";
-            modalView.icon = (
-                <ExportOutlined
-                    style={{color: settingInfoStore.DarkTheme() ? "white" : "black"}}
-                />
-            );
-            modalView.content = (
-                <ExportView>
-                    {exportTypeInfo.map((item) => {
-                        return (
-                            <span
-                                class={"langItem"}
-                                onDblclick={() => {
-                                    if (currentCom.value) {
-                                        currentCom.value.exportHtml(item.key);
-                                    }
-                                    DestroyModal();
-                                }}
-                            >
-                {t(item.val)}
-              </span>
-                        );
-                    })}
-                </ExportView>
-            );
-            // modalView.show();
-            ShowModal(modalView);
-        };
-
-        const AddBtn = styled(Button)`
-            border: none;
-            width: 70%;
-            height: 40px;
-            background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.6)'};
-            color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.2)'};
-
-            &:hover {
-                background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.5)' : 'rgba(255, 255, 255, 0.8)'};
-                color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.5)'};
-            }
-        `
-
-        const addRef = reactive({
-            flag: false,
-            content: '',
-            overId: '',
-        })
-
-        const delCategory = async (key: string) => {
-            const res = await RemoveCategory(key)
-            if (res) {
-                const index = categoryList.value.findIndex(itm => key === itm.key);
-                if (index !== -1) {
-                    categoryList.value.splice(index, 1);
-                }
-            }
-        }
-
-        const changeCategory = async () => {
-            addRef.flag = false
-            const modalView = new ModalView();
-            modalView.cancelText = "";
-            modalView.title = t("category");
-            modalView.okText = "";
-            modalView.closed = true;
-            modalView.width = "350px";
-            modalView.icon = (
-                <Image
-                    preview={false}
-                    width={25}
-                    src={settingInfoStore.DarkTheme() ? categoryDarkIcon : categoryLightIcon}
-                />
-            );
-
-            modalView.content = (
-                <CategoryView>
-                    <div class={"content"}>
-                    {categoryList.value.map((item) => {
-                        return (
-                            <div
-                                class={"categoryItem"}
-                                onMouseover={() => addRef.overId = item.key}
-                                onMouseleave={() => addRef.overId = ""}
-                                onClick={async () => {
-                                    await SelectCategory(item?.key!)
-                                    DestroyModal();
-                                    await loadFileList()
-                                }}
-                            >
-                {t(item?.tag!)}
-                                {addRef.overId !== "" && addRef.overId === item.key && <CloseOutlined class={'close'} onClick={(e) => {
-                                    delCategory(item.key)
-                                    e.stopPropagation()
-                                }}/>}
-              </div>
-                        );
-                    })}
-                    </div>
-                    {addRef.flag ?
-                        <Input class={'inputEdit'}
-                               bordered={false}
-                               onChange={e => addRef.content = e.target.value!}
-                               onPressEnter={async () => {
-                                   const cId = await AddCategory(addRef.content)
-                                   if (cId !== "") {
-                                       categoryList.value.push({
-                                           key: cId,
-                                           tag: addRef.content
-                                       })
-                                   }
-                                   addRef.flag = false
-                                   addRef.content = ""
-                               }}></Input>
-                        :
-                        <AddBtn
-                            // type="text"
-                            style={{
-                                width: '95%',
-                            }}
-                            icon={<PlusOutlined style={{
-                                color: settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.4)',
-                            }}/>}
-                            onClick={() => addRef.flag = true}
-                        ></AddBtn>}
-                </CategoryView>
-            );
-            // modalView.show();
-            ShowModal(modalView);
-        };
-
-        const changeLang = () => {
-            const modalView = new ModalView();
-            modalView.cancelText = "";
-            modalView.okText = t("exportCurrent");
-            modalView.title = t("language");
-            modalView.okText = "";
-            modalView.closed = true;
-            modalView.width = "350px";
-            modalView.icon = (
-                <Image
-                    preview={false}
-                    width={25}
-                    src={settingInfoStore.DarkTheme() ? langLight : langDark}
-                />
-            );
-            modalView.content = (
-                <LanguageView>
-                    {languageInfo.map((item) => {
-                        return (
-                            <span
-                                class={"langItem"}
-                                onClick={() => {
-                                    locale.value = item.lang;
-                                    settingInfoStore.UpdateLang(locale.value);
-                                    DestroyModal();
-                                }}
-                            >
-                {t(item.descKey)}
-              </span>
-                        );
-                    })}
-                </LanguageView>
-            );
-            // modalView.show();
-            ShowModal(modalView);
-        };
 
         const createFile = async () => {
             const file = await CreateFile();
@@ -1533,143 +849,7 @@ export default defineComponent({
             }
         };
 
-        const DeleteView = styled.div`
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            //margin-left: 50px;
-            position: relative;
-            text-align: center;
-            padding: 10px 0;
-            width: 510px;
-            gap: 8px;
-            max-height: 350px;
-            overflow-y: auto;
 
-            ::-webkit-scrollbar {
-                display: none;
-            }
-
-            .item {
-                width: 80%;
-                line-height: 35px;
-                padding: 0 10px;
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-                border-radius: 8px;
-
-                color: ${() =>
-                        settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
-                background-color: ${() =>
-                        settingInfoStore.DarkTheme()
-                                ? "rgba(255, 255, 255, 0.2)"
-                                : "rgba(255, 255, 255, 0.7)"};
-
-                &:hover {
-                    box-shadow: 0 0 5px 1px ${() =>
-                            settingInfoStore.DarkTheme()
-                                    ? "rgba(255, 255, 255, 0.8)"
-                                    : "gray"};
-                    color: ${() =>
-                            settingInfoStore.DarkTheme()
-                                    ? "rgba(255, 255, 255, 0.8)"
-                                    : "rgba(0, 0, 0, 0.8)"};
-                }
-            }
-
-            .right {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 10px;
-
-                .time {
-                    font-size: 12px;
-                }
-            }
-        `
-
-        const showDelFile = async () => {
-            const modalView = new ModalView();
-            modalView.cancelText = "";
-            modalView.okText = "";
-            modalView.title = t("deleteFileList");
-            modalView.okText = "";
-            modalView.closed = true;
-            modalView.width = "550px";
-            modalView.icon = (
-                <Image
-                    preview={false}
-                    width={25}
-                    src={settingInfoStore.DarkTheme() ? garbageLightIcon : garbageDarkIcon}
-                />
-            );
-            const list = await DeleteList();
-            modalView.content = (
-                <DeleteView>
-                    {list.map(item => {
-                        return <div class={'item'}>
-                            <span>{item?.fileName}</span>
-                            <div class={'right'}>
-                                <span class={'time'}>{`${item?.del} ${t("delete")}`}</span>
-                                <UndoOutlined class={'recovery'} onClick={async () => {
-                                    const res = await Recovery(item?.uuid!)
-                                    if (res) {
-                                        fileList.value.push(item!)
-                                        DestroyModal()
-                                        return
-                                    }
-                                    TipError(t('recoveryFailure'))
-                                }}/>
-                            </div>
-                        </div>
-                    })}
-                </DeleteView>
-            );
-            // modalView.show();
-            ShowModal(modalView);
-        }
-
-        const HelpView = styled.pre`
-            padding: 10px;
-            margin-right: 15px;
-            max-height: 350px;
-            overflow-y: auto;
-            text-wrap: wrap;
-            border-radius: 8px;
-            background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.4)'};
-            box-shadow: 0 0 10px 5px ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.3)' : 'rgba(255, 255, 255, 0.5)'};
-            color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.2)'};
-
-            ::-webkit-scrollbar {
-                display: none;
-            }
-        `
-
-        const showHelp = async () => {
-            const modalView = new ModalView();
-            modalView.cancelText = "";
-            modalView.okText = "";
-            modalView.title = t("help");
-            modalView.okText = "";
-            modalView.closed = true;
-            modalView.width = "650px";
-            modalView.icon = (
-                <QuestionOutlined
-                    style={{color: settingInfoStore.DarkTheme() ? "white" : "black"}}
-                />
-            );
-            const info = await HelpInfo(settingInfoStore.getState().lang);
-            modalView.content = (
-                <HelpView>
-                    {info}
-                </HelpView>
-            );
-            // modalView.show();
-            ShowModal(modalView);
-        }
 
         const PopCategoryView = styled.div`
             width: 60px;
@@ -1712,7 +892,7 @@ export default defineComponent({
                                             onClick={async () => {
                                                 const result = await ModifyCategory(selectFileKey.value, itm.key)
                                                 if (result) {
-                                                    fileCategory(itm.key)
+                                                    FileCategoryDesc(itm.key)
                                                 }
                                             }}
                                         >{itm.tag}</span>
@@ -1720,7 +900,7 @@ export default defineComponent({
                                 </PopCategoryView>
                             }
                         >
-                            <span class={"category"}>— {fileCategory("")}</span>
+                            <span class={"category"}>— {FileCategoryDesc("")}</span>
                         </PopoverView>
                     </div>
                     <div class={"title"}>
@@ -1795,7 +975,7 @@ export default defineComponent({
                             </div>
                             <div
                                 class={"action"}
-                                onClick={showHelp}
+                                onClick={ShowHelp}
                                 title={t('help')}
                             >
                                 <QuestionOutlined/>
@@ -1814,19 +994,25 @@ export default defineComponent({
                                             justifyContent: 'flex-start'
                                         }}
                                     >
-                                        <MenuItemView title={t('export')} onClick={fileExport}>
+                                        <MenuItemView title={t('export')} onClick={() => {
+                                            FileExport(key => {
+                                                if (currentCom.value) {
+                                                    currentCom.value.exportHtml(key);
+                                                }
+                                            })
+                                        }}>
                                             <ExportOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
                                         <MenuItemView title={t('delete')} onClick={deleteFile}>
                                             <DeleteOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
-                                        <MenuItemView title={t('language')} onClick={changeLang}>
+                                        <MenuItemView title={t('language')} onClick={ChangeLang}>
                                             <DribbbleOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
                                         <MenuItemView title={t('changeTheme')} onClick={SwitchTheme}>
                                             <BulbOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
-                                        <MenuItemView title={t('configStore')} onClick={configStore}>
+                                        <MenuItemView title={t('configStore')} onClick={ConfigStoreHandle}>
                                             <CloudUploadOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
                                         {/*<MenuItemView title={t('license')} onClick={showLicense}>*/}
@@ -1916,7 +1102,9 @@ export default defineComponent({
                         <span class={"footer"}>{`${fileList.value.length} ${t(
                             "file"
                         )}`}</span>
-                        <GarbageView onClick={showDelFile}>
+                        <GarbageView onClick={() => {
+                            ShowDelFile(item => fileList.value.push(item))
+                        }}>
                             <Image src={settingInfoStore.DarkTheme() ? garbageLightIcon : garbageDarkIcon} width={18}
                                    preview={false}/>
                         </GarbageView>

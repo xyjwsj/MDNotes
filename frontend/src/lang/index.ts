@@ -35,7 +35,13 @@ if (!messages.hasOwnProperty(lang)) {
 const i18n = createI18n({
   legacy: false,
   locale: lang || 'zh-CN"', // 默认cn语言环境
+  globalInjection: true,
   messages,
 });
 
 export default i18n;
+export const $t = (key: string) => i18n.global.t(key)
+export const getLocale = () => i18n.global.locale.value
+export const setLocale = (locale: string) => {
+  (i18n.global.locale as any).value = locale
+}

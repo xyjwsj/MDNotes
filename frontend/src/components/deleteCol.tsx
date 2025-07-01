@@ -1,0 +1,114 @@
+import styled from "vue3-styled-components";
+import {settingInfoStore} from "@/store/modules/settings.ts";
+import {DestroyModal, ModalView, ShowModal} from "@/util/modalUtil.tsx";
+import {Image} from "ant-design-vue";
+import garbageLightIcon from "@/assets/png/garbage-light.png";
+import garbageDarkIcon from "@/assets/png/garbage-black.png";
+import {DeleteList, Recovery} from "@/bindings/changeme/handler/filehandler.ts";
+import {UndoOutlined} from "@ant-design/icons-vue";
+import {TipError} from "@/util/messageUtil.tsx";
+import { $t } from '@/lang'
+import {RecordInfo} from "@/bindings/changeme/model";
+
+const DeleteView = styled.div`
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            //margin-left: 50px;
+            position: relative;
+            text-align: center;
+            padding: 10px 0;
+            width: 510px;
+            gap: 8px;
+            max-height: 350px;
+            overflow-y: auto;
+
+            ::-webkit-scrollbar {
+                display: none;
+            }
+
+            .item {
+                width: 80%;
+                line-height: 35px;
+                padding: 0 10px;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                border-radius: 8px;
+
+                color: ${() =>
+    settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
+                background-color: ${() =>
+    settingInfoStore.DarkTheme()
+        ? "rgba(255, 255, 255, 0.2)"
+        : "rgba(255, 255, 255, 0.7)"};
+
+                &:hover {
+                    box-shadow: 0 0 5px 1px ${() =>
+    settingInfoStore.DarkTheme()
+        ? "rgba(255, 255, 255, 0.8)"
+        : "gray"};
+                    color: ${() =>
+    settingInfoStore.DarkTheme()
+        ? "rgba(255, 255, 255, 0.8)"
+        : "rgba(0, 0, 0, 0.8)"};
+                }
+            }
+
+            .right {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 10px;
+
+                .time {
+                    font-size: 12px;
+                }
+            }
+        `
+
+const ShowDelFile = async (callback: (record: RecordInfo) => void) => {
+    const modalView = new ModalView();
+    modalView.cancelText = "";
+    modalView.okText = "";
+    modalView.title = $t("deleteFileList");
+    modalView.okText = "";
+    modalView.closed = true;
+    modalView.width = "550px";
+    modalView.icon = (
+        <Image
+            preview={false}
+            width={25}
+            src={settingInfoStore.DarkTheme() ? garbageLightIcon : garbageDarkIcon}
+        />
+    );
+    const list = await DeleteList();
+    modalView.content = (
+        <DeleteView>
+            {list.map(item => {
+                return <div class={'item'}>
+                    <span>{item?.fileName}</span>
+                    <div class={'right'}>
+                        <span class={'time'}>{`${item?.del} ${$t("delete")}`}</span>
+                        <UndoOutlined class={'recovery'} onClick={async () => {
+                            const res = await Recovery(item?.uuid!)
+                            if (res) {
+                                callback(item!)
+                                DestroyModal()
+                                return
+                            }
+                            TipError($t('recoveryFailure'))
+                        }}/>
+                    </div>
+                </div>
+            })}
+        </DeleteView>
+    );
+    // modalView.show();
+    ShowModal(modalView);
+}
+
+export {
+    ShowDelFile
+}

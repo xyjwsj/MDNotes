@@ -310,7 +310,8 @@ export default defineComponent({
           accept: "image/*",
           // url: "/api/upload",
           url: "",
-          linkToImgUrl: "/api/upload",
+          linkToImgUrl: "",
+          // linkToImgUrl: "/api/upload",
           withCredentials: true,
           extraData: {
             "aaa": "bbb",
