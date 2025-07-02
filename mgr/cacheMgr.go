@@ -3,10 +3,15 @@ package mgr
 import (
 	"changeme/model"
 	"changeme/util"
+	"context"
 	"errors"
+	"fmt"
 	"log"
 	"os"
+	"sync"
 	"time"
+
+	"github.com/go-git/go-git/v5/plumbing"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
@@ -18,6 +23,10 @@ var recordCache []*model.RecordInfo
 var category *model.Category
 var preference *model.Preference
 var startAsync bool
+var (
+	syncMu     sync.Mutex
+	syncCancel context.CancelFunc
+)
 
 func init() {
 	path := util.CreatePlatformPath(model.AppDataRoot, "info.db")
@@ -85,7 +94,14 @@ func init() {
 
 	startAsync = false
 
-	go repository()
+	syncMu.Lock()
+	defer syncMu.Unlock()
+	if syncCancel != nil {
+		syncCancel() // 取消上一个同步任务
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	syncCancel = cancel
+	go repository(ctx)
 }
 
 func Start() {
@@ -107,42 +123,115 @@ func ConfigRepository(remoteUrl, username, token string) {
 
 	_ = os.WriteFile(path, content, os.ModePerm)
 
-	go repository()
+	syncMu.Lock()
+	defer syncMu.Unlock()
+	if syncCancel != nil {
+		syncCancel() // 取消上一个同步任务
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	syncCancel = cancel
+	go repository(ctx)
 }
 
-func repository() {
+func repository(ctx context.Context) {
 	if preference.Username == "" || preference.Token == "" || preference.RemoteUrl == "" {
 		return
 	}
 
+	syncMu.Lock()
 	if startAsync {
+		syncMu.Unlock()
+		return
+	}
+	startAsync = true
+	syncMu.Unlock()
+	defer func() {
+		syncMu.Lock()
+		startAsync = false
+		syncMu.Unlock()
+	}()
+
+	// 固定分支名，使用设备标识 + 用户名区分
+	branchId := UniqueId()
+
+	repo, err := openOrCreateRepo(model.AppDataRoot)
+	if err != nil {
+		log.Println("打开或初始化仓库失败:", err)
 		return
 	}
 
-	repo, err := git.PlainInitWithOptions(model.AppDataRoot, &git.PlainInitOptions{
-		InitOptions: git.InitOptions{
-			DefaultBranch: "refs/heads/main",
-		},
-		Bare:         false,
-		ObjectFormat: "",
-	})
-
+	err = setupRemote(repo, preference.RemoteUrl)
 	if err != nil {
-		if errors.Is(err, git.ErrRepositoryAlreadyExists) {
-			repo, err = git.PlainOpen(model.AppDataRoot)
-		} else {
-			log.Println(err.Error())
+		log.Println("配置远程仓库失败:", err)
+		return
+	}
+
+	auth := &http.BasicAuth{
+		Username: preference.Username,
+		Password: preference.Token,
+	}
+
+	w, err := repo.Worktree()
+	if err != nil {
+		log.Println("获取工作树失败:", err)
+		return
+	}
+
+	// 切换或创建分支
+	err = checkoutBranch(repo, w, branchId)
+	if err != nil {
+		log.Println("切换分支失败:", err)
+		return
+	}
+
+	// 第一次拉取远程内容
+	err = pullRemote(w, auth, branchId)
+	if err != nil {
+		log.Println("首次拉取失败:", err)
+	}
+
+	// 启动定时任务
+	tickerCommit := time.NewTicker(1 * time.Minute)
+	tickerPush := time.NewTicker(2 * time.Minute)
+	tickerLog := time.NewTicker(10 * time.Second)
+
+	startAsync = true
+
+	for {
+		select {
+		case <-ctx.Done():
+			log.Println("Git 同步任务已取消")
 			return
+		case <-tickerCommit.C:
+			commitChanges(w, auth.Username)
+		case <-tickerPush.C:
+			pushChanges(repo, auth, branchId)
+		case <-tickerLog.C:
+			log.Println("Git 同步任务运行中...")
 		}
 	}
+}
 
-	if err != nil {
-		log.Println("CreateLocal Error:", err.Error())
-		return
+// 打开或创建仓库
+func openOrCreateRepo(path string) (*git.Repository, error) {
+	repo, err := git.PlainOpen(path)
+	if err == nil {
+		return repo, nil
 	}
 
-	// ========== 设置远程仓库地址 ==========
-	remoteURL := preference.RemoteUrl
+	if errors.Is(err, git.ErrRepositoryNotExists) {
+		// 使用 PlainInit 创建新仓库
+		repo, err = git.PlainInit(path, false)
+		if err != nil {
+			return nil, fmt.Errorf("初始化仓库失败：%w", err)
+		}
+		return repo, nil
+	}
+	return nil, fmt.Errorf("打开仓库失败：%w", err)
+}
+
+// 设置远程地址
+func setupRemote(repo *git.Repository, remoteURL string) error {
 	remotes, _ := repo.Remotes()
 	foundOrigin := false
 	for _, r := range remotes {
@@ -151,77 +240,146 @@ func repository() {
 			break
 		}
 	}
-
 	if !foundOrigin {
-		_, err = repo.CreateRemote(&config.RemoteConfig{
+		_, err := repo.CreateRemote(&config.RemoteConfig{
 			Name: "origin",
 			URLs: []string{remoteURL},
 		})
-		if err != nil {
-			log.Println("CreateRemote Error:", err)
-			return
-		}
+		return err
 	}
-	// ========== 设置远程仓库地址 END ==========
+	return nil
+}
 
-	auth := &http.BasicAuth{
-		Username: preference.Username,
-		Password: preference.Token, // 替换为实际 Token
+// 切换分支，如果不存在则从远程创建跟踪分支
+func checkoutBranch(repo *git.Repository, w *git.Worktree, branch string) error {
+	refName := plumbing.NewBranchReferenceName(branch)
+
+	// 检查本地是否有未提交的更改
+	//status, err := w.Status()
+	//if err != nil {
+	//	return fmt.Errorf("获取工作区状态失败: %w", err)
+	//}
+	//if !status.IsClean() {
+	//	// 方式1：自动提交
+	//	_ = w.AddGlob(".")
+	//	_, err := w.Commit("Auto commit before branch switch", &git.CommitOptions{
+	//		Author: &object.Signature{
+	//			Name: "AutoCommit",
+	//			When: time.Now(),
+	//		},
+	//	})
+	//	if err != nil {
+	//		return fmt.Errorf("自动提交失败: %w", err)
+	//	}
+	//}
+
+	// 检查本地是否存在该分支
+	branchRef, err := repo.Reference(refName, true)
+	if err == nil && branchRef != nil {
+		// 本地分支存在，直接切换
+		return w.Checkout(&git.CheckoutOptions{
+			Branch: refName,
+			Create: false,
+			Force:  true,
+		})
 	}
 
-	w, _ := repo.Worktree()
+	// 本地分支不存在，尝试 fetch 远程分支
+	log.Printf("本地分支 %s 不存在，尝试从远程创建...\n", branch)
+	err = fetchRemoteBranch(repo, "origin", branch)
+	if err != nil {
+		log.Printf("拉取远程分支失败：%v\n", err)
+		// 远程也没有该分支，则创建空分支
+		return w.Checkout(&git.CheckoutOptions{
+			Branch: refName,
+			Create: true,
+			Force:  true,
+		})
+	}
 
-	w.AddGlob(".")
+	// 手动设置本地分支跟踪远程分支
+	err = repo.Storer.SetReference(
+		plumbing.NewSymbolicReference(
+			refName,
+			plumbing.NewRemoteReferenceName("origin", branch),
+		),
+	)
+	if err != nil {
+		return err
+	}
 
-	hash, _ := w.Commit("Auto Commit", &git.CommitOptions{
+	// 切换到新建的本地分支
+	return w.Checkout(&git.CheckoutOptions{
+		Branch: refName,
+		Create: false,
+		Force:  true,
+	})
+}
+
+// 拉取远程特定分支
+func fetchRemoteBranch(repo *git.Repository, remote string, branch string) error {
+	refSpec := config.RefSpec(fmt.Sprintf("refs/heads/%s:refs/remotes/%s/%s", branch, remote, branch))
+	return repo.Fetch(&git.FetchOptions{
+		RemoteName: remote,
+		RefSpecs:   []config.RefSpec{refSpec},
+		Force:      true,
+	})
+}
+
+// 拉取最新提交
+func pullRemote(w *git.Worktree, auth *http.BasicAuth, branch string) error {
+	err := w.Pull(&git.PullOptions{
+		Auth:          auth,
+		RemoteName:    "origin",
+		ReferenceName: plumbing.NewBranchReferenceName(branch),
+		SingleBranch:  true,
+	})
+	if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
+		return err
+	}
+	return nil
+}
+
+// 提交更改
+func commitChanges(w *git.Worktree, author string) {
+	status, err := w.Status()
+	if err != nil {
+		log.Println("获取工作区状态失败:", err)
+		return
+	}
+	if status.IsClean() {
+		log.Println("无变更，无需提交")
+		return
+	}
+	_ = w.AddGlob(".")
+	hash, err := w.Commit("Auto Commit", &git.CommitOptions{
 		Author: &object.Signature{
-			Name: preference.Username,
+			Name: author,
 			When: time.Now(),
 		},
 	})
-
-	if !hash.IsZero() {
-		err = w.Pull(&git.PullOptions{
-			Auth:          auth,
-			RemoteName:    "origin",
-			ReferenceName: "refs/heads/main", // 指定要拉取的分支，如 main 或 master
-			SingleBranch:  true,              // 只拉取该分支
-		})
-
-		if err != nil {
-			log.Println("pull error：" + err.Error())
-		}
+	if err != nil {
+		log.Println("提交失败:", err)
+		return
 	}
+	if !hash.IsZero() {
+		log.Println("提交成功:", hash.String())
+	}
+}
 
-	ticker := time.NewTicker(1 * time.Minute)
-	ticker1 := time.NewTicker(10 * time.Second)
-	ticker2 := time.NewTicker(2 * time.Minute)
-
-	startAsync = true
-	//bb04d8ea5f4dac046b84f99c09547d70
-	for {
-
-		select {
-		case <-ticker.C:
-			_ = w.AddGlob(".") // 添加所有文件
-			// 提交配置
-			_, _ = w.Commit("Auto Commit", &git.CommitOptions{
-				Author: &object.Signature{
-					Name: preference.Username,
-					When: time.Now(),
-				},
-			})
-			log.Println("Already Commit...")
-		case <-ticker2.C:
-			_ = repo.Push(&git.PushOptions{
-				Auth:       auth,
-				RemoteName: "origin",
-				RefSpecs:   []config.RefSpec{"refs/heads/main:refs/heads/main"},
-			})
-			log.Println("Already Push...")
-		case <-ticker1.C:
-			log.Println("Start Async Task ...")
-		}
+// 推送更改
+func pushChanges(repo *git.Repository, auth *http.BasicAuth, branch string) {
+	err := repo.Push(&git.PushOptions{
+		Auth:       auth,
+		RemoteName: "origin",
+		RefSpecs: []config.RefSpec{
+			config.RefSpec(fmt.Sprintf("refs/heads/%s:refs/heads/%s", branch, branch)),
+		},
+	})
+	if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
+		log.Println("推送失败:", err)
+	} else {
+		log.Println("推送成功")
 	}
 }
 

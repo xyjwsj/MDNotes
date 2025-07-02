@@ -71,6 +71,12 @@ func TestCache(t *testing.T) {
 	log.Println(contents)
 }
 
+func TestRepository(t *testing.T) {
+	mgr.ConfigRepository("https://gitee.com/xyjwsj/note.git", "xyjwsj", "bb04d8ea5f4dac046b84f99c09547d70")
+	for {
+	}
+}
+
 func TestPdf(t *testing.T) {
 
 }
