@@ -64,11 +64,11 @@ class ModalView {
     this.modal = Modal.confirm({
       style: {
         backgroundColor: settingInfoStore.DarkTheme()
-          ? "#1E1F22  !important"
-          : "white",
+          ? "#1D1D1B !important"
+          : "#FFFFFD !important",
         color: settingInfoStore.DarkTheme() ? "white" : "black",
         borderRadius: "10px",
-        boxShadow: "0 0 20px 1px gray",
+        boxShadow: settingInfoStore.DarkTheme() ? "0 0 15px 1px gray" : "0 0 15px 1px lightGray",
       },
       closeIcon: (
         <CloseOutlined

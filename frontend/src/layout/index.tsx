@@ -71,7 +71,7 @@ export default defineComponent({
             height: 40px;
             width: calc(100% - 80px);
             background-color: ${() =>
-                    settingInfoStore.DarkTheme() ? "#2d2f32" : "#e9e9ed"};
+                    settingInfoStore.DarkTheme() ? "#282828" : "#e9e9ed"};
             padding-left: 80px;
             display: flex;
             align-items: center;
@@ -79,6 +79,7 @@ export default defineComponent({
             justify-content: space-between;
             flex-direction: row;
             position: relative;
+            box-shadow: 0 1px 8px -5px white;
 
             .fileTitle {
                 position: absolute;
@@ -168,7 +169,7 @@ export default defineComponent({
                 .search {
                     position: absolute;
                     background-color: ${() =>
-                            settingInfoStore.DarkTheme() ? "#242424" : "#fafafa"};
+                            settingInfoStore.DarkTheme() ? "#181816" : "#fafafa"};
                     border-radius: 15px;
                     height: 25px;
                     width: 80%;
@@ -262,94 +263,6 @@ export default defineComponent({
             position: relative;
         `;
 
-        const ListView = styled.div`
-            width: ${() => (showList.value ? "230px" : 0)};
-            background-color: ${() =>
-                    settingInfoStore.DarkTheme() ? "#2b2d30" : "#efeff2"};
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            //align-items: center;
-            transition: width 0.5s ease;
-            overflow: hidden; /* 防止内容溢出时动画异常 */
-            position: relative;
-
-            .footer {
-                height: 20px;
-                font-size: 11px;
-                color: ${() =>
-                        settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.4)" : "gray"};
-                position: absolute;
-                left: 50%;
-                transform: translateX(-50%);
-                bottom: 0;
-            }
-
-            .selectDefault {
-                line-height: 35px;
-                width: 190px;
-                padding: 0 20px;
-                font-size: 14px;
-                display: flex;
-                position: relative;
-                color: ${() =>
-                        settingInfoStore.DarkTheme()
-                                ? "rgba(255, 255, 255, 0.6)"
-                                : "rgba(48, 48, 45, 1)"};
-                justify-content: space-between;
-
-                &:hover {
-                    background-color: ${() =>
-                            settingInfoStore.DarkTheme() ? "#323233" : "#e7e7ea"};
-                }
-
-                .tag {
-                    position: absolute;
-                    width: 10px;
-                    height: 10px;
-                    background-color: red;
-                    right: 8px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    border-radius: 5px;
-                }
-
-                .editInput {
-                    height: 35px;
-
-                    .ant-input {
-                        color: ${() =>
-                                settingInfoStore.DarkTheme()
-                                        ? "rgba(255, 255, 255, 0.9)"
-                                        : "black"};
-                    }
-                }
-
-                .left {
-                    display: flex;
-                    justify-content: flex-start;
-                    align-items: center;
-                    gap: 5px;
-                }
-
-                .right {
-                    font-size: 12px;
-                    padding-right: 10px;
-                    color: ${() =>
-                            settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.4)" : "gray"};
-                    display: flex;
-                    justify-content: flex-start;
-                    align-items: center;
-                    gap: 3px;
-                }
-            }
-
-            .select {
-                background-color: ${() =>
-                        settingInfoStore.DarkTheme() ? "#43454A" : "#e0e0e3"};
-            }
-        `;
-
         const GarbageView = styled.div`
             position: absolute;
             bottom: -28px;
@@ -374,6 +287,96 @@ export default defineComponent({
                 transform: translate(5px, -5px);
             }
         `
+
+        const ListView = styled.div`
+            width: ${() => (showList.value ? "230px" : 0)};
+            background-color: ${() =>
+            settingInfoStore.DarkTheme() ? "#282828" : "#F5F6F5"};
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            //align-items: center;
+            transition: width 0.5s ease;
+            overflow: hidden; /* 防止内容溢出时动画异常 */
+            position: relative;
+            box-shadow: 0 0 7px -5px ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.6)' : 'gray'};
+            z-index: 10;
+            
+            .footer {
+                height: 20px;
+                font-size: 11px;
+                color: ${() =>
+            settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.4)" : "gray"};
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: 0;
+            }
+
+            .selectDefault {
+                line-height: 35px;
+                width: 190px;
+                padding: 0 20px;
+                font-size: 14px;
+                display: flex;
+                position: relative;
+                color: ${() =>
+            settingInfoStore.DarkTheme()
+                ? "#E5E5E5"
+                : "rgba(48, 48, 45, 1)"};
+                justify-content: space-between;
+
+                &:hover {
+                    background-color: ${() =>
+            settingInfoStore.DarkTheme() ? "#373735" : "#E4E6E5"};
+                }
+
+                .tag {
+                    position: absolute;
+                    width: 10px;
+                    height: 10px;
+                    background-color: red;
+                    right: 8px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    border-radius: 5px;
+                }
+
+                .editInput {
+                    height: 35px;
+
+                    .ant-input {
+                        color: ${() =>
+            settingInfoStore.DarkTheme()
+                ? "rgba(255, 255, 255, 0.9)"
+                : "black"};
+                    }
+                }
+
+                .left {
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                    gap: 5px;
+                }
+
+                .right {
+                    font-size: 12px;
+                    padding-right: 10px;
+                    color: ${() =>
+            settingInfoStore.DarkTheme() ? "#6D6D6D" : "gray"};
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                    gap: 3px;
+                }
+            }
+
+            .select {
+                background-color: ${() =>
+            settingInfoStore.DarkTheme() ? "#2E3C51" : "#D1E0F4"};
+            }
+        `;
 
         const TransitionGroupCon = styled(TransitionGroup)`
             width: 230px;

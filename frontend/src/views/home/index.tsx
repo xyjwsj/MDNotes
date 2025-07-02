@@ -51,6 +51,7 @@ export default defineComponent({
       width: 100%;
       border: none;
       //position: relative; // 这里会引起编辑区在最后一行发生跳动问题
+      background-color: #181816;
 
       .vditor-reset {
         padding: 30px 30px !important;
@@ -59,6 +60,10 @@ export default defineComponent({
         ::-webkit-scrollbar {
           display: none;
         }
+      }
+
+      .vditor-ir pre.vditor-reset {
+        background-color: ${() => settingInfoStore.DarkTheme() ? '#1D1D1B' : '#FCFCFA'} !important;
       }
 
       .counter {
