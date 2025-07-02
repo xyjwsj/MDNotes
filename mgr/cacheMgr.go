@@ -467,15 +467,33 @@ func DelList() []*model.RecordInfo {
 }
 
 func RecoveryDel(fileKey string) bool {
-	for _, item := range recordCache {
+	for idx, item := range recordCache {
 		if item.Uuid == fileKey && item.Status == 0 {
 			target := util.CreatePlatformPath(model.CacheDel, fileKey+".md")
 			if !util.Exists(target) {
+				recordCache = append(recordCache[:idx], recordCache[idx+1:]...)
+				SyncData()
 				return false
 			}
 			item.Status = 1
 			src := util.CreatePlatformPath(model.CacheDel, fileKey+".md")
 			util.Move(src, target)
+			SyncData()
+			return true
+		}
+	}
+	return false
+}
+
+func CleanRecoveryFile(fileKey string) bool {
+	for idx, item := range recordCache {
+		if item.Uuid == fileKey && item.Status == 0 {
+			target := util.CreatePlatformPath(model.CacheDel, fileKey+".md")
+			recordCache = append(recordCache[:idx], recordCache[idx+1:]...)
+			if util.Exists(target) {
+				src := util.CreatePlatformPath(model.CacheDel, fileKey+".md")
+				_ = os.Remove(src)
+			}
 			SyncData()
 			return true
 		}

@@ -70,6 +70,7 @@ const enLocale = {
   help: 'Help',
   category: 'Category',
   all: 'ALL',
+  cleanFileFailure: "Failed to clean file, please try again",
 };
 
 export default enLocale;

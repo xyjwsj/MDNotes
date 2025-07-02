@@ -69,6 +69,7 @@ const zhLocale = {
   help: '帮助',
   category: '分类',
   all: '所有',
+  cleanFileFailure: "清理文件失败，请重试",
 };
 
 export default zhLocale;

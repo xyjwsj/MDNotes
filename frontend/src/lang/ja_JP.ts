@@ -69,6 +69,7 @@ const jaLocale = {
   help: 'ヘルプ',
   category: 'カテゴリ',
   all: 'すべて',
+  cleanFileFailure: "ファイルのクリーンアップに失敗しました。もう一度やり直してください",
 };
 
 export default jaLocale;

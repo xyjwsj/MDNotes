@@ -69,6 +69,7 @@ const zhTwLocale = {
   help: '幫助',
   category: '分類',
   all: '所有',
+  cleanFileFailure: "清理檔案失敗，請重試",
 };
 
 export default zhTwLocale;

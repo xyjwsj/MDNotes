@@ -70,6 +70,7 @@ const ptLocale = {
   help: 'Ajuda',
   category: 'Categoria',
   all: 'Tudo',
+  cleanFileFailure: "Falha ao limpar o arquivo, tente novamente",
 };
 
 export default ptLocale;

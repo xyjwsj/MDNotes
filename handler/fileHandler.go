@@ -76,6 +76,10 @@ func (file *FileHandler) Recovery(fileKey string) bool {
 	return mgr.RecoveryDel(fileKey)
 }
 
+func (file *FileHandler) CleanRecoveryFile(fileKey string) bool {
+	return mgr.CleanRecoveryFile(fileKey)
+}
+
 func (file *FileHandler) CreateFile() model.RecordInfo {
 	return mgr.NewRecord()
 }

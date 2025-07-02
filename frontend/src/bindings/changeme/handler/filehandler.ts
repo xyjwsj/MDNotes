@@ -28,6 +28,11 @@ export function ChangeTag(fileKey: string, tag: string): Promise<boolean> & { ca
     return $resultPromise;
 }
 
+export function CleanRecoveryFile(fileKey: string): Promise<boolean> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3180401214, fileKey) as any;
+    return $resultPromise;
+}
+
 export function CreateFile(): Promise<model$0.RecordInfo> & { cancel(): void } {
     let $resultPromise = $Call.ByID(1643363620) as any;
     let $typingPromise = $resultPromise.then(($result: any) => {
