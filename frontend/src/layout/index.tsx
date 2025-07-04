@@ -55,6 +55,7 @@ import {ShowHelp} from "@/components/help.tsx";
 import {HotKey} from "@/components/hotKey.tsx";
 import {ShowDelFile} from "@/components/deleteCol.tsx";
 import {FileExport} from "@/components/fileExport.tsx";
+import {currentTheme} from "@/style/theme.ts";
 
 export default defineComponent({
     name: "Layout",
@@ -70,8 +71,7 @@ export default defineComponent({
         const ToolView = styled.div`
             height: 40px;
             width: calc(100% - 80px);
-            background-color: ${() =>
-                    settingInfoStore.DarkTheme() ? "#282828" : "#e9e9ed"};
+            background-color: ${() => currentTheme.value.colors.toolBackground};
             padding-left: 80px;
             display: flex;
             align-items: center;
@@ -153,38 +153,26 @@ export default defineComponent({
 
                 .add {
                     line-height: 40px;
-                    color: ${() =>
-                            settingInfoStore.DarkTheme()
-                                    ? "rgba(255, 255, 255, 0.4)"
-                                    : "rgba(0, 0, 0, 0.4)"};
+                    color: ${() => currentTheme.value.colors.action};
 
                     &:hover {
-                        color: ${() =>
-                                settingInfoStore.DarkTheme()
-                                        ? "rgba(255, 255, 255, 0.8)"
-                                        : "rgba(0, 0, 0, 0.7)"};
+                        color: ${() => currentTheme.value.colors.actionHover};
                     }
                 }
 
                 .search {
                     position: absolute;
-                    background-color: ${() =>
-                            settingInfoStore.DarkTheme() ? "#181816" : "#fafafa"};
+                    background-color: ${() => currentTheme.value.colors.inputBackground};
                     border-radius: 15px;
                     height: 25px;
                     width: 80%;
-                    z-index: ${() => (search.value ? 1 : -1)};
 
                     .ant-input {
                         padding-left: 10px;
-                        color: ${() =>
-                                settingInfoStore.DarkTheme() ? "white" : "rgba(0, 0, 0, 0.6)"};
+                        color: ${() => currentTheme.value.colors.input};
 
                         &::placeholder {
-                            color: ${() =>
-                                    settingInfoStore.DarkTheme()
-                                            ? "rgba(255, 255, 255, 0.3)"
-                                            : "rgba(0, 0, 0, 0.4)"};
+                            color: ${() => currentTheme.value.colors.inputPlaceholder};
                         }
                     }
 
@@ -203,16 +191,12 @@ export default defineComponent({
 
                     &.expand-enter-to,
                     &.expand-leave-from {
-                        width: 100%;
+                        width: 80%;
                     }
                 }
             }
 
             .tools {
-                    /* background-color: ${() =>
-                        settingInfoStore.DarkTheme()
-                                ? "#2b2d31"
-                                : "rgba(239, 239, 242, 0.6)"}; */
                 height: 40px;
                 display: flex;
                 justify-content: flex-end;
@@ -238,18 +222,14 @@ export default defineComponent({
 
                     .action {
                         height: 45px;
-                        color: ${() =>
-                                settingInfoStore.DarkTheme() ? "gray" : "rgba(0, 0, 0, 0.4)"};
+                        color: ${() => currentTheme.value.colors.action};
                         font-size: 17px;
                         display: flex;
                         justify-content: flex-end;
                         align-items: center;
 
                         &:hover {
-                            color: ${() =>
-                                    settingInfoStore.DarkTheme()
-                                            ? "lightgray"
-                                            : "rgba(0, 0, 0, 0.7)"};
+                            color: ${() => currentTheme.value.colors.actionHover};
                         }
                     }
                 }
@@ -272,7 +252,7 @@ export default defineComponent({
             opacity: 0.5;
             padding-right: 10px;
             padding-top: 10px;
-            background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.3)' : 'lightgray'};
+            background-color: ${() => currentTheme.value.colors.otherAction};
             display: flex;
             align-items: flex-start;
             justify-content: flex-end;
@@ -283,15 +263,14 @@ export default defineComponent({
 
             &:hover {
                 opacity: 0.9;
-                box-shadow: 0 0 5px 2px ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.3)'};
+                box-shadow: 0 0 5px 2px ${() => currentTheme.value.colors.otherActionHover};;
                 transform: translate(5px, -5px);
             }
         `
 
         const ListView = styled.div`
             width: ${() => (showList.value ? "230px" : 0)};
-            background-color: ${() =>
-            settingInfoStore.DarkTheme() ? "#282828" : "#F5F6F5"};
+            background-color: ${() => currentTheme.value.colors.listBackground};
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -299,14 +278,13 @@ export default defineComponent({
             transition: width 0.5s ease;
             overflow: hidden; /* 防止内容溢出时动画异常 */
             position: relative;
-            box-shadow: 0 0 7px -5px ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.6)' : 'gray'};
+            box-shadow: 0 0 7px -5px ${() => currentTheme.value.colors.listShadow};
             z-index: 10;
             
             .footer {
                 height: 20px;
                 font-size: 11px;
-                color: ${() =>
-            settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.4)" : "gray"};
+                color: ${() => currentTheme.value.colors.footer};
                 position: absolute;
                 left: 50%;
                 transform: translateX(-50%);
@@ -320,15 +298,11 @@ export default defineComponent({
                 font-size: 14px;
                 display: flex;
                 position: relative;
-                color: ${() =>
-            settingInfoStore.DarkTheme()
-                ? "#E5E5E5"
-                : "rgba(48, 48, 45, 1)"};
+                color: ${() => currentTheme.value.colors.listItem};
                 justify-content: space-between;
 
                 &:hover {
-                    background-color: ${() =>
-            settingInfoStore.DarkTheme() ? "#373735" : "#E4E6E5"};
+                    background-color:${() => currentTheme.value.colors.listItemHover};
                 }
 
                 .tag {
@@ -346,10 +320,7 @@ export default defineComponent({
                     height: 35px;
 
                     .ant-input {
-                        color: ${() =>
-            settingInfoStore.DarkTheme()
-                ? "rgba(255, 255, 255, 0.9)"
-                : "black"};
+                        color: ${() => currentTheme.value.colors.listInput};
                     }
                 }
 
@@ -363,8 +334,7 @@ export default defineComponent({
                 .right {
                     font-size: 12px;
                     padding-right: 10px;
-                    color: ${() =>
-            settingInfoStore.DarkTheme() ? "#6D6D6D" : "gray"};
+                    color: ${() => currentTheme.value.colors.listItemSize};
                     display: flex;
                     justify-content: flex-start;
                     align-items: center;
@@ -373,8 +343,7 @@ export default defineComponent({
             }
 
             .select {
-                background-color: ${() =>
-            settingInfoStore.DarkTheme() ? "#2E3C51" : "#D1E0F4"};
+                background-color: ${() => currentTheme.value.colors.listItemSelectBackground};
             }
         `;
 
@@ -435,20 +404,11 @@ export default defineComponent({
         const {t} = useI18n();
 
 
-
-
-
         const MenuItemView = styled(MenuItem)`
-            color: ${() =>
-                    settingInfoStore.DarkTheme()
-                            ? "gray"
-                            : "rgba(0, 0, 0, 0.4)"} !important;
+            color: ${() => currentTheme.value.colors.menuItem} !important;
 
             &:hover {
-                color: ${() =>
-                        settingInfoStore.DarkTheme()
-                                ? "lightgray"
-                                : "rgba(0, 0, 0, 0.7)"} !important;
+                color: ${() => currentTheme.value.colors.menuItemHover} !important;
             }
         `;
 
@@ -456,12 +416,12 @@ export default defineComponent({
 
             :global(.ant-popover-arrow) {
                 &:before {
-                    background: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.7)' : 'lightgray'} !important;
+                    background: ${() => currentTheme.value.colors.popoverBackground} !important;
                 }
             }
 
             :global(.ant-popover-inner) {
-                background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(0, 0, 0, 0.7)' : 'lightgray'} !important;
+                background-color: ${() => currentTheme.value.colors.popoverBackground} !important;
             }
         `;
 
@@ -469,7 +429,6 @@ export default defineComponent({
             display: flex;
             flex-direction: row;
             align-items: center;
-            //background-color: gray;
             gap: 12px;
 
             span {
@@ -479,7 +438,7 @@ export default defineComponent({
                 background-color: red;
 
                 &:hover {
-                    box-shadow: 0 0 3px 2px ${() => settingInfoStore.DarkTheme() ? 'gray' : 'rgba(0, 0, 0, 0.5)'};
+                    box-shadow: 0 0 3px 2px ${() => currentTheme.value.colors.tagShadow};
                 }
             }
         `;
@@ -700,7 +659,7 @@ export default defineComponent({
                 )}？`;
                 modalView.content = (
                     <span
-                        style={{color: settingInfoStore.DarkTheme() ? "white" : "black"}}
+                        style={{color: currentTheme.value.colors.dialogIcon}}
                     >
             {contentStr}
           </span>
@@ -708,7 +667,7 @@ export default defineComponent({
             }
             modalView.icon = (
                 <DeleteOutlined
-                    style={{color: settingInfoStore.DarkTheme() ? "white" : "black"}}
+                    style={{color: currentTheme.value.colors.dialogIcon}}
                 />
             );
             modalView.ok = async () => {
@@ -865,18 +824,12 @@ export default defineComponent({
                 width: 90%;
                 text-align: center;
                 line-height: 30px;
-                color: ${() => settingInfoStore.DarkTheme() ? 'lightgray' : 'rgba(0, 0, 0, 0.7)'};
+                color: ${() => currentTheme.value.colors.dialogItem};
                 border-radius: 5px;
-                background-color: ${() =>
-                        settingInfoStore.DarkTheme()
-                                ? "rgba(255, 255, 255, 0.3)"
-                                : "rgba(255, 255, 255, 0.6)"};
+                background-color: ${() => currentTheme.value.colors.dialogItemBackground};
                 &:hover {
-                    box-shadow: 0 0 5px 1px ${() =>
-                            settingInfoStore.DarkTheme()
-                                    ? "rgba(255, 255, 255, 0.8)"
-                                    : "rgba(255, 255, 255, 0.4)"};
-                    color: ${() => settingInfoStore.DarkTheme() ? "white": "black"};
+                    box-shadow: 0 0 5px 1px ${() => currentTheme.value.colors.dialogItemHoverShadow};
+                    color: ${() => currentTheme.value.colors.dialogItemHover};
             }
         `
 
@@ -918,7 +871,7 @@ export default defineComponent({
                             />
                         )}
                         <Transition name="expand" mode="out-in">
-                            <Input
+                            {search.value && <Input
                                 class={"search"}
                                 placeholder={t("fileName")}
                                 bordered={false}
@@ -935,7 +888,7 @@ export default defineComponent({
                                 onChange={(e) => {
                                     searchDoc(e.target.value!);
                                 }}
-                            ></Input>
+                            ></Input>}
                         </Transition>
                     </div>
                     <div
