@@ -71,6 +71,7 @@ const jaLocale = {
   all: 'すべて',
   cleanFileFailure: "ファイルのクリーンアップに失敗しました。もう一度やり直してください",
   categoryManger: 'カテゴリーフィルタ／管理',
+  listShowHidden: 'リストの表示／非表示',
 };
 
 export default jaLocale;

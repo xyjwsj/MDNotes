@@ -72,6 +72,7 @@ const ptLocale = {
   all: 'Tudo',
   cleanFileFailure: "Falha ao limpar o arquivo, tente novamente",
   categoryManger: 'Filtro/Gestão de Categoria',
+  listShowHidden: 'Mostrar/Ocultar lista',
 };
 
 export default ptLocale;

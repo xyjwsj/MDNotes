@@ -71,6 +71,7 @@ const zhLocale = {
   all: '所有',
   cleanFileFailure: "清理文件失败，请重试",
   categoryManger: '分类过滤/管理',
+  listShowHidden: '列表显示隐藏',
 };
 
 export default zhLocale;

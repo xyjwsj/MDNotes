@@ -27,7 +27,6 @@ import {
     LayoutOutlined,
     MoreOutlined,
     PlusOutlined,
-    QuestionOutlined,
     SearchOutlined,
     TagOutlined,
 } from "@ant-design/icons-vue";
@@ -51,7 +50,6 @@ import styled from "vue3-styled-components";
 import {categoryList, ChangeCategory, FileCategoryDesc, LoadCategoryList} from "@/components/category.tsx";
 import {ChangeLang} from "@/components/language.tsx";
 import {ConfigStoreHandle} from "@/components/cloudStore.tsx";
-import {ShowHelp} from "@/components/help.tsx";
 import {HotKey} from "@/components/hotKey.tsx";
 import {ShowDelFile} from "@/components/deleteCol.tsx";
 import {FileExport} from "@/components/fileExport.tsx";
@@ -122,7 +120,7 @@ export default defineComponent({
                 display: flex;
                 font-size: 18px;
                 align-items: center;
-                justify-content: flex-end;
+                justify-content: flex-start;
                 position: relative;
                 gap: 15px;
 
@@ -153,10 +151,10 @@ export default defineComponent({
 
                 .add {
                     line-height: 40px;
-                    color: ${() => currentTheme.value.colors.action};
+                    color: ${() => currentTheme.value.colors.menuItem};
 
                     &:hover {
-                        color: ${() => currentTheme.value.colors.actionHover};
+                        color: ${() => currentTheme.value.colors.menuItemHover};
                     }
                 }
 
@@ -222,14 +220,14 @@ export default defineComponent({
 
                     .action {
                         height: 45px;
-                        color: ${() => currentTheme.value.colors.action};
+                        color: ${() => currentTheme.value.colors.menuItem};
                         font-size: 17px;
                         display: flex;
                         justify-content: flex-end;
                         align-items: center;
 
                         &:hover {
-                            color: ${() => currentTheme.value.colors.actionHover};
+                            color: ${() => currentTheme.value.colors.menuItemHover};
                         }
                     }
                 }
@@ -544,9 +542,9 @@ export default defineComponent({
                     fileList.value.push(item)
                 })
             });
-            Mousetrap.bind("command+shift+h", () => {
-                ShowHelp()
-            });
+            // Mousetrap.bind("command+shift+h", () => {
+            //     ShowHelp()
+            // });
             Mousetrap.bind("command+shift+p", () => {
                 // fileExport()
             });
@@ -923,19 +921,20 @@ export default defineComponent({
                             </div>
                             <div
                                 class={"action"}
+                                title={t('listShowHidden') + ' ⌘+⇧+←/→'}
                                 onClick={() => {
                                     showList.value = !showList.value;
                                 }}
                             >
                                 <LayoutOutlined/>
                             </div>
-                            <div
-                                class={"action"}
-                                onClick={ShowHelp}
-                                title={t('help')}
-                            >
-                                <QuestionOutlined/>
-                            </div>
+                            {/*<div*/}
+                            {/*    class={"action"}*/}
+                            {/*    onClick={ShowHelp}*/}
+                            {/*    title={t('help')}*/}
+                            {/*>*/}
+                            {/*    <QuestionOutlined/>*/}
+                            {/*</div>*/}
                             <Dropdown
                                 class={"action"}
                                 overlay={
@@ -950,7 +949,7 @@ export default defineComponent({
                                             justifyContent: 'flex-start'
                                         }}
                                     >
-                                        <MenuItemView title={t('export')} onClick={() => {
+                                        <MenuItemView title={t('export') + ' ⌘+⇧+E'} onClick={() => {
                                             FileExport(key => {
                                                 if (currentCom.value) {
                                                     currentCom.value.exportHtml(key);
@@ -959,16 +958,16 @@ export default defineComponent({
                                         }}>
                                             <ExportOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
-                                        <MenuItemView title={t('delete')} onClick={deleteFile}>
+                                        <MenuItemView title={t('delete') + ' ⌘+D'} onClick={deleteFile}>
                                             <DeleteOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
-                                        <MenuItemView title={t('language')} onClick={ChangeLang}>
+                                        <MenuItemView title={t('language' + ' ⌘+L')} onClick={ChangeLang}>
                                             <DribbbleOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
-                                        <MenuItemView title={t('changeTheme')} onClick={SwitchTheme}>
+                                        <MenuItemView title={t('changeTheme' + ' ⌘+⇧+T')} onClick={SwitchTheme}>
                                             <BulbOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
-                                        <MenuItemView title={t('configStore')} onClick={ConfigStoreHandle}>
+                                        <MenuItemView title={t('configStore' + ' ⌘+⇧+S')} onClick={ConfigStoreHandle}>
                                             <CloudUploadOutlined style={{fontSize: '17px'}}/>
                                         </MenuItemView>
                                         {/*<MenuItemView title={t('license')} onClick={showLicense}>*/}

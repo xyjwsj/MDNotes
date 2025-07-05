@@ -74,6 +74,7 @@ const frLocale = {
   all: 'Tout',
   cleanFileFailure: "Échec du nettoyage du fichier, veuillez réessayer",
   categoryManger: 'Filtrage/Gestion des catégories',
+  listShowHidden: 'Afficher/Masquer la liste',
 };
 
 export default frLocale;

@@ -4,53 +4,97 @@ import {settingInfoStore} from "@/store/modules/settings.ts";
 
 export type Theme = {
     colors: {
+        // 工具栏背景色
         toolBackground: string;
+        // 输入框色
         input: string;
+        // 输入框提示颜色
         inputPlaceholder: string;
+        // 输入框背景色
         inputBackground: string;
-        action: string;
-        actionHover: string;
+        // 其他按钮栏文本色
         otherAction: string;
+        // 其他按钮悬浮文本色
         otherActionHover: string;
+        // 标题颜色
         title: string
+        // 副标题颜色
         subTitle: string
+        // 列表区背景色
         listBackground: string;
+        // 列表去阴影色
         listShadow: string;
+        // 列表区条目文本色
         listItem: string;
+        // 列表区选中条目背景色
         listItemSelectBackground: string;
+        // 列表区条目悬浮色
         listItemHover: string;
+        // 列表区输入框颜色
         listInput: string;
+        // 列表区条目大小文本颜色
         listItemSize: string;
-        menuItem: string;
-        menuItemHover: string;
+        // 悬浮下拉框背景色
         popoverBackground: string;
+        // 工具栏菜单悬浮色
+        menuItemHover: string;
+        // 工具栏菜单文本色
+        menuItem: string;
+        // 对话框tag阴影
         tagShadow: string;
+        // 对话框图标颜色
         dialogIcon: string;
+        // 对话框标题颜色
         dialogTitle: string;
+        // 对话框label文本色
         dialogLabelText: string;
+        // 对话框label色
         dialogLabel: string;
+        // 对话框label背景色
         dialogLabelBackground: string;
+        // 对话框条目文本色
         dialogItem: string;
+        // 对话框条目背景色
         dialogItemBackground: string;
+        // 对话框条目悬浮色值
         dialogItemHover: string;
+        // 对话框条目悬浮阴影
         dialogItemHoverShadow: string;
+        // 对话框输入框色制
         dialogInput: string;
+        // 对话框输入框聚焦色纸
         dialogInputFocus: string;
+        // 对话框输入框提示文本色
         dialogInputPlaceholder: string;
+        // 对话框输入框背景色
         dialogInputBackground: string;
+        // 对话框输入框悬浮文本色
         dialogInputHover: string;
+        // 对话框输入框悬浮阴影
         dialogInputHoverShadow: string;
-        dialogBtnBackground: string;
+        // 对话框按钮文本色
         dialogBtn: string;
+        // 对话框按钮背景色
+        dialogBtnBackground: string;
+        // 对话框按钮悬浮文本颜色
         dialogBtnHover: string;
+        // 对话框按钮悬浮阴影
         dialogBtnHoverShadow: string;
+        // 对话框按钮悬浮背景色
         dialogBtnHoverBackground: string;
+        // 对话框无数据颜色
         dialogNoData: string;
+
         icon: string;
+        // 列表区底部文本色值
         footer: string;
+        // 编辑器背景色
         editorBackground: string;
+        // 字符计数器背景色
         counterBackground: string;
+        // 编辑去右下角同步文本颜色
         syncInfo: string;
+        // 编辑区右下角同步中icon颜色
         syncIng: string;
     };
     fonts: {
@@ -71,8 +115,6 @@ const computeThemeColors = (darkMode: boolean) => {
             input: darkMode ? "#FFFFFF" : "rgba(0, 0, 0, 0.6)",
             inputPlaceholder: darkMode ? "rgba(255, 255, 255, 0.3)" : "rgba(0, 0, 0, 0.4)",
             inputBackground: darkMode ? "#181816" : "#fafafa",
-            action: darkMode ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.4)",
-            actionHover: darkMode ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.7)",
             otherAction: darkMode ? 'rgba(0, 0, 0, 0.3)' : 'lightgray',
             otherActionHover: darkMode ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.3)',
             title: darkMode ? "lightgray" : "gray",
@@ -86,7 +128,7 @@ const computeThemeColors = (darkMode: boolean) => {
             listItemSize: darkMode ? "#6D6D6D" : "gray",
             menuItem: darkMode ? "gray" : "rgba(0, 0, 0, 0.4)",
             menuItemHover: darkMode ? "lightgray" : "rgba(0, 0, 0, 0.7)",
-            popoverBackground: darkMode ? 'rgba(0, 0, 0, 0.7)' : 'lightgray',
+            popoverBackground: darkMode ? "#282828" : 'lightgray',
             tagShadow: darkMode ? 'gray' : 'rgba(0, 0, 0, 0.5)',
             dialogIcon: darkMode ? "white" : "black",
             dialogTitle: darkMode ? "rgba(255, 255, 255, 0.8)" : "gray",

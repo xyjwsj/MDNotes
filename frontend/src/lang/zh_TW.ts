@@ -71,6 +71,7 @@ const zhTwLocale = {
   all: '所有',
   cleanFileFailure: "清理檔案失敗，請重試",
   categoryManger: '分類過濾／管理',
+  listShowHidden: '列表顯示／隱藏',
 };
 
 export default zhTwLocale;
