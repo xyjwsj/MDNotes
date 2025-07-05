@@ -9,6 +9,7 @@ import categoryLightIcon from '@/assets/png/category-light.png'
 import {CategoryItem} from "@/bindings/changeme/model";
 import {CloseOutlined, PlusOutlined} from "@ant-design/icons-vue";
 import { $t } from '@/lang'
+import {currentTheme} from "@/style/theme.ts";
 
 const CategoryView = styled.div`
             display: flex;
@@ -35,22 +36,12 @@ const CategoryView = styled.div`
                     position: relative;
                     border-radius: 5px;
                     text-align: center;
-                    color: ${() =>
-    settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
-                    background-color: ${() =>
-    settingInfoStore.DarkTheme()
-        ? "rgba(255, 255, 255, 0.2)"
-        : "rgba(255, 255, 255, 0.7)"};
+                    color: ${() => currentTheme.value.colors.dialogItem};
+                    background-color: ${() => currentTheme.value.colors.dialogItemBackground};
 
                     &:hover {
-                        box-shadow: 0 0 5px 1px ${() =>
-    settingInfoStore.DarkTheme()
-        ? "rgba(255, 255, 255, 0.8)"
-        : "gray"};
-                        color: ${() =>
-    settingInfoStore.DarkTheme()
-        ? "rgba(255, 255, 255, 0.8)"
-        : "rgba(0, 0, 0, 0.8)"};
+                        box-shadow: 0 0 5px 1px ${() => currentTheme.value.colors.dialogItemHoverShadow};
+                        color: ${() => currentTheme.value.colors.dialogItemHover};
                     }
                     
                     .close {
@@ -71,23 +62,13 @@ const CategoryView = styled.div`
             .inputEdit {
                 height: 40px;
                 width: 95%;
-                background-color: ${() =>
-    settingInfoStore.DarkTheme()
-        ? "rgba(255, 255, 255, 0.3)"
-        : "rgba(255, 255, 255, 0.7)"};
-                color: ${() =>
-    settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
+                background-color: ${() => currentTheme.value.colors.dialogInputBackground};
+                color: ${() => currentTheme.value.colors.dialogInput};
                 text-align: center;
 
                 &:hover {
-                    box-shadow: 0 0 5px 1px ${() =>
-    settingInfoStore.DarkTheme()
-        ? "rgba(255, 255, 255, 0.8)"
-        : "gray"};
-                    color: ${() =>
-    settingInfoStore.DarkTheme()
-        ? "rgba(255, 255, 255, 0.8)"
-        : "rgba(0, 0, 0, 0.8)"};
+                    box-shadow: 0 0 5px 1px ${() => currentTheme.value.colors.dialogInputHover};
+                    color: ${() => currentTheme.value.colors.dialogInputHover};
                 }
             }
         `;
@@ -96,12 +77,12 @@ const AddBtn = styled(Button)`
             border: none;
             width: 70%;
             height: 40px;
-            background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.6)'};
-            color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.2)'};
+            background-color: ${() => currentTheme.value.colors.dialogBtnBackground};
+            color: ${() => currentTheme.value.colors.dialogBtn};
 
             &:hover {
-                background-color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.5)' : 'rgba(255, 255, 255, 0.8)'};
-                color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.5)'};
+                background-color: ${() => currentTheme.value.colors.dialogBtnHoverBackground};
+                color: ${() => currentTheme.value.colors.dialogBtnHover};
             }
         `
 
@@ -185,7 +166,7 @@ const ChangeCategory = async () => {
                         width: '95%',
                     }}
                     icon={<PlusOutlined style={{
-                        color: settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.4)',
+                        color: currentTheme.value.colors.icon,
                     }}/>}
                     onClick={() => addRef.flag = true}
                 ></AddBtn>}

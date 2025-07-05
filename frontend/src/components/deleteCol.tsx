@@ -9,6 +9,7 @@ import {DeleteOutlined, UndoOutlined} from "@ant-design/icons-vue";
 import {TipError} from "@/util/messageUtil.tsx";
 import {$t} from '@/lang'
 import {RecordInfo} from "@/bindings/changeme/model";
+import {currentTheme} from "@/style/theme.ts";
 
 const DeleteView = styled.div`
     display: flex;
@@ -37,22 +38,12 @@ const DeleteView = styled.div`
         justify-content: space-between;
         border-radius: 8px;
 
-        color: ${() =>
-                settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
-        background-color: ${() =>
-                settingInfoStore.DarkTheme()
-                        ? "rgba(255, 255, 255, 0.2)"
-                        : "rgba(255, 255, 255, 0.7)"};
+        color: ${() => currentTheme.value.colors.dialogBtn};
+        background-color: ${() => currentTheme.value.colors.dialogBtnBackground};
 
         &:hover {
-            box-shadow: 0 0 5px 1px ${() =>
-                    settingInfoStore.DarkTheme()
-                            ? "rgba(255, 255, 255, 0.8)"
-                            : "gray"};
-            color: ${() =>
-                    settingInfoStore.DarkTheme()
-                            ? "rgba(255, 255, 255, 0.8)"
-                            : "rgba(0, 0, 0, 0.8)"};
+            box-shadow: 0 0 5px 1px ${() => currentTheme.value.colors.dialogBtnHoverShadow};
+            color: ${() => currentTheme.value.colors.dialogBtnHover};
         }
     }
 
@@ -117,7 +108,7 @@ const ShowDelFile = async (callback: (record: RecordInfo) => void) => {
                         backgroundColor: '',
                     }}
                     style={{
-                        color: settingInfoStore.DarkTheme() ? "white" : "gray",
+                        color: currentTheme.value.colors.dialogNoData,
                     }}
                     description={'暂无数据'}></Empty>}
         </DeleteView>

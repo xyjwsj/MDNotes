@@ -6,6 +6,7 @@ import keyboardDark from "@/assets/png/keyboard-black.png";
 import keyboardLight from "@/assets/png/keyboard-white.png";
 import {Image} from "ant-design-vue";
 import { $t } from '@/lang'
+import {currentTheme} from "@/style/theme.ts";
 
 const HotKeyView = styled.div`
             display: flex;
@@ -17,31 +18,23 @@ const HotKeyView = styled.div`
             .title {
                 width: 100%;
                 margin-top: 20px;
-                color: ${() =>
-    settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.8)" : "gray"};
+                color: ${() => currentTheme.value.colors.dialogTitle};
             }
 
             .item {
                 width: 50%;
                 line-height: 35px;
-                color: ${() =>
-    settingInfoStore.DarkTheme()
-        ? "rgba(255, 255, 255, 0.8)"
-        : "rgba(0, 0, 0, 0.8)"};
                 display: flex;
                 align-items: center;
+                color: ${() => currentTheme.value.colors.dialogLabelText};
                 gap: 3px;
 
                 .key {
-                    background-color: ${() =>
-    settingInfoStore.DarkTheme() ? "rgba(0, 0, 0, 0.7)" : "lightgray"};
+                    background-color: ${() => currentTheme.value.colors.dialogLabelBackground};
                     line-height: 20px;
                     padding: 0 5px;
                     border-radius: 3px;
-                    color: ${() =>
-    settingInfoStore.DarkTheme()
-        ? "rgba(255, 255, 255, 0.7)"
-        : "rgba(0, 0, 0, 0.8)"};
+                    color: ${() => currentTheme.value.colors.dialogLabel};
                 }
             }
         `;
@@ -113,7 +106,7 @@ const hotKeyInfo = reactive([
                 descKey: "export",
             },
             {
-                key: "⌘+Shift+C",
+                key: "⌘+Shift+S",
                 descKey: "configStore",
             },
             {
@@ -127,6 +120,10 @@ const hotKeyInfo = reactive([
             {
                 key: "⌘+Shift+Right",
                 descKey: "showSidebar",
+            },
+            {
+                key: "⌘+Shift+C",
+                descKey: "categoryManger",
             },
             {
                 key: "⌘+Shift+H",

@@ -1,6 +1,7 @@
 import Mousetrap from "mousetrap";
 
 const HandleKey = (event: KeyboardEvent) => {
+    console.log('监听事件', event)
     const modifiers: string[] = [];
 
     if (event.metaKey || event.ctrlKey) modifiers.push("command");

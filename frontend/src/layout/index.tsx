@@ -94,14 +94,14 @@ export default defineComponent({
                     font-size: 15px;
                     font-weight: bold;
                     line-height: 30px;
-                    color: ${() => (settingInfoStore.DarkTheme() ? "lightgray" : "gray")};
+                    color: ${() => currentTheme.value.colors.title};
                 }
                 
                 .category {
                     font-size: 13px;
                     font-weight: bold;
                     line-height: 30px;
-                    color: ${() => (settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)")};
+                    color: ${() => currentTheme.value.colors.subTitle};
                 }
 
                 .tag {

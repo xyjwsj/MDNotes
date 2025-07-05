@@ -31,14 +31,8 @@ const LanguageView = styled.div`
                 background-color: ${() => currentTheme.value.colors.dialogItemBackground};
 
                 &:hover {
-                    box-shadow: 0 0 5px 1px ${() =>
-    settingInfoStore.DarkTheme()
-        ? "rgba(255, 255, 255, 0.8)"
-        : "gray"};
-                    color: ${() =>
-    settingInfoStore.DarkTheme()
-        ? "rgba(255, 255, 255, 0.8)"
-        : "rgba(0, 0, 0, 0.8)"};
+                    box-shadow: 0 0 5px 1px ${() => currentTheme.value.colors.dialogItemHoverShadow};
+                    color: ${() => currentTheme.value.colors.dialogItemHover};
                 }
             }
         `;

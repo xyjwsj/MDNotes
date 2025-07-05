@@ -30,6 +30,7 @@ import chartsLightIcon from "@/assets/png/charts-light.png";
 import chartsDarkIcon from "@/assets/png/charts-black.png";
 import {$t} from '@/lang'
 import styled from "vue3-styled-components";
+import {currentTheme} from "@/style/theme.ts";
 
 
 const TemplateView = styled.div`
@@ -50,7 +51,7 @@ const TemplateView = styled.div`
 
             .item {
                 padding: 10px 5px;
-                color: ${() => (settingInfoStore.DarkTheme() ? "white" : "black")};
+                color: ${() => currentTheme.value.colors.dialogItem};
                 //width: 120px;
                 height: 120px;
                 width: 40%;
@@ -60,10 +61,7 @@ const TemplateView = styled.div`
                 gap: 5px;
 
                 &:hover {
-                    box-shadow: 0 0 5px 2px ${() =>
-    settingInfoStore.DarkTheme()
-        ? "rgba(255, 255, 255, 0.8)"
-        : "gray"};
+                    box-shadow: 0 0 5px 2px ${() => currentTheme.value.colors.dialogItemHover};
                 }
             }
         `;

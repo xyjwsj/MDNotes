@@ -73,6 +73,7 @@ const frLocale = {
   category: 'Catégorie',
   all: 'Tout',
   cleanFileFailure: "Échec du nettoyage du fichier, veuillez réessayer",
+  categoryManger: 'Filtrage/Gestion des catégories',
 };
 
 export default frLocale;

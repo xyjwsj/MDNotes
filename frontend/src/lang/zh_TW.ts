@@ -70,6 +70,7 @@ const zhTwLocale = {
   category: '分類',
   all: '所有',
   cleanFileFailure: "清理檔案失敗，請重試",
+  categoryManger: '分類過濾／管理',
 };
 
 export default zhTwLocale;

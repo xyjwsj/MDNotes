@@ -70,6 +70,7 @@ const jaLocale = {
   category: 'カテゴリ',
   all: 'すべて',
   cleanFileFailure: "ファイルのクリーンアップに失敗しました。もう一度やり直してください",
+  categoryManger: 'カテゴリーフィルタ／管理',
 };
 
 export default jaLocale;

@@ -4,35 +4,26 @@ import {ModalView, ShowModal} from "@/util/modalUtil.tsx";
 import {TipSuccess, TipWarning} from "@/util/messageUtil.tsx";
 import styled from "vue3-styled-components";
 import {Input} from "ant-design-vue";
-import {settingInfoStore} from "@/store/modules/settings.ts";
-import { $t } from '@/lang'
+import {$t} from '@/lang'
+import {currentTheme} from "@/style/theme.ts";
 
 const InputView = styled(Input)`
-            background-color: ${() =>
-    settingInfoStore.DarkTheme()
-        ? "rgba(255, 255, 255, 0.2)"
-        : "rgba(255, 255, 255, 0.6)"};
+            background-color: ${() => currentTheme.value.colors.dialogInputBackground};
             margin: 5px 0;
-            color: ${() =>
-    settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.8)" : "gray"};
+            color: ${() => currentTheme.value.colors.dialogInput};
 
             .ant-input {
                 &::placeholder {
-                    color: ${() =>
-    settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.4)" : "gray"};
+                    color: ${() => currentTheme.value.colors.dialogInputPlaceholder};
                 }
             }
 
             &:hover {
-                background-color: ${() =>
-    settingInfoStore.DarkTheme()
-        ? "rgba(255, 255, 255, 0.4)"
-        : "#fafafa"};
+                background-color: ${() => currentTheme.value.colors.dialogInputHover};
             }
 
             &:focus {
-                background-color: ${() =>
-    settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.4)" : "white"};
+                background-color: ${() => currentTheme.value.colors.dialogInputFocus};
             }
         `;
 

@@ -1,9 +1,9 @@
 import styled from "vue3-styled-components";
-import {settingInfoStore} from "@/store/modules/settings.ts";
 import {reactive} from "vue";
 import {DestroyModal, ModalView, ShowModal} from "@/util/modalUtil.tsx";
 import {ExportOutlined} from "@ant-design/icons-vue";
-import { $t } from '@/lang'
+import {$t} from '@/lang'
+import {currentTheme} from "@/style/theme.ts";
 
 const ExportView = styled.div`
             display: flex;
@@ -24,22 +24,12 @@ const ExportView = styled.div`
                 width: 95%;
                 border-radius: 5px;
                 text-align: center;
-                color: ${() =>
-    settingInfoStore.DarkTheme() ? "rgba(255, 255, 255, 0.6)" : "gray"};
-                background-color: ${() =>
-    settingInfoStore.DarkTheme()
-        ? "rgba(255, 255, 255, 0.2)"
-        : "rgba(255, 255, 255, 0.7)"};
+                color: ${() => currentTheme.value.colors.dialogItem};
+                background-color: ${() => currentTheme.value.colors.dialogItemBackground};
 
                 &:hover {
-                    box-shadow: 0 0 5px 1px ${() =>
-    settingInfoStore.DarkTheme()
-        ? "rgba(255, 255, 255, 0.8)"
-        : "gray"};
-                    color: ${() =>
-    settingInfoStore.DarkTheme()
-        ? "rgba(255, 255, 255, 0.8)"
-        : "rgba(0, 0, 0, 0.8)"};
+                    box-shadow: 0 0 5px 1px ${() => currentTheme.value.colors.dialogItemHoverShadow};
+                    color: ${() => currentTheme.value.colors.dialogBtnHover};
                 }
             }
         `;
@@ -74,7 +64,7 @@ const FileExport = (callback: (key: string) => void) => {
     modalView.width = "350px";
     modalView.icon = (
         <ExportOutlined
-            style={{color: settingInfoStore.DarkTheme() ? "white" : "black"}}
+            style={{color: currentTheme.value.colors.dialogIcon}}
         />
     );
     modalView.content = (

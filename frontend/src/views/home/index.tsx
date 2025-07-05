@@ -14,6 +14,7 @@ import {UploadImage} from "@/bindings/changeme/handler/resourcehandler.ts";
 import {HandleKey} from "@/util/hotKeyUtil.ts";
 import Mousetrap from "mousetrap";
 import {ShowMDTemplate} from "@/components/mdTemplate.tsx";
+import {currentTheme} from "@/style/theme.ts";
 
 export default defineComponent({
     name: "Home",
@@ -38,7 +39,7 @@ export default defineComponent({
             }
 
             .vditor-ir pre.vditor-reset {
-                background-color: ${() => settingInfoStore.DarkTheme() ? '#1D1D1B' : '#FCFCFA'} !important;
+                background-color: ${() => currentTheme.value.colors.editorBackground} !important;
             }
 
             .counter {
@@ -47,8 +48,7 @@ export default defineComponent({
                 right: 0;
                 height: 15px;
                 width: 30px;
-                background-color: ${() =>
-                        settingInfoStore.DarkTheme() ? "#2B2D30" : "#E0E0E3"};
+                background-color: ${() => currentTheme.value.colors.counterBackground};
                 color: gray;
                 text-align: center;
                 font-size: 12px;
@@ -65,7 +65,7 @@ export default defineComponent({
                 justify-content: flex-end;
                 font-size: 10px;
                 align-items: center;
-                color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.3)' : 'lightgray'};
+                color: ${() => currentTheme.value.colors.syncInfo};
                 //gap: 15px;
 
                 .item {
@@ -84,7 +84,7 @@ export default defineComponent({
                 }
 
                 .async-ing {
-                    color: ${() => settingInfoStore.DarkTheme() ? 'rgba(255, 255, 255, 0.6)' : 'gray'};;
+                    color: ${() => currentTheme.value.colors.syncIng};
                 }
             }
         `;

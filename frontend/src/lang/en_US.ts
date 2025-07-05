@@ -71,6 +71,7 @@ const enLocale = {
   category: 'Category',
   all: 'ALL',
   cleanFileFailure: "Failed to clean file, please try again",
+  categoryManger: 'Category Filter/Management',
 };
 
 export default enLocale;

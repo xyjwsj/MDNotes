@@ -70,6 +70,7 @@ const zhLocale = {
   category: '分类',
   all: '所有',
   cleanFileFailure: "清理文件失败，请重试",
+  categoryManger: '分类过滤/管理',
 };
 
 export default zhLocale;
