@@ -29,7 +29,8 @@ const ExportView = styled.div`
 
                 &:hover {
                     box-shadow: 0 0 5px 1px ${() => currentTheme.value.colors.dialogItemHoverShadow};
-                    color: ${() => currentTheme.value.colors.dialogBtnHover};
+                    background-color: ${() => currentTheme.value.colors.dialogItemHoverBackground};
+                    color: ${() => currentTheme.value.colors.dialogItemHover};
                 }
             }
         `;

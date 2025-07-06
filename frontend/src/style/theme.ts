@@ -28,6 +28,8 @@ export type Theme = {
         listItem: string;
         // 列表区选中条目背景色
         listItemSelectBackground: string;
+        // 列表选中条目阴影
+        listItemSelectShadow: string;
         // 列表区条目悬浮色
         listItemHover: string;
         // 列表区输入框颜色
@@ -36,6 +38,16 @@ export type Theme = {
         listItemSize: string;
         // 悬浮下拉框背景色
         popoverBackground: string;
+        // 悬浮下拉框条目背景色
+        popoverItemBackground: string;
+        // 悬浮下拉框文本颜色
+        popoverItem: string;
+        // 悬浮下拉框悬浮文本颜色
+        popoverItemHover: string;
+        // 悬浮下拉框悬浮阴影颜色
+        popoverItemHoverShadow: string;
+        // 悬浮下拉框悬浮背景颜色
+        popoverItemHoverBackground: string;
         // 工具栏菜单悬浮色
         menuItemHover: string;
         // 工具栏菜单文本色
@@ -58,6 +70,8 @@ export type Theme = {
         dialogItemBackground: string;
         // 对话框条目悬浮色值
         dialogItemHover: string;
+        // 对话框条目悬浮背景色
+        dialogItemHoverBackground: string;
         // 对话框条目悬浮阴影
         dialogItemHoverShadow: string;
         // 对话框输入框色制
@@ -70,6 +84,8 @@ export type Theme = {
         dialogInputBackground: string;
         // 对话框输入框悬浮文本色
         dialogInputHover: string;
+        // 对话框输入框悬浮背景色
+        dialogInputHoverBackground: string;
         // 对话框输入框悬浮阴影
         dialogInputHoverShadow: string;
         // 对话框按钮文本色
@@ -123,12 +139,18 @@ const computeThemeColors = (darkMode: boolean) => {
             listShadow: darkMode ? 'rgba(255, 255, 255, 0.6)' : 'gray',
             listItem: darkMode ? "#E5E5E5" : "rgba(48, 48, 45, 1)",
             listItemSelectBackground: darkMode ? "#2E3C51" : "#D1E0F4",
+            listItemSelectShadow: darkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)",
             listItemHover: darkMode ? "#373735" : "#E4E6E5",
             listInput: darkMode ? "rgba(255, 255, 255, 0.9)" : "black",
             listItemSize: darkMode ? "#6D6D6D" : "gray",
             menuItem: darkMode ? "gray" : "rgba(0, 0, 0, 0.4)",
             menuItemHover: darkMode ? "lightgray" : "rgba(0, 0, 0, 0.7)",
             popoverBackground: darkMode ? "#282828" : 'lightgray',
+            popoverItemBackground: darkMode ? "rgba(255, 255, 255, 0.1)" : 'rgba(255, 255, 255, 0.6)',
+            popoverItem: darkMode ? "rgba(255, 255, 255, 0.9)" : 'rgba(0, 0, 0, 0.6)',
+            popoverItemHover: darkMode ? "rgba(255, 255, 255, 1)" : 'rgba(0, 0, 0, 0.8)',
+            popoverItemHoverShadow: darkMode ? "rgba(0, 0, 0, 0.3)" : 'rgba(255, 255, 255, 0.4)',
+            popoverItemHoverBackground: darkMode ? "rgba(255, 255, 255, 0.2)" : 'rgba(255, 255, 255, 0.7)',
             tagShadow: darkMode ? 'gray' : 'rgba(0, 0, 0, 0.5)',
             dialogIcon: darkMode ? "white" : "black",
             dialogTitle: darkMode ? "rgba(255, 255, 255, 0.8)" : "gray",
@@ -136,14 +158,16 @@ const computeThemeColors = (darkMode: boolean) => {
             dialogLabel: darkMode ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.8)",
             dialogLabelBackground: darkMode ? "rgba(0, 0, 0, 0.7)" : "lightgray",
             dialogItem: darkMode ? "rgba(255, 255, 255, 0.6)" : "gray",
-            dialogItemBackground: darkMode ? "rgba(255, 255, 255, 0.3)" : "rgba(255, 255, 255, 0.6)",
             dialogItemHover: darkMode ? "white" : "black",
-            dialogItemHoverShadow: darkMode ? "rgba(255, 255, 255, 0.8)" : "rgba(255, 255, 255, 0.4)",
+            dialogItemBackground: darkMode ? "rgba(255, 255, 255, 0.3)" : "rgba(255, 255, 255, 0.6)",
+            dialogItemHoverBackground: darkMode ? "rgba(255, 255, 255, 0.4)" : "rgba(255, 255, 255, 0.5)",
+            dialogItemHoverShadow: darkMode ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.2)",
             dialogInput: darkMode ? "rgba(255, 255, 255, 0.6)" : "gray",
             dialogInputFocus: darkMode ? "rgba(255, 255, 255, 0.4)" : "white",
             dialogInputPlaceholder: darkMode ? "rgba(255, 255, 255, 0.4)" : "gray",
             dialogInputBackground: darkMode ? "rgba(255, 255, 255, 0.3)" : "rgba(255, 255, 255, 0.7)",
-            dialogInputHover: darkMode ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.8)",
+            dialogInputHover: darkMode ? "white" : "black",
+            dialogInputHoverBackground: darkMode ? "rgba(255, 255, 255, 0.5)" : "rgba(255, 255, 255, 1)",
             dialogInputHoverShadow: darkMode ? "rgba(255, 255, 255, 0.8)" : "gray",
             dialogBtnBackground: darkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.6)',
             dialogBtn: darkMode ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.2)',

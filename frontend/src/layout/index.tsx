@@ -292,7 +292,7 @@ export default defineComponent({
             .selectDefault {
                 line-height: 35px;
                 width: 190px;
-                padding: 0 20px;
+                padding: 1px 20px;
                 font-size: 14px;
                 display: flex;
                 position: relative;
@@ -342,6 +342,7 @@ export default defineComponent({
 
             .select {
                 background-color: ${() => currentTheme.value.colors.listItemSelectBackground};
+                box-shadow: inset 0 0 10px 1px ${() => currentTheme.value.colors.listItemSelectShadow};
             }
         `;
 
@@ -816,18 +817,20 @@ export default defineComponent({
             display: flex;
             flex-direction: column;
             align-items: center;
+            background-color: ${() => currentTheme.value.colors.popoverBackground};
             gap: 5px;
             
             .spanItem {
                 width: 90%;
                 text-align: center;
                 line-height: 30px;
-                color: ${() => currentTheme.value.colors.dialogItem};
+                color: ${() => currentTheme.value.colors.popoverItem};
                 border-radius: 5px;
-                background-color: ${() => currentTheme.value.colors.dialogItemBackground};
+                background-color: ${() => currentTheme.value.colors.popoverItemBackground};
                 &:hover {
-                    box-shadow: 0 0 5px 1px ${() => currentTheme.value.colors.dialogItemHoverShadow};
-                    color: ${() => currentTheme.value.colors.dialogItemHover};
+                    box-shadow: 0 0 5px 1px ${() => currentTheme.value.colors.popoverItemHoverShadow};
+                    color: ${() => currentTheme.value.colors.popoverItemHover};
+                    background-color: ${() => currentTheme.value.colors.popoverItemHoverBackground};
             }
         `
 

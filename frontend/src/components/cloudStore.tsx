@@ -19,7 +19,8 @@ const InputView = styled(Input)`
             }
 
             &:hover {
-                background-color: ${() => currentTheme.value.colors.dialogInputHover};
+                color: ${() => currentTheme.value.colors.dialogInputHover};;
+                background-color: ${() => currentTheme.value.colors.dialogInputHoverBackground};
             }
 
             &:focus {

@@ -10,11 +10,11 @@ import {SameDay} from "@/util/dateUtil.ts";
 import {ReloadOutlined} from "@ant-design/icons-vue";
 import {TipSuccess} from "@/util/messageUtil.tsx";
 import {Log} from "@/bindings/changeme/handler/systemhandler.ts";
-import {UploadImage} from "@/bindings/changeme/handler/resourcehandler.ts";
 import {HandleKey} from "@/util/hotKeyUtil.ts";
 import Mousetrap from "mousetrap";
 import {ShowMDTemplate} from "@/components/mdTemplate.tsx";
 import {currentTheme} from "@/style/theme.ts";
+import {UploadImage} from "@/bindings/changeme/handler/resourcehandler.ts";
 
 export default defineComponent({
     name: "Home",
@@ -213,8 +213,8 @@ export default defineComponent({
                 },
                 upload: {
                     accept: "image/*",
-                    // url: "/api/upload",
-                    url: "",
+                    url: "/api/upload",
+                    // url: "",
                     linkToImgUrl: "/api/upload",
                     withCredentials: true,
                     extraData: {
@@ -264,9 +264,6 @@ export default defineComponent({
                     },
                     fileData: async (event: ClipboardEvent, _: any) => {
                         const res: File[] = []
-                        // Log('xxxxx===>' + JSON.stringify(files))
-                        // Object.keys(files).filter(itm => files[itm])
-                        // const fs = files.filter((file: any) => file.name && file.name != "")
                         if ("clipboardData" in event) {
                             const clipboardData = event.clipboardData
                             if (clipboardData != null) {
