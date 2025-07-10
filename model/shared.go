@@ -1,6 +1,8 @@
 package model
 
-import "github.com/wailsapp/wails/v3/pkg/application"
+import (
+	"github.com/wailsapp/wails/v3/pkg/application"
+)
 
 type AppInfo struct {
 	App *application.App

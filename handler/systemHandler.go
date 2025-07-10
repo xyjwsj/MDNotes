@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"changeme/api"
 	"changeme/mgr"
 	"changeme/model"
 	"changeme/util"
@@ -57,6 +58,9 @@ func (system *SystemHandler) Trial(create bool) License {
 
 func (system *SystemHandler) Start() bool {
 	mgr.Start()
+	go func() {
+		api.ReportOpenApp("macos", "1.1.0", mgr.UniqueId())
+	}()
 	return true
 }
 
