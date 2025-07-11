@@ -127,7 +127,7 @@ const templateInfo = reactive([
 
 const ShowMDTemplate = (callback: (content: string) => void) => {
     const modalView = new ModalView();
-    modalView.title = "选择插入模版";
+    modalView.title = $t('insertTemplate');
     modalView.okText = "";
     modalView.cancelText = "";
     modalView.closed = true;

@@ -26,17 +26,31 @@ export default defineComponent({
             height: 100%;
             width: 100%;
             border: none;
+            padding-left: 10px;
             //position: relative; // 这里会引起编辑区在最后一行发生跳动问题
-            background-color: #181816;
+            background-color: ${() => currentTheme.value.colors.editorBackground};
 
             .vditor-reset {
                 padding: 30px 30px !important;
                 overflow-y: auto;
+                position: relative;
 
+                caret-width: 4px !important;
+                //&::after {
+                //    content: '';
+                //    position: absolute;
+                //    top: 8px;
+                //    left: calc(8px + 1ch); /* 跟随文本内容 */
+                //    width: 14px; /* 光标宽度 */
+                //    height: 24px;
+                //    background: #007BFF;
+                //}
+                
                 ::-webkit-scrollbar {
                     display: none;
                 }
             }
+            
 
             .vditor-ir pre.vditor-reset {
                 background-color: ${() => currentTheme.value.colors.editorBackground} !important;
