@@ -91,7 +91,8 @@ func getSerialNumber() string {
 }
 
 func UniqueId() string {
-	id := getMac() + getSerialNumber()
+	//id := getMac() + getSerialNumber()
+	id := getSerialNumber()
 	return util.MD5(id)
 }
 

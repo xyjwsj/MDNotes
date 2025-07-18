@@ -65,11 +65,11 @@ func (system *SystemHandler) Start() bool {
 }
 
 func (system *SystemHandler) ScreenFullSwitch() {
-	maximised := model.FetchAppInfo().App.CurrentWindow().IsMaximised()
+	maximised := model.FetchAppInfo().App.Window.Current().IsMaximised()
 	if !maximised {
-		model.FetchAppInfo().App.CurrentWindow().Maximise()
+		model.FetchAppInfo().App.Window.Current().Maximise()
 	} else {
-		model.FetchAppInfo().App.CurrentWindow().UnMaximise()
+		model.FetchAppInfo().App.Window.Current().UnMaximise()
 	}
 }
 

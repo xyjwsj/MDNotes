@@ -30,6 +30,7 @@ var (
 
 func init() {
 	path := util.CreatePlatformPath(model.AppDataRoot, "info.db")
+	log.Println("xxxxxx====uniqueId:" + UniqueId())
 	if !util.Exists(path) {
 		recordCache = make([]*model.RecordInfo, 0)
 	} else {
@@ -40,6 +41,8 @@ func init() {
 		}
 
 		contents := util.DecryptContent(file, UniqueId())
+
+		log.Println("info---" + string(contents))
 
 		err = util.Json2Struct(string(contents), &recordCache)
 		if err != nil {
@@ -62,6 +65,7 @@ func init() {
 		}
 
 		contents := util.DecryptContent(file, UniqueId())
+		log.Println("preference---" + string(contents))
 		var pre model.Preference
 		err = util.Json2Struct(string(contents), &pre)
 		if err != nil {

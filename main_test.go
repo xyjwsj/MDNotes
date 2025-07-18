@@ -8,11 +8,16 @@ import (
 	"io/fs"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
 
 func TestGit(t *testing.T) {
+}
+
+func TestUniqueId(t *testing.T) {
+	mgr.UniqueId()
 }
 
 func TestCopy(t *testing.T) {
@@ -147,4 +152,75 @@ func TestExport(t *testing.T) {
 	if err != nil {
 		log.Println(err)
 	}
+}
+
+func TestMoveDataNew(t *testing.T) {
+	filepath.Walk("/Users/wushaojie/Downloads/note-e04366721a40cf8739183bbf6b7eee72", func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			log.Printf("访问文件 %s 出错: %v\n", path, err)
+			return err
+		}
+
+		// 判断是否是文件，并且后缀为 .db 或 .md
+		if !info.IsDir() && (strings.HasSuffix(info.Name(), ".db") || strings.HasSuffix(info.Name(), ".md")) {
+			fmt.Printf("处理文件: %s\n", path)
+
+			// 读取文件内容
+			originalData, err := os.ReadFile(path)
+			if err != nil {
+				log.Printf("读取文件 %s 失败: %v\n", path, err)
+				return err
+			}
+
+			// 解密原始内容
+			decryptedData := util.DecryptContent(originalData, "e04366721a40cf8739183bbf6b7eee72")
+
+			// 再次加密内容
+			encryptedData, err := util.EncryptContent(decryptedData, mgr.UniqueId())
+			if err != nil {
+				log.Printf("加密文件 %s 失败: %v\n", path, err)
+				return err
+			}
+
+			// 覆盖写回加密后的数据
+			err = os.WriteFile(path, encryptedData, os.ModePerm)
+			if err != nil {
+				log.Printf("写入文件 %s 失败: %v\n", path, err)
+				return err
+			}
+
+			log.Printf("文件 %s 已重新加密。\n", path)
+		}
+
+		return nil
+	})
+}
+
+func TestDecryptData(t *testing.T) {
+	filepath.Walk("/Users/wushaojie/Downloads/note-e04366721a40cf8739183bbf6b7eee72", func(path string, info os.FileInfo, err error) error {
+		//filepath.Walk("/Users/wushaojie/Library/Containers/com.allen.mdnote/Data/Library/Application Support/LiveMark", func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			log.Printf("访问文件 %s 出错: %v\n", path, err)
+			return err
+		}
+
+		// 判断是否是文件，并且后缀为 .db 或 .md
+		if !info.IsDir() && (strings.HasSuffix(info.Name(), ".db") || strings.HasSuffix(info.Name(), ".md")) {
+			fmt.Printf("处理文件: %s\n", path)
+
+			// 读取文件内容
+			originalData, err := os.ReadFile(path)
+			if err != nil {
+				log.Printf("读取文件 %s 失败: %v\n", path, err)
+				return err
+			}
+
+			// 解密原始内容
+			decryptedData := util.DecryptContent(originalData, mgr.UniqueId())
+
+			log.Printf("文件 \n%s\n", decryptedData)
+		}
+
+		return nil
+	})
 }

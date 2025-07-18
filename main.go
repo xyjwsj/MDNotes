@@ -7,7 +7,6 @@ import (
 	"embed"
 	_ "embed"
 	"log"
-	"runtime"
 	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -62,7 +61,7 @@ func main() {
 	// 'Mac' options tailor the window when running on macOS.
 	// 'BackgroundColour' is the background colour of the window.
 	// 'URL' is the URL that will be loaded into the webview.
-	app.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
+	app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title:  "LiveMark",
 		Width:  1050,
 		Height: 850,
@@ -77,12 +76,6 @@ func main() {
 		},
 		BackgroundColour: application.NewRGB(27, 38, 54),
 		URL:              "/",
-	})
-
-	app.OnWindowCreation(func(window application.Window) {
-		if runtime.GOOS == "windows" {
-
-		}
 	})
 
 	app.OnShutdown(func() {
@@ -120,7 +113,11 @@ func main() {
 	go func() {
 		for {
 			now := time.Now().Format(time.RFC1123)
-			app.EmitEvent("time", now)
+
+			app.Event.EmitEvent(&application.CustomEvent{
+				Name: "time",
+				Data: now,
+			})
 			time.Sleep(time.Second)
 		}
 	}()

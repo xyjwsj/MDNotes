@@ -109,7 +109,8 @@ func (file *FileHandler) RemoveCategory(key string) bool {
 func (file *FileHandler) ExportFile(all bool, fileKey string) bool {
 	list := mgr.CacheList()
 	if all {
-		dialog := application.OpenFileDialogWithOptions(&application.OpenFileDialogOptions{
+		dialog := application.OpenFileDialog()
+		dialog.SetOptions(&application.OpenFileDialogOptions{
 			CanChooseDirectories:    true,
 			CanChooseFiles:          false,
 			CanCreateDirectories:    true,
