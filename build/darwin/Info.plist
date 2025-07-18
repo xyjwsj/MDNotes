@@ -17,11 +17,11 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.allen.mdnote</string>
 	<key>CFBundleVersion</key>
-	<string>1.1.0</string>
+	<string>1.1.1</string>
 	<key>CFBundleGetInfoString</key>
 	<string>LiveMark Markdown Editor\nFast，Secure，Lightweight</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.1.0</string>
+	<string>1.1.1</string>
 	<key>CFBundleIconFile</key>
 	<string>icons</string>
 	<key>LSMinimumSystemVersion</key>
@@ -29,6 +29,6 @@
 	<key>NSHighResolutionCapable</key>
 	<string>true</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>>© 2025 Allen Wu. LiveMark — Markdown Editor</string>
+	<string>© 2025 Allen Wu. LiveMark — Markdown Editor for macOS\nhttps://livemark.site</string>
 </dict>
 </plist>
